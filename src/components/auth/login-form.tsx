@@ -1,4 +1,5 @@
 "use client";
+import { useActionState } from "react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import {
@@ -10,11 +11,14 @@ import {
   FieldSeparator,
 } from "../ui/field";
 import { Input } from "../ui/input";
-import { useActionState } from "react";
 import { loginAction } from "@/actions/auth";
+import { Alert, AlertTitle } from "../ui/alert";
+import { AlertCircleIcon } from "lucide-react";
 
 export function LoginForm() {
   const [state, action, pending] = useActionState(loginAction, undefined);
+
+  console.log("LoginForm state:", state);
   return (
     <form action={action} className="flex flex-col gap-y-4 w-full">
       <FieldGroup>
@@ -26,7 +30,13 @@ export function LoginForm() {
         </div>
         <Field>
           <FieldLabel htmlFor="email">Email</FieldLabel>
-          <Input id="email" type="email" name="email" placeholder="m@example.com" required />
+          <Input
+            id="email"
+            type="email"
+            name="email"
+            placeholder="m@example.com"
+            required
+          />
           {state?.errors?.email && (
             <FieldError>{state?.errors?.email}</FieldError>
           )}
@@ -38,7 +48,7 @@ export function LoginForm() {
               href="#"
               className="ml-auto text-sm underline-offset-4 hover:underline"
             >
-              Forgot your password?
+              Olvidaste tu contraseña?
             </Link>
           </div>
           <Input id="password" type="password" name="password" required />
@@ -46,6 +56,12 @@ export function LoginForm() {
             <FieldError>{state?.errors?.password}</FieldError>
           )}
         </Field>
+        { !state?.ok && state?.message && (
+          <Alert variant="destructive">
+            <AlertCircleIcon />
+            <AlertTitle>{state.message}.</AlertTitle>
+          </Alert>
+        )}
         <Field>
           <Button type="submit" disabled={pending}>
             {pending ? "Ingresando..." : "Ingresar"}

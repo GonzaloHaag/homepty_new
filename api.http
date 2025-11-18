@@ -12,3 +12,7 @@ Content-Type: application/json
 
 ### Logout
 GET http://localhost:3001/api/auth/logout
+
+
+### Solicitudes GET
+GET http://localhost:3001/api/solicitudes-inmuebles

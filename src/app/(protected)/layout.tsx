@@ -1,11 +1,22 @@
+import { AppSidebar, Header } from "@/components/layout";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+
 export default function ProtectedLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <main>
-      { children }
-    </main>
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <Header />
+        <main className="flex flex-1 flex-col gap-4 p-4">
+          <section className="min-h-[calc(100svh - 3rem)] flex-1 md:min-h-min">
+            {children}
+          </section>
+        </main>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
