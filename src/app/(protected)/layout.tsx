@@ -1,5 +1,6 @@
 import { AppSidebar, Header } from "@/components/layout";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function ProtectedLayout({
   children,
@@ -16,6 +17,7 @@ export default function ProtectedLayout({
             {children}
           </section>
         </main>
+        <Toaster duration={3000} position="top-right" richColors={true} />
       </SidebarInset>
     </SidebarProvider>
   );

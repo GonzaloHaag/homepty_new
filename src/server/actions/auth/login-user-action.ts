@@ -1,10 +1,12 @@
 "use server";
 import { createClient } from "@/lib/supabase/server";
 import { LoginSchema } from "@/schemas";
+import { LoginSchemaType } from "@/schemas/login-schema";
 import { FormState } from "@/types/form-state";
 import { redirect } from "next/navigation";
+import z from "zod";
 
-export async function loginAction(state: FormState, formData: FormData) {
+export async function loginUserAction(state: FormState<LoginSchemaType>, formData: FormData):Promise<FormState<LoginSchemaType>> {
   const validatedFields = LoginSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
@@ -12,7 +14,9 @@ export async function loginAction(state: FormState, formData: FormData) {
 
   if (!validatedFields.success) {
     return {
-      errors: validatedFields.error.flatten().fieldErrors,
+      ok: false,
+      message: "Error de validación",
+      errors: z.flattenError(validatedFields.error).fieldErrors
     };
   }
 
@@ -32,7 +36,11 @@ export async function loginAction(state: FormState, formData: FormData) {
     if(error.code === "invalid_credentials") {
       return {
         ok:false,
-        message: "Credenciales inválidas"
+        message: "Credenciales inválidas",
+        inputs: {
+          email: validatedFields.data.email,
+          password: validatedFields.data.password,
+        }
       };
     }
     return {

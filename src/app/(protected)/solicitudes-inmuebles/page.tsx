@@ -1,8 +1,9 @@
-import { SectionTabs } from "@/components/solicitudes-inmuebles";
+import { SectionTabs, TabsSkeleton } from "@/components/real-state-applications";
 import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { PlusCircleIcon } from "lucide-react";
 import Link from "next/link";
+import { Suspense } from "react";
 
 export default function SolicitudesInmueblesPage() {
   return (
@@ -19,7 +20,9 @@ export default function SolicitudesInmueblesPage() {
         </Link>
       </div>
       <Separator />
-      <SectionTabs />
+      <Suspense fallback={<TabsSkeleton />}>
+        <SectionTabs />
+      </Suspense>
     </div>
   );
 }

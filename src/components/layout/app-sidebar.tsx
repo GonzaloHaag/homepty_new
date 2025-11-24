@@ -4,10 +4,12 @@ import {
   HomeIcon,
   MapPinIcon,
   Settings,
+  UserIcon,
 } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -17,6 +19,7 @@ import {
 } from "@/components/ui/sidebar";
 import { HeaderSidebar } from "./header-sidebar";
 import Link from "next/link";
+import { NavUser } from "./nav-user";
 
 // Menu items.
 const items = [
@@ -45,6 +48,11 @@ const items = [
     url: "#",
     icon: Settings,
   },
+  {
+    title: "Perfil",
+    url: "/perfil",
+    icon: UserIcon,
+  }
 ];
 
 export function AppSidebar() {
@@ -59,7 +67,11 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <Link href={item.url} title={item.title} className="font-medium">
+                    <Link
+                      href={item.url}
+                      title={item.title}
+                      className="font-medium"
+                    >
                       <item.icon />
                       <span>{item.title}</span>
                     </Link>
@@ -70,6 +82,9 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+         <NavUser />
+      </SidebarFooter>
     </Sidebar>
   );
 }

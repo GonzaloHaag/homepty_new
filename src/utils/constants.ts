@@ -58,3 +58,12 @@ export const TYPE_OF_PROPERTIES = [
     label: "Local Comercial",
   },
 ];
+export const USER_ACTIVITY = [
+  { id: 1, value: "Asesor inmobiliario", label: "Asesor inmobiliario" },
+  { id: 2, value: "Broker hipotecario", label: "Broker hipotecario" },
+  { id: 3, value: "Constructor", label: "Constructor" },
+  { id: 4, value: "Desarrollador", label: "Desarrollador" },
+  { id: 5, value: "Arquitecto/arquitecta", label: "Arquitecto/arquitecta" },
+  { id: 6, value: "Notario", label: "Notario" },
+  { id: 7, value: "Inmobiliaria", label: "Inmobiliaria" },
+];

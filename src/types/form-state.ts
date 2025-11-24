@@ -1,11 +1,8 @@
-export type FormState =
+export type FormState<T> =
   | {
       ok?: boolean;
-      errors?: {
-        name?: string[];
-        email?: string[];
-        password?: string[];
-      };
+      errors?: Partial<Record<keyof T, string[]>>;
+      inputs?: Partial<T>;
       message?: string;
     }
   | undefined;

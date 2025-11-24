@@ -1,8 +1,11 @@
+"use client";
 import { TYPE_OF_PROPERTIES } from "@/utils/constants";
 import { NativeSelect, NativeSelectOption } from "../ui/native-select";
 import { Field, FieldDescription, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
+import { Button  } from "../ui/button";
+import { ButtonBack } from "../shared";
 
 export function FormPropertyApplication() {
   return (
@@ -210,6 +213,13 @@ export function FormPropertyApplication() {
             />
           </Field>
         </div>
+      </div>
+
+      <div className="w-full flex items-center justify-end gap-x-2">
+        <ButtonBack />
+        <Button type="submit" title="Crear solicitud" className="min-w-28">
+          Crear solicitud
+        </Button>
       </div>
     </form>
   );

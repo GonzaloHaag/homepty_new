@@ -11,14 +11,12 @@ import {
   FieldSeparator,
 } from "../ui/field";
 import { Input } from "../ui/input";
-import { loginAction } from "@/actions/auth";
+import { loginUserAction } from "@/server/actions";
 import { Alert, AlertTitle } from "../ui/alert";
 import { AlertCircleIcon } from "lucide-react";
 
 export function LoginForm() {
-  const [state, action, pending] = useActionState(loginAction, undefined);
-
-  console.log("LoginForm state:", state);
+  const [state, action, pending] = useActionState(loginUserAction, undefined);
   return (
     <form action={action} className="flex flex-col gap-y-4 w-full">
       <FieldGroup>
@@ -35,6 +33,7 @@ export function LoginForm() {
             type="email"
             name="email"
             placeholder="m@example.com"
+            defaultValue={state?.inputs?.email || ""}
             required
           />
           {state?.errors?.email && (
@@ -51,12 +50,18 @@ export function LoginForm() {
               Olvidaste tu contraseña?
             </Link>
           </div>
-          <Input id="password" type="password" name="password" required />
+          <Input
+            id="password"
+            type="password"
+            name="password"
+            required
+            defaultValue={state?.inputs?.password || ""}
+          />
           {state?.errors?.password && (
             <FieldError>{state?.errors?.password}</FieldError>
           )}
         </Field>
-        { !state?.ok && state?.message && (
+        {!state?.ok && state?.message && (
           <Alert variant="destructive">
             <AlertCircleIcon />
             <AlertTitle>{state.message}.</AlertTitle>

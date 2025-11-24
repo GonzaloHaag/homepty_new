@@ -3,9 +3,13 @@ import { useTabs } from "@/hooks";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 export function SectionTabs() {
-  const { handleTabChange, defaultTab } = useTabs();
+  const { handleTabChange, currentTab } = useTabs({ defaultValue: "todas" });
   return (
-    <Tabs defaultValue={defaultTab} className="w-[400px]" onValueChange={handleTabChange}>
+    <Tabs 
+      value={currentTab} 
+      onValueChange={handleTabChange} 
+      className="w-[400px]"
+    >
       <TabsList>
         <TabsTrigger value="todas">Todas</TabsTrigger>
         <TabsTrigger value="nueva">Nuevas</TabsTrigger>
@@ -16,7 +20,10 @@ export function SectionTabs() {
       <TabsContent value="todas">
         Make changes to your account here.
       </TabsContent>
-      <TabsContent value="new">Change your password here.</TabsContent>
+      <TabsContent value="nueva">Nuevas solicitudes.</TabsContent>
+      <TabsContent value="en_proceso">Solicitudes en proceso.</TabsContent>
+      <TabsContent value="completada">Solicitudes completadas.</TabsContent>
+      <TabsContent value="cancelada">Solicitudes canceladas.</TabsContent>
     </Tabs>
   );
 }

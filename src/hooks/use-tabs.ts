@@ -1,22 +1,30 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-export function useTabs() {
+interface Props {
+  defaultValue?: string;
+}
+export function useTabs({ defaultValue = "todas" } : Props ) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
+
+  const currentTab = searchParams.get("tab") || defaultValue;
+
   function handleTabChange(value: string) {
     const params = new URLSearchParams(searchParams);
-    if (value) {
+    
+    if (value && value !== defaultValue) {
       params.set("tab", value);
     } else {
+      // Si es el tab por defecto, lo removemos de la URL para mantenerla limpia
       params.delete("tab");
     }
-    replace(`${pathname}?${params.toString()}`);
+    
+    // Usamos replace para no agregar al historial del navegador
+    replace(`${pathname}?${params.toString()}`, { scroll: false });
   }
-
-  const defaultTab = searchParams.get("tab") || "todas";
 
   return {
     handleTabChange,
-    defaultTab,
+    currentTab,
   };
 }
