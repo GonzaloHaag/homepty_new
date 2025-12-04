@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { UserInfo, UserInfoSkeleton } from "@/components/profile";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -6,12 +7,12 @@ import {
 } from "@/components/ui/native-select";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getUserInfo } from "@/server/queries";
 import { TYPE_OF_PROPERTIES } from "@/utils/constants";
 import { CameraIcon, PlusIcon, Share2Icon } from "lucide-react";
 import Link from "next/link";
-import { Suspense } from "react";
-
-export default function PerfilPage() {
+export default async function ProfilePage() {
+  const userPromise = getUserInfo();
   return (
     <div className="flex flex-col gap-y-4">
       <section className="flex bg-[url('/images/placeholder.svg')] bg-center bg-cover min-h-40 rounded-md relative p-4">
@@ -22,7 +23,7 @@ export default function PerfilPage() {
       </section>
       {/** Info user */}
       <Suspense fallback={<UserInfoSkeleton />}>
-        <UserInfo />
+        <UserInfo userPromise={userPromise} />
       </Suspense>
       <Separator />
       <Tabs defaultValue="my-properties" className="w-full">
@@ -37,7 +38,7 @@ export default function PerfilPage() {
               <Share2Icon /> Compartir
             </Button>
             <Link
-              href="/crear-propiedad"
+              href="/create-property"
               title="Crear propiedad"
               className={buttonVariants({ variant: "default" })}
             >

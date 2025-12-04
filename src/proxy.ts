@@ -41,7 +41,6 @@ export async function proxy(request: NextRequest) {
       },
     });
   }
-
   return updateSession(request);
 }
 

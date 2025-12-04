@@ -30,32 +30,32 @@ const items = [
   },
   {
     title: "Explorar",
-    url: "/explorar",
+    url: "/explore",
     icon: MapPinIcon,
   },
   {
     title: "Solicitudes",
-    url: "/solicitudes-inmuebles",
+    url: "/property-requests",
     icon: ClipboardListIcon,
   },
   {
     title: "CRM",
-    url: "#",
+    url: "/crm",
     icon: BriefcaseIcon,
   },
   {
     title: "Settings",
-    url: "#",
+    url: "/settings",
     icon: Settings,
   },
   {
     title: "Perfil",
-    url: "/perfil",
+    url: "/profile",
     icon: UserIcon,
   }
 ];
 
-export function AppSidebar() {
+export async function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <HeaderSidebar />

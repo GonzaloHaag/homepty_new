@@ -1,24 +1,13 @@
-"use server";
+import { verifySession } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { ServiceResponse, User } from "@/types";
-
 export async function getUserInfo(): Promise<ServiceResponse<User>> {
   const supabase = await createClient();
-  const {
-    data: { user: userAuth },
-    error: errorUserAuth,
-  } = await supabase.auth.getUser();
-  if (errorUserAuth || !userAuth) {
-    return {
-      ok: false,
-      message: "Error al obtener el usuario actual.",
-      data: null,
-    };
-  }
+  const { userId } = await verifySession();
   const { data, error } = await supabase
     .from("usuarios")
     .select("*")
-    .eq("id", userAuth.id)
+    .eq("id", userId)
     .single();
 
   if (error || !data) {
@@ -29,7 +18,6 @@ export async function getUserInfo(): Promise<ServiceResponse<User>> {
       data: null,
     };
   }
-
   return {
     ok: true,
     message: "Usuario actual obtenido correctamente.",

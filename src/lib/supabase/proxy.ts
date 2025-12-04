@@ -37,13 +37,23 @@ export async function updateSession(request: NextRequest) {
   const { data } = await supabase.auth.getClaims();
 
   const user = data?.claims;
-
+    const url = request.nextUrl.clone();
   if (!user && !request.nextUrl.pathname.startsWith("/auth")) {
     // no user, potentially respond by redirecting the user to the login page
-    const url = request.nextUrl.clone();
     url.pathname = "/auth/login";
     return NextResponse.redirect(url);
   }
+
+  // const { data:{ user: currentUser }} = await supabase.auth.getUser();
+
+  // if(currentUser) {
+  //    /** Para la home no quiero insertar user en la url */
+  //    if(url.pathname === "/" || url.pathname === "/auth/login") {
+  //      return NextResponse.rewrite(url);
+  //    }
+  //    url.pathname = `/${currentUser.id}${url.pathname}`;
+  //    return NextResponse.rewrite(url);
+  // }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
   // creating a new response object with NextResponse.next() make sure to:

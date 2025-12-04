@@ -8,7 +8,7 @@ import { User } from "@/types";
 interface Props {
   user: User;
 }
-export function DialogEditProfile({ user }: Props) {
+export function DialogEditUser({ user }: Props) {
   const [open, setOpen] = useState(false);
 
   const closeDialog = () => {

@@ -1,4 +1,4 @@
-import { FormPropertyApplication } from "@/components/real-state-applications";
+import { FormPropertyRequest } from "@/components/property-requests";
 import { ButtonBack } from "@/components/shared";
 import {
   Card,
@@ -8,12 +8,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default function SolicitudesInmueblesCrearPage() {
+export default async function RequestsCreatePage() {
   return (
     <div className="flex flex-col gap-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Crear solicitud</h1>
-         <ButtonBack />
+        <ButtonBack />
       </div>
       <Card>
         <CardHeader>
@@ -23,7 +23,7 @@ export default function SolicitudesInmueblesCrearPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <FormPropertyApplication />
+          <FormPropertyRequest />
         </CardContent>
       </Card>
     </div>

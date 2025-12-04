@@ -4,9 +4,9 @@ import {
   NativeSelectOption,
 } from "@/components/ui/native-select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TYPE_OF_OPERATIONS, TYPE_OF_PROPERTIES } from "@/utils/constants";
+import { TYPE_OF_PROPERTIES } from "@/utils/constants";
 
-export default function InicioPage() {
+export default async function HomePage() {
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-xl font-semibold">
@@ -22,11 +22,11 @@ export default function InicioPage() {
           <NativeSelectOption value="">
             Seleccionar tipo de operacion
           </NativeSelectOption>
-          {TYPE_OF_OPERATIONS.map((operation) => (
+          {/* {TYPE_OF_OPERATIONS.map((operation) => (
             <NativeSelectOption key={operation.id} value={operation.value}>
               {operation.label}
             </NativeSelectOption>
-          ))}
+          ))} */}
         </NativeSelect>
         <NativeSelect>
           <NativeSelectOption value="">

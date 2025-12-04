@@ -11,7 +11,7 @@ export function Header() {
         <header className="flex items-center shrink-0 p-2 h-12 border-b w-full gap-2">
             <SidebarTrigger />
             <Separator orientation="vertical" />
-            <h1 className="font-bold capitalize">{titlePage}</h1>
+            <h1 className="font-bold uppercase">{titlePage}</h1>
         </header>
     );
 }

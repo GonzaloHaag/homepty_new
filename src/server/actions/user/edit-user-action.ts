@@ -10,22 +10,14 @@ export async function editUserAction(
   state: FormState<User>,
   formData: FormData
 ) {
-  const rawData = {
-    nombre_usuario: formData.get("nombre_usuario") as string,
-    telefono_usuario: formData.get("telefono_usuario") as string,
-    email_usuario: formData.get("email_usuario") as string,
-    actividad_usuario: formData.get("actividad_usuario") as string,
-    id_estado: formData.get("id_estado") ? Number(formData.get("id_estado")) : null,
-    id_ciudad: formData.get("id_ciudad") ? Number(formData.get("id_ciudad")) : null,
-    descripcion_usuario: formData.get("descripcion_usuario") as string,
-  };
-  const validatedFields = UserSchema.safeParse(rawData);
+  const entries = Object.fromEntries(formData.entries());
+  const validatedFields = UserSchema.safeParse(entries);
   if (!validatedFields.success) {
     return {
       ok: false,
       errors: z.flattenError(validatedFields.error).fieldErrors,
       message: "Error de validación. Por favor, revisa los campos.",
-      inputs: rawData
+      inputs: entries,
     };
   }
 
@@ -48,10 +40,10 @@ export async function editUserAction(
     return {
       ok: false,
       message: "Error al actualizar el perfil. Por favor, intenta de nuevo.",
-      inputs: validatedFields.data
+      inputs: validatedFields.data,
     };
   }
-  revalidatePath("/perfil");
+  revalidatePath(`/${userId}/profile`, "page");
   return {
     ok: true,
     message: "Perfil actualizado correctamente.",

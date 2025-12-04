@@ -4,17 +4,20 @@ import {
   MapPinIcon,
   PhoneIcon,
 } from "lucide-react";
-import { DialogEditProfile } from "./dialog-edit-profile";
+import { DialogEditUser } from "./dialog-edit-user";
 import { STATES_NAMES_BY_ID } from "@/utils";
-import { getUserInfo } from "@/server/queries";
+import { ServiceResponse, User } from "@/types";
 import { ErrorMessage } from "../shared";
-
-export async function UserInfo() {
-  const response = await getUserInfo();
+interface Props {
+  userPromise: Promise<ServiceResponse<User>>;
+}
+export async function UserInfo({ userPromise }: Props) {
+  const response = await userPromise;
   if (!response.ok || !response.data) {
     return <ErrorMessage message="Error al obtener el usuario." />;
   }
   const user = response.data;
+  console.log({user});
   return (
     <div className="flex flex-col gap-y-4">
       <div className="flex items-center justify-between">
@@ -26,8 +29,7 @@ export async function UserInfo() {
               : user.descripcion_usuario}
           </p>
         </div>
-        {/* Dialog */}
-        <DialogEditProfile user={user} />
+        <DialogEditUser user={user} />
       </div>
       <div className="flex flex-col gap-y-2">
         <div className="flex items-center gap-x-2 text-sm">
