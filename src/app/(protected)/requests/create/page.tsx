@@ -1,4 +1,4 @@
-import { FormPropertyRequest } from "@/components/property-requests";
+import { FormRequest } from "@/components/requests";
 import { ButtonBack } from "@/components/shared";
 import {
   Card,
@@ -23,7 +23,7 @@ export default async function RequestsCreatePage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <FormPropertyRequest />
+          <FormRequest />
         </CardContent>
       </Card>
     </div>

@@ -5,11 +5,12 @@ import {
   PhoneIcon,
 } from "lucide-react";
 import { DialogEditUser } from "./dialog-edit-user";
-import { STATES_NAMES_BY_ID } from "@/utils";
-import { ServiceResponse, User } from "@/types";
+
 import { ErrorMessage } from "../shared";
+import { STATES_NAMES_BY_ID } from "@/utils/formatters";
+import { QueryResponse, User } from "@/types";
 interface Props {
-  userPromise: Promise<ServiceResponse<User>>;
+  userPromise: Promise<QueryResponse<User>>;
 }
 export async function UserInfo({ userPromise }: Props) {
   const response = await userPromise;

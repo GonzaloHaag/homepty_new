@@ -1,34 +1,53 @@
 "use client";
-import { TYPE_OF_PROPERTIES } from "@/utils/constants";
+import { CITIES, STATES, TYPES_OF_PROPERTIES } from "@/utils/constants";
 import { NativeSelect, NativeSelectOption } from "../ui/native-select";
 import { Field, FieldDescription, FieldError, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { ButtonBack } from "../shared";
-import { useActionState, useEffect } from "react";
-import { createPropertyApplicationAction } from "@/server/actions";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { RequestSchema } from "@/schemas";
+import { createRequestAction } from "@/server/actions";
 import { toast } from "sonner";
 
-export function FormPropertyRequest() {
-  const [state, formAction, pending] = useActionState(
-    createPropertyApplicationAction,
-    undefined
-  );
+export function FormRequest() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(RequestSchema),
+    mode: "onBlur",
+    defaultValues: {
+      tipo_operacion: "Comprar",
+      tipo_propiedad_id: 1,
+      presupuesto_min: undefined,
+      presupuesto_max: undefined,
+      id_estado: undefined,
+      id_ciudad: undefined,
+      zona: "",
+      habitaciones: undefined,
+      banos: undefined,
+      estacionamientos: undefined,
+      metros_cuadrados: undefined,
+      detalles_adicionales: "",
+      nombre_contacto: "",
+      correo_contacto: "",
+      telefono_contacto: "",
+    },
+  });
 
-  useEffect(() => {
-    if (state === undefined) return;
-
-    if (state && !state?.ok) {
-      toast.error(state?.message || "Error al crear la solicitud.");
-    } else {
-      toast.success(state.message);
+  const onSubmit = handleSubmit(async (data) => {
+    const response = await createRequestAction({ request: data });
+    if (!response.ok) {
+      toast.error("Error al crear la solicitud. Por favor, intenta de nuevo.");
+      return;
     }
-    // El redirect se maneja en la action
-  }, [state]);
-
+  });
   return (
-    <form action={formAction} className="flex flex-col gap-6">
+    <form onSubmit={onSubmit} className="flex flex-col gap-6">
       {/* Sección: ¿Qué estás buscando? */}
       <div className="flex flex-col gap-4">
         <h2 className="text-lg font-semibold">¿Qué estás buscando?</h2>
@@ -37,40 +56,40 @@ export function FormPropertyRequest() {
             <FieldLabel htmlFor="tipo_operacion">Tipo de operación</FieldLabel>
             <NativeSelect
               id="tipo_operacion"
-              name="tipo_operacion"
-              defaultValue={state?.inputs?.tipo_operacion?.toString() ?? ""}
-              aria-invalid={!!state?.errors?.tipo_operacion}
+              {...register("tipo_operacion")}
+              aria-invalid={!!errors.tipo_operacion}
             >
               <NativeSelectOption value="">
                 Seleccionar tipo de operación
               </NativeSelectOption>
-              <NativeSelectOption value="comprar">Comprar</NativeSelectOption>
-              <NativeSelectOption value="rentar">Rentar</NativeSelectOption>
+              <NativeSelectOption value="Comprar">Comprar</NativeSelectOption>
+              <NativeSelectOption value="Rentar">Rentar</NativeSelectOption>
             </NativeSelect>
-            {state?.errors?.tipo_operacion && (
-              <FieldError>{state.errors.tipo_operacion}</FieldError>
+            {errors.tipo_operacion && (
+              <FieldError>{errors.tipo_operacion.message}</FieldError>
             )}
           </Field>
 
           <Field>
-            <FieldLabel htmlFor="tipo_propiedad">Tipo de propiedad</FieldLabel>
+            <FieldLabel htmlFor="tipo_propiedad_id">
+              Tipo de propiedad
+            </FieldLabel>
             <NativeSelect
-              id="tipo_propiedad"
-              name="tipo_propiedad"
-              defaultValue={state?.inputs?.tipo_propiedad?.toString() ?? ""}
-              aria-invalid={!!state?.errors?.tipo_propiedad}
+              id="tipo_propiedad_id"
+              {...register("tipo_propiedad_id", { valueAsNumber: true })}
+              aria-invalid={!!errors.tipo_propiedad_id}
             >
               <NativeSelectOption value="">
                 Seleccionar tipo de propiedad
               </NativeSelectOption>
-              {TYPE_OF_PROPERTIES.map((type) => (
+              {TYPES_OF_PROPERTIES.map((type) => (
                 <NativeSelectOption key={type.id} value={type.id}>
                   {type.label}
                 </NativeSelectOption>
               ))}
             </NativeSelect>
-            {state?.errors?.tipo_propiedad && (
-              <FieldError>{state.errors.tipo_propiedad}</FieldError>
+            {errors.tipo_propiedad_id && (
+              <FieldError>{errors.tipo_propiedad_id.message}</FieldError>
             )}
           </Field>
         </div>
@@ -82,14 +101,13 @@ export function FormPropertyRequest() {
             </FieldLabel>
             <Input
               id="presupuesto_min"
-              name="presupuesto_min"
               type="number"
               placeholder="1,000,000"
-              defaultValue={state?.inputs?.presupuesto_min?.toString() ?? ""}
-              aria-invalid={!!state?.errors?.presupuesto_min}
+              {...register("presupuesto_min", { valueAsNumber: true })}
+              aria-invalid={!!errors.presupuesto_min}
             />
-            {state?.errors?.presupuesto_min && (
-              <FieldError>{state.errors.presupuesto_min}</FieldError>
+            {errors.presupuesto_min && (
+              <FieldError>{errors.presupuesto_min.message}</FieldError>
             )}
           </Field>
 
@@ -99,14 +117,13 @@ export function FormPropertyRequest() {
             </FieldLabel>
             <Input
               id="presupuesto_max"
-              name="presupuesto_max"
               type="number"
               placeholder="3,000,000"
-              defaultValue={state?.inputs?.presupuesto_max?.toString() ?? ""}
-              aria-invalid={!!state?.errors?.presupuesto_max}
+              {...register("presupuesto_max", { valueAsNumber: true })}
+              aria-invalid={!!errors.presupuesto_max}
             />
-            {state?.errors?.presupuesto_max && (
-              <FieldError>{state.errors.presupuesto_max}</FieldError>
+            {errors.presupuesto_max && (
+              <FieldError>{errors.presupuesto_max.message}</FieldError>
             )}
           </Field>
         </div>
@@ -118,30 +135,44 @@ export function FormPropertyRequest() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Field>
-            <FieldLabel htmlFor="estado">Estado</FieldLabel>
-            <NativeSelect id="estado" name="estado">
+            <FieldLabel htmlFor="id_estado">Estado</FieldLabel>
+            <NativeSelect
+              id="id_estado"
+              {...register("id_estado", { valueAsNumber: true })}
+              aria-invalid={!!errors.id_estado}
+            >
               <NativeSelectOption value="">
                 Selecciona un estado
               </NativeSelectOption>
-              <NativeSelectOption value="10">Durango</NativeSelectOption>
+              {STATES.map((state) => (
+                <NativeSelectOption key={state.id} value={state.id}>
+                  {state.label}
+                </NativeSelectOption>
+              ))}
             </NativeSelect>
+            {errors.id_estado && (
+              <FieldError>{errors.id_estado.message}</FieldError>
+            )}
           </Field>
 
           <Field>
             <FieldLabel htmlFor="id_ciudad">Ciudad</FieldLabel>
             <NativeSelect
               id="id_ciudad"
-              name="id_ciudad"
-              defaultValue={state?.inputs?.id_ciudad?.toString() ?? ""}
-              aria-invalid={!!state?.errors?.id_ciudad}
+              {...register("id_ciudad", { valueAsNumber: true })}
+              aria-invalid={!!errors.id_ciudad}
             >
               <NativeSelectOption value="">
                 Primero selecciona un estado
               </NativeSelectOption>
-              <NativeSelectOption value="27">Gómez Palacio</NativeSelectOption>
+              {CITIES.map((city) => (
+                <NativeSelectOption key={city.id} value={city.id}>
+                  {city.label}
+                </NativeSelectOption>
+              ))}
             </NativeSelect>
-            {state?.errors?.id_ciudad && (
-              <FieldError>{state.errors.id_ciudad}</FieldError>
+            {errors.id_ciudad && (
+              <FieldError>{errors.id_ciudad.message}</FieldError>
             )}
           </Field>
         </div>
@@ -152,18 +183,15 @@ export function FormPropertyRequest() {
           </FieldLabel>
           <Input
             id="zona"
-            name="zona"
             type="text"
             placeholder="Ej. Centro, Valle Oriente, etc."
-            defaultValue={state?.inputs?.zona?.toString() ?? ""}
-            aria-invalid={!!state?.errors?.zona}
+            {...register("zona")}
+            aria-invalid={!!errors.zona}
           />
           <FieldDescription className="text-xs text-muted-foreground mt-1">
             Si tienes alguna zona específica en mente, indícala aquí
           </FieldDescription>
-          {state?.errors?.zona && (
-            <FieldError>{state.errors.zona}</FieldError>
-          )}
+          {errors.zona && <FieldError>{errors.zona.message}</FieldError>}
         </Field>
       </div>
 
@@ -176,9 +204,8 @@ export function FormPropertyRequest() {
             <FieldLabel htmlFor="habitaciones">Habitaciones</FieldLabel>
             <NativeSelect
               id="habitaciones"
-              name="habitaciones"
-              defaultValue={state?.inputs?.habitaciones?.toString() ?? ""}
-              aria-invalid={!!state?.errors?.habitaciones}
+              {...register("habitaciones", { valueAsNumber: true })}
+              aria-invalid={!!errors.habitaciones}
             >
               <NativeSelectOption value="">Seleccionar</NativeSelectOption>
               <NativeSelectOption value="1">1+</NativeSelectOption>
@@ -187,8 +214,8 @@ export function FormPropertyRequest() {
               <NativeSelectOption value="4">4+</NativeSelectOption>
               <NativeSelectOption value="5">5+</NativeSelectOption>
             </NativeSelect>
-            {state?.errors?.habitaciones && (
-              <FieldError>{state.errors.habitaciones}</FieldError>
+            {errors.habitaciones && (
+              <FieldError>{errors.habitaciones.message}</FieldError>
             )}
           </Field>
 
@@ -196,9 +223,8 @@ export function FormPropertyRequest() {
             <FieldLabel htmlFor="banos">Baños</FieldLabel>
             <NativeSelect
               id="banos"
-              name="banos"
-              defaultValue={state?.inputs?.banos?.toString() ?? ""}
-              aria-invalid={!!state?.errors?.banos}
+              {...register("banos", { valueAsNumber: true })}
+              aria-invalid={!!errors.banos}
             >
               <NativeSelectOption value="">Seleccionar</NativeSelectOption>
               <NativeSelectOption value="1">1+</NativeSelectOption>
@@ -206,18 +232,15 @@ export function FormPropertyRequest() {
               <NativeSelectOption value="3">3+</NativeSelectOption>
               <NativeSelectOption value="4">4+</NativeSelectOption>
             </NativeSelect>
-            {state?.errors?.banos && (
-              <FieldError>{state.errors.banos}</FieldError>
-            )}
+            {errors.banos && <FieldError>{errors.banos.message}</FieldError>}
           </Field>
 
           <Field>
             <FieldLabel htmlFor="estacionamientos">Estacionamientos</FieldLabel>
             <NativeSelect
               id="estacionamientos"
-              name="estacionamientos"
-              defaultValue={state?.inputs?.estacionamientos?.toString() ?? ""}
-              aria-invalid={!!state?.errors?.estacionamientos}
+              {...register("estacionamientos", { valueAsNumber: true })}
+              aria-invalid={!!errors.estacionamientos}
             >
               <NativeSelectOption value="">Seleccionar</NativeSelectOption>
               <NativeSelectOption value="1">1+</NativeSelectOption>
@@ -225,8 +248,8 @@ export function FormPropertyRequest() {
               <NativeSelectOption value="3">3+</NativeSelectOption>
               <NativeSelectOption value="4">4+</NativeSelectOption>
             </NativeSelect>
-            {state?.errors?.estacionamientos && (
-              <FieldError>{state.errors.estacionamientos}</FieldError>
+            {errors.estacionamientos && (
+              <FieldError>{errors.estacionamientos.message}</FieldError>
             )}
           </Field>
 
@@ -234,14 +257,13 @@ export function FormPropertyRequest() {
             <FieldLabel htmlFor="metros_cuadrados">Superficie (m²)</FieldLabel>
             <Input
               id="metros_cuadrados"
-              name="metros_cuadrados"
               type="number"
               placeholder="80"
-              defaultValue={state?.inputs?.metros_cuadrados?.toString() ?? ""}
-              aria-invalid={!!state?.errors?.metros_cuadrados}
+              {...register("metros_cuadrados", { valueAsNumber: true })}
+              aria-invalid={!!errors.metros_cuadrados}
             />
-            {state?.errors?.metros_cuadrados && (
-              <FieldError>{state.errors.metros_cuadrados}</FieldError>
+            {errors.metros_cuadrados && (
+              <FieldError>{errors.metros_cuadrados.message}</FieldError>
             )}
           </Field>
         </div>
@@ -252,18 +274,17 @@ export function FormPropertyRequest() {
           </FieldLabel>
           <Textarea
             id="detalles_adicionales"
-            name="detalles_adicionales"
             rows={4}
             placeholder="Menciona cualquier característica o requerimiento adicional que tengas..."
             className="max-h-40"
-            defaultValue={state?.inputs?.detalles_adicionales?.toString() ?? ""}
-            aria-invalid={!!state?.errors?.detalles_adicionales}
+            {...register("detalles_adicionales")}
+            aria-invalid={!!errors.detalles_adicionales}
           />
           <FieldDescription className="text-xs text-muted-foreground mt-1">
             Por ejemplo: necesito que tenga jardín, cerca de escuelas, etc.
           </FieldDescription>
-          {state?.errors?.detalles_adicionales && (
-            <FieldError>{state.errors.detalles_adicionales}</FieldError>
+          {errors.detalles_adicionales && (
+            <FieldError>{errors.detalles_adicionales.message}</FieldError>
           )}
         </Field>
       </div>
@@ -277,14 +298,13 @@ export function FormPropertyRequest() {
             <FieldLabel htmlFor="nombre_contacto">Nombre completo</FieldLabel>
             <Input
               id="nombre_contacto"
-              name="nombre_contacto"
               type="text"
               placeholder="Juan Pérez"
-              defaultValue={state?.inputs?.nombre_contacto?.toString() ?? ""}
-              aria-invalid={!!state?.errors?.nombre_contacto}
+              {...register("nombre_contacto")}
+              aria-invalid={!!errors.nombre_contacto}
             />
-            {state?.errors?.nombre_contacto && (
-              <FieldError>{state.errors.nombre_contacto}</FieldError>
+            {errors.nombre_contacto && (
+              <FieldError>{errors.nombre_contacto.message}</FieldError>
             )}
           </Field>
 
@@ -294,14 +314,13 @@ export function FormPropertyRequest() {
             </FieldLabel>
             <Input
               id="correo_contacto"
-              name="correo_contacto"
               type="email"
               placeholder="ejemplo@correo.com"
-              defaultValue={state?.inputs?.correo_contacto?.toString() ?? ""}
-              aria-invalid={!!state?.errors?.correo_contacto}
+              {...register("correo_contacto")}
+              aria-invalid={!!errors.correo_contacto}
             />
-            {state?.errors?.correo_contacto && (
-              <FieldError>{state.errors.correo_contacto}</FieldError>
+            {errors.correo_contacto && (
+              <FieldError>{errors.correo_contacto.message}</FieldError>
             )}
           </Field>
 
@@ -309,14 +328,13 @@ export function FormPropertyRequest() {
             <FieldLabel htmlFor="telefono_contacto">Teléfono</FieldLabel>
             <Input
               id="telefono_contacto"
-              name="telefono_contacto"
               type="tel"
               placeholder="(81) 1234 5678"
-              defaultValue={state?.inputs?.telefono_contacto?.toString() ?? ""}
-              aria-invalid={!!state?.errors?.telefono_contacto}
+              {...register("telefono_contacto")}
+              aria-invalid={!!errors.telefono_contacto}
             />
-            {state?.errors?.telefono_contacto && (
-              <FieldError>{state.errors.telefono_contacto}</FieldError>
+            {errors.telefono_contacto && (
+              <FieldError>{errors.telefono_contacto.message}</FieldError>
             )}
           </Field>
         </div>
@@ -328,7 +346,7 @@ export function FormPropertyRequest() {
           type="submit"
           title="Crear solicitud"
           className="min-w-28"
-          disabled={pending}
+          disabled={isSubmitting}
         >
           Crear solicitud
         </Button>

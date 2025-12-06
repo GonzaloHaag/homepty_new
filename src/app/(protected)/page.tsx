@@ -4,7 +4,7 @@ import {
   NativeSelectOption,
 } from "@/components/ui/native-select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TYPE_OF_PROPERTIES } from "@/utils/constants";
+import { TYPES_OF_PROPERTIES } from "@/utils/constants";
 
 export default async function HomePage() {
   return (
@@ -32,7 +32,7 @@ export default async function HomePage() {
           <NativeSelectOption value="">
             Seleccionar tipo de propiedad
           </NativeSelectOption>
-          {TYPE_OF_PROPERTIES.map((type) => (
+          {TYPES_OF_PROPERTIES.map((type) => (
             <NativeSelectOption key={type.id} value={type.value}>
               {type.label}
             </NativeSelectOption>

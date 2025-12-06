@@ -1,7 +1,8 @@
 import { verifySession } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { ServiceResponse, User } from "@/types";
-export async function getUserInfo(): Promise<ServiceResponse<User>> {
+import { QueryResponse, User } from "@/types";
+
+export async function getUserInfo(): Promise<QueryResponse<User>> {
   const supabase = await createClient();
   const { userId } = await verifySession();
   const { data, error } = await supabase
@@ -15,7 +16,6 @@ export async function getUserInfo(): Promise<ServiceResponse<User>> {
     return {
       ok: false,
       message: "Error al obtener el perfil del usuario.",
-      data: null,
     };
   }
   return {

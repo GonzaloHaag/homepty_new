@@ -35,7 +35,7 @@ const items = [
   },
   {
     title: "Solicitudes",
-    url: "/property-requests",
+    url: "/requests",
     icon: ClipboardListIcon,
   },
   {

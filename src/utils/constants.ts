@@ -31,33 +31,54 @@ export const TYPES_OF_OPERATIONS = [
   },
 ];
 
-export const TYPE_OF_PROPERTIES = [
+export const TYPES_OF_PROPERTIES = [
   {
     id: 1,
-    value: "1",
+    value: 1,
     label: "Casa",
   },
   {
     id: 2,
-    value: "2",
+    value: 2,
     label: "Departamento",
   },
   {
     id: 3,
-    value: "3",
+    value: 3,
     label: "Terreno",
   },
   {
     id: 4,
-    value: "4",
+    value: 4,
     label: "Oficina",
   },
   {
     id: 5,
-    value: "5",
-    label: "Local Comercial",
+    value: 5,
+    label: "Local comercial",
+  },
+  {
+    id: 6,
+    value: 6,
+    label: "Bodega",
+  },
+  {
+    id: 7,
+    value: 7,
+    label: "Loft",
+  },
+  {
+    id: 8,
+    value: 8,
+    label: "Lote",
+  },
+  {
+    id: 9,
+    value: 9,
+    label: "Nave industrial",
   },
 ];
+
 export const USER_ACTIVITY = [
   { id: 1, value: "Asesor inmobiliario", label: "Asesor inmobiliario" },
   { id: 2, value: "Broker hipotecario", label: "Broker hipotecario" },
@@ -80,7 +101,7 @@ export const TYPES_OF_USES = [
   { id: 1, label: "Residencial", value: 1 },
   { id: 2, label: "Comercial", value: 2 },
   { id: 3, label: "Industrial", value: 3 },
-  { id: 4, label: "Mixto", value: 4 }
+  { id: 4, label: "Mixto", value: 4 },
 ];
 
 export const STATES: { id: number; label: string }[] = [
@@ -229,4 +250,11 @@ export const AMENITIES = [
   { id: 10, nombre: "Vigilancia 24 Hrs" },
   { id: 12, nombre: "Zona de Mascotas" },
   { id: 13, nombre: "Zonas Verdes" },
+];
+
+export const TYPES_STATUS_REQUEST = [
+  { id: 1, value: "nueva", label: "Nueva" },
+  { id: 2, value: "en_proceso", label: "En Proceso" },
+  { id: 3, value: "completada", label: "Completada" },
+  { id: 4, value: "cancelada", label: "Cancelada" },
 ];

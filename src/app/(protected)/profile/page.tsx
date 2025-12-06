@@ -8,7 +8,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getUserInfo } from "@/server/queries";
-import { TYPE_OF_PROPERTIES } from "@/utils/constants";
+import { TYPES_OF_PROPERTIES } from "@/utils/constants";
 import { CameraIcon, PlusIcon, Share2Icon } from "lucide-react";
 import Link from "next/link";
 export default async function ProfilePage() {
@@ -57,7 +57,7 @@ export default async function ProfilePage() {
             </div>
             <NativeSelect>
               <NativeSelectOption value="">Todos los tipos</NativeSelectOption>
-              {TYPE_OF_PROPERTIES.map((type) => (
+              {TYPES_OF_PROPERTIES.map((type) => (
                 <NativeSelectOption key={type.id} value={type.value}>
                   {type.label}
                 </NativeSelectOption>
