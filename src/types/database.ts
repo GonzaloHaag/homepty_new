@@ -50,42 +50,6 @@ export type Database = {
         }
         Relationships: []
       }
-      amenidadespropiedades: {
-        Row: {
-          created_at: string
-          id_amenidad: number
-          id_amenidad_propiedad: number
-          id_propiedad: number
-        }
-        Insert: {
-          created_at?: string
-          id_amenidad: number
-          id_amenidad_propiedad?: number
-          id_propiedad: number
-        }
-        Update: {
-          created_at?: string
-          id_amenidad?: number
-          id_amenidad_propiedad?: number
-          id_propiedad?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "amenidadespropiedades_id_amenidad_fkey"
-            columns: ["id_amenidad"]
-            isOneToOne: false
-            referencedRelation: "amenidades"
-            referencedColumns: ["id_amenidad"]
-          },
-          {
-            foreignKeyName: "amenidadespropiedades_id_propiedad_fkey"
-            columns: ["id_propiedad"]
-            isOneToOne: false
-            referencedRelation: "propiedades"
-            referencedColumns: ["id_propiedad"]
-          },
-        ]
-      }
       ciudades: {
         Row: {
           created_at: string
@@ -436,6 +400,27 @@ export type Database = {
           },
         ]
       }
+      imagenes_unidades: {
+        Row: {
+          created_at: string
+          id: number
+          id_unidad: number
+          image_url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          id_unidad: number
+          image_url: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          id_unidad?: number
+          image_url?: string
+        }
+        Relationships: []
+      }
       inquilinos: {
         Row: {
           created_at: string
@@ -556,194 +541,6 @@ export type Database = {
           nombre_pais?: string
         }
         Relationships: []
-      }
-      propiedades: {
-        Row: {
-          amenidades: number[] | null
-          area_construida_propiedad: number | null
-          area_propiedad: number | null
-          banios_propiedad: number | null
-          caracteristicas_adicionales_propiedad: string | null
-          categoria_propiedad: string | null
-          codigo_postal_propiedad: string | null
-          colonia_propiedad: string | null
-          created_at: string
-          descripcion_estado_propiedad: string
-          descripcion_inversion_propiedad: string | null
-          descripcion_propiedad: string | null
-          direccion_propiedad: string
-          estacionamientos_propiedad: number | null
-          fecha_cambio_status: string
-          habitaciones_propiedad: number | null
-          id_accion_propiedad: number
-          id_ciudad_propiedad: number
-          id_estado_propiedad: number
-          id_propiedad: number
-          id_status_propiedad: number | null
-          id_uso_propiedad: number
-          id_usuario: string
-          id_zona_propiedad: number | null
-          is_unit: boolean
-          numero_plantas_propiedad: number | null
-          precio_propiedad: number | null
-          referencias_propiedad: string | null
-          tipo_propiedad: string | null
-          titulo_propiedad: string
-          verificacion_documentos_propiedad: string | null
-        }
-        Insert: {
-          amenidades?: number[] | null
-          area_construida_propiedad?: number | null
-          area_propiedad?: number | null
-          banios_propiedad?: number | null
-          caracteristicas_adicionales_propiedad?: string | null
-          categoria_propiedad?: string | null
-          codigo_postal_propiedad?: string | null
-          colonia_propiedad?: string | null
-          created_at?: string
-          descripcion_estado_propiedad: string
-          descripcion_inversion_propiedad?: string | null
-          descripcion_propiedad?: string | null
-          direccion_propiedad: string
-          estacionamientos_propiedad?: number | null
-          fecha_cambio_status?: string
-          habitaciones_propiedad?: number | null
-          id_accion_propiedad: number
-          id_ciudad_propiedad: number
-          id_estado_propiedad: number
-          id_propiedad?: number
-          id_status_propiedad?: number | null
-          id_uso_propiedad: number
-          id_usuario: string
-          id_zona_propiedad?: number | null
-          is_unit?: boolean
-          numero_plantas_propiedad?: number | null
-          precio_propiedad?: number | null
-          referencias_propiedad?: string | null
-          tipo_propiedad?: string | null
-          titulo_propiedad: string
-          verificacion_documentos_propiedad?: string | null
-        }
-        Update: {
-          amenidades?: number[] | null
-          area_construida_propiedad?: number | null
-          area_propiedad?: number | null
-          banios_propiedad?: number | null
-          caracteristicas_adicionales_propiedad?: string | null
-          categoria_propiedad?: string | null
-          codigo_postal_propiedad?: string | null
-          colonia_propiedad?: string | null
-          created_at?: string
-          descripcion_estado_propiedad?: string
-          descripcion_inversion_propiedad?: string | null
-          descripcion_propiedad?: string | null
-          direccion_propiedad?: string
-          estacionamientos_propiedad?: number | null
-          fecha_cambio_status?: string
-          habitaciones_propiedad?: number | null
-          id_accion_propiedad?: number
-          id_ciudad_propiedad?: number
-          id_estado_propiedad?: number
-          id_propiedad?: number
-          id_status_propiedad?: number | null
-          id_uso_propiedad?: number
-          id_usuario?: string
-          id_zona_propiedad?: number | null
-          is_unit?: boolean
-          numero_plantas_propiedad?: number | null
-          precio_propiedad?: number | null
-          referencias_propiedad?: string | null
-          tipo_propiedad?: string | null
-          titulo_propiedad?: string
-          verificacion_documentos_propiedad?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "propiedades_id_accion_propiedad_fkey"
-            columns: ["id_accion_propiedad"]
-            isOneToOne: false
-            referencedRelation: "accionespropiedades"
-            referencedColumns: ["id_accion_propiedad"]
-          },
-          {
-            foreignKeyName: "propiedades_id_ciudad_propiedad_fkey"
-            columns: ["id_ciudad_propiedad"]
-            isOneToOne: false
-            referencedRelation: "ciudades"
-            referencedColumns: ["id_ciudad"]
-          },
-          {
-            foreignKeyName: "propiedades_id_estado_propiedad_fkey"
-            columns: ["id_estado_propiedad"]
-            isOneToOne: false
-            referencedRelation: "estados"
-            referencedColumns: ["id_estado"]
-          },
-          {
-            foreignKeyName: "propiedades_id_status_propiedad_fkey"
-            columns: ["id_status_propiedad"]
-            isOneToOne: false
-            referencedRelation: "statuspropiedad"
-            referencedColumns: ["id_status_propiedad"]
-          },
-          {
-            foreignKeyName: "propiedades_id_uso_propiedad_fkey"
-            columns: ["id_uso_propiedad"]
-            isOneToOne: false
-            referencedRelation: "usospropiedades"
-            referencedColumns: ["id_uso_propiedad"]
-          },
-          {
-            foreignKeyName: "propiedades_id_usuario_fkey"
-            columns: ["id_usuario"]
-            isOneToOne: false
-            referencedRelation: "usuarios"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "propiedades_id_zona_propiedad_fkey"
-            columns: ["id_zona_propiedad"]
-            isOneToOne: false
-            referencedRelation: "zonas"
-            referencedColumns: ["id_zona"]
-          },
-        ]
-      }
-      propiedades_guardadas: {
-        Row: {
-          created_at: string
-          id: number
-          id_propiedad: number
-          id_usuario: string
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          id_propiedad: number
-          id_usuario: string
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          id_propiedad?: number
-          id_usuario?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "propiedades_guardadas_id_propiedad_fkey"
-            columns: ["id_propiedad"]
-            isOneToOne: false
-            referencedRelation: "propiedades"
-            referencedColumns: ["id_propiedad"]
-          },
-          {
-            foreignKeyName: "propiedades_guardadas_id_usuario_fkey"
-            columns: ["id_usuario"]
-            isOneToOne: false
-            referencedRelation: "usuarios"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       solicitudes: {
         Row: {
@@ -1240,4 +1037,4 @@ export const Constants = {
       ],
     },
   },
-} as const
+} as const;

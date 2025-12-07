@@ -7,16 +7,14 @@ import {
 } from "@/components/ui/native-select";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
 import { LocationCharacteristics } from "@/schemas";
-import { CITIES, STATES, AMENITIES } from "@/utils/constants";
-import { useFormContext, Controller } from "react-hook-form";
+import { CITIES, STATES } from "@/utils/constants";
+import { useFormContext } from "react-hook-form";
 
 export function LocationCharacteristicsStep() {
   const {
     register,
     formState: { errors },
-    control,
   } = useFormContext<LocationCharacteristics>();
   return (
     <section className="grid grid-cols-2 items-start gap-6">
@@ -110,7 +108,7 @@ export function LocationCharacteristicsStep() {
         />
       </div>
 
-      <Controller
+      {/* <Controller
         control={control}
         name="amenidades"
         render={({ field }) => (
@@ -153,7 +151,7 @@ export function LocationCharacteristicsStep() {
             </div>
           </div>
         )}
-      />
+      /> */}
 
       <div className="flex flex-col gap-y-2 col-span-2 w-full">
         <Label htmlFor="caracteristicas">Caracteristicas adicionales</Label>

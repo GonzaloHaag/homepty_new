@@ -1,50 +1,29 @@
-import { Input } from "@/components/ui/input";
-import {
-  NativeSelect,
-  NativeSelectOption,
-} from "@/components/ui/native-select";
+import { Suspense } from "react";
+import { Filters, SectionProperties } from "@/components/home";
+import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TYPES_OF_PROPERTIES } from "@/utils/constants";
+import { getAllUnits } from "@/server/queries";
 
 export default async function HomePage() {
+  const unitsPromise = getAllUnits();
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-xl font-semibold">
-        Encontrá las mejores propiedades
-      </h1>
-      <form className="w-full flex items-center gap-4 bg-muted/50 p-4 rounded">
-        <Input
-          type="search"
-          placeholder="Nombre, estado o ciudad..."
-          className="md:max-w-sm"
-        />
-        <NativeSelect>
-          <NativeSelectOption value="">
-            Seleccionar tipo de operacion
-          </NativeSelectOption>
-          {/* {TYPE_OF_OPERATIONS.map((operation) => (
-            <NativeSelectOption key={operation.id} value={operation.value}>
-              {operation.label}
-            </NativeSelectOption>
-          ))} */}
-        </NativeSelect>
-        <NativeSelect>
-          <NativeSelectOption value="">
-            Seleccionar tipo de propiedad
-          </NativeSelectOption>
-          {TYPES_OF_PROPERTIES.map((type) => (
-            <NativeSelectOption key={type.id} value={type.value}>
-              {type.label}
-            </NativeSelectOption>
-          ))}
-        </NativeSelect>
-      </form>
-
-      <section className="">
+      <div className="flex flex-col gap-y-1">
+        <h1 className="text-xl font-semibold">
+          Encontrá las mejores propiedades
+        </h1>
+        <p className="text-muted-foreground text-sm max-w-4xl text-pretty">
+          Explora nuestras propiedades populares y recomendadas, cuidadosamente
+          seleccionadas para ti. Además, descubre una amplia variedad de
+          opciones subidas por nuestra comunidad de usuarios.
+        </p>
+      </div>
+      <Separator />
+      <section className="flex flex-col gap-y-4">
         <Tabs defaultValue="popular" className="w-full">
           <TabsList>
             <TabsTrigger value="popular" className="min-w-32">
-              Popular
+              Populares
             </TabsTrigger>
             <TabsTrigger value="recommended" className="min-w-32">
               Recomendados
@@ -58,6 +37,10 @@ export default async function HomePage() {
           </TabsContent>
         </Tabs>
       </section>
+      <Filters />
+      <Suspense fallback={<div>Cargando propiedades...</div>}>
+        <SectionProperties unitsPromise={unitsPromise} />
+      </Suspense>
     </div>
   );
 }

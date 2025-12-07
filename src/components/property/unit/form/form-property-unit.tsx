@@ -1,5 +1,5 @@
 "use client";
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { defineStepper } from "@/components/ui/stepper";
@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { LocationCharacteristicsStep } from "./location-characteristics-step";
 import { ButtonBack } from "@/components/shared";
 import { Card } from "@/components/ui/card";
+import { createPropertyUnitAction } from "@/server/actions";
 
 const { useStepper, steps, utils } = defineStepper(
   {
@@ -30,6 +31,22 @@ const { useStepper, steps, utils } = defineStepper(
 );
 
 export function FormPropertyUnit() {
+  const [unitsImageUrls, setUnitsImageUrls] = useState<string[]>([]);
+  const [unitsFileUrls, setUnitsFileUrls] = useState<File[]>([]);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const handleClick = () => {
+    inputRef.current?.click(); // dispara el input file oculto
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const files = Array.from(event.target.files);
+      setUnitsFileUrls([...unitsFileUrls, ...files]);
+      const newImagesUrls = files.map((file) => URL.createObjectURL(file));
+
+      setUnitsImageUrls([...unitsImageUrls, ...newImagesUrls]);
+    }
+  };
   const stepper = useStepper();
 
   const methods = useForm({
@@ -42,36 +59,49 @@ export function FormPropertyUnit() {
       id_tipo_uso: 1,
       descripcion: "",
       descripcion_estado: "",
-      descripcion_inversion: null,
+      descripcion_inversion: undefined,
       id_estado: undefined,
       id_ciudad: undefined,
-      codigo_postal: null,
+      codigo_postal: undefined,
       direccion: "",
-      colonia: null,
+      colonia: undefined,
       area: undefined,
-      precio: null,
-      habitaciones: null,
+      precio: undefined,
+      habitaciones: undefined,
       banios: undefined,
-      estacionamientos: null,
-      amenidades: [],
-      caracteristicas: null,
+      estacionamientos: undefined,
+      caracteristicas: undefined,
     },
   });
 
   const {
     handleSubmit,
     trigger,
-    formState: { errors },
+    getValues,
+    formState: { errors, isSubmitting },
     reset,
   } = methods;
 
   const onSubmit = handleSubmit(
-    (values: z.infer<typeof stepper.current.schema>) => {
+    async (values: z.infer<typeof stepper.current.schema>) => {
       console.log(`Form values for step ${stepper.current.id}:`, values);
       if (stepper.isLast) {
-        /** Simular envio al back */
-        toast.success("Unidad creada correctamente!");
+        // Obtener TODOS los valores del formulario, no solo del paso actual
+        const allFormValues = getValues();
+        console.log("All form values:", allFormValues);
 
+        /** Enviar al back */
+        const response = await createPropertyUnitAction({
+          unit: allFormValues,
+          unitFiles: unitsFileUrls,
+        });
+        if (!response.ok) {
+          toast.error(response.message);
+          return;
+        }
+        toast.success("Unidad creada con éxito!");
+        setUnitsImageUrls([]);
+        setUnitsFileUrls([]);
         /** Hacer todo aca */
         stepper.reset();
         reset();
@@ -79,7 +109,6 @@ export function FormPropertyUnit() {
         stepper.next();
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
-      console.log("Final values:", values);
     }
   );
 
@@ -143,7 +172,14 @@ export function FormPropertyUnit() {
           </nav>
           <div className="flex flex-col gap-y-4">
             {stepper.switch({
-              "basic-info": () => <BasicInformationStep />,
+              "basic-info": () => (
+                <BasicInformationStep
+                  handleClick={handleClick}
+                  handleChange={handleChange}
+                  inputRef={inputRef}
+                  unitsImageUrls={unitsImageUrls}
+                />
+              ),
               "location-characteristics": () => <LocationCharacteristicsStep />,
               confirm: () => <Confirm />,
             })}
@@ -162,7 +198,11 @@ export function FormPropertyUnit() {
                 </Button>
               </div>
             ) : (
-              <Button type="submit" className="w-full max-w-60 mx-auto">
+              <Button
+                type="submit"
+                className="w-full max-w-60 mx-auto"
+                disabled={isSubmitting}
+              >
                 Confirmar
               </Button>
             )}

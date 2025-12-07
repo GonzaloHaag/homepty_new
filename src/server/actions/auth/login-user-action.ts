@@ -2,7 +2,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { LoginSchema } from "@/schemas";
 import { LoginSchemaType } from "@/schemas/login-schema";
-import { FormState } from "@/types/form-state";
+import { FormState } from "@/types";
 import { redirect } from "next/navigation";
 import z from "zod";
 

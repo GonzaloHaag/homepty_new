@@ -38,7 +38,7 @@ export default async function ProfilePage() {
               <Share2Icon /> Compartir
             </Button>
             <Link
-              href="/create-property"
+              href="/properties/create/unit"
               title="Crear propiedad"
               className={buttonVariants({ variant: "default" })}
             >

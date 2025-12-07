@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { ChangeEvent, RefObject } from "react";
 import { ErrorMessage } from "@/components/shared";
 import { InputForm } from "@/components/shared/input-form";
 import { Button } from "@/components/ui/button";
@@ -19,28 +19,22 @@ import {
 import { UploadIcon } from "lucide-react";
 import Image from "next/image";
 import { useFormContext } from "react-hook-form";
-
-export function BasicInformationStep() {
+interface Props {
+  handleClick: () => void;
+  handleChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  inputRef: RefObject<HTMLInputElement | null>;
+  unitsImageUrls: string[];
+}
+export function BasicInformationStep({
+  handleClick,
+  handleChange,
+  inputRef,
+  unitsImageUrls,
+}: Props) {
   const {
     register,
     formState: { errors },
   } = useFormContext<BasicInfo>();
-  const [unitsImageUrls, setUnitsImageUrls] = useState<string[]>([]);
-  const [unitsFileUrls, setUnitsFileUrls] = useState<File[]>([]);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const handleClick = () => {
-    inputRef.current?.click(); // dispara el input file oculto
-  };
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      const files = Array.from(event.target.files);
-      setUnitsFileUrls([...unitsFileUrls, ...files]);
-      const newImagesUrls = files.map((file) => URL.createObjectURL(file));
-
-      setUnitsImageUrls([...unitsImageUrls, ...newImagesUrls]);
-    }
-  };
   return (
     <section className="grid grid-cols-2 items-start gap-6">
       <div className="flex flex-col gap-y-2">
@@ -72,7 +66,10 @@ export function BasicInformationStep() {
       />
       <div className="flex flex-col gap-y-2">
         <Label htmlFor="id_tipo_operacion">Tipo de operación *</Label>
-        <NativeSelect id="id_tipo_operacion" {...register("id_tipo_accion")}>
+        <NativeSelect
+          id="id_tipo_operacion"
+          {...register("id_tipo_accion", { valueAsNumber: true })}
+        >
           {TYPES_OF_OPERATIONS.map((type) => (
             <NativeSelectOption key={type.id} value={type.id}>
               {type.label}
@@ -81,8 +78,13 @@ export function BasicInformationStep() {
         </NativeSelect>
       </div>
       <div className="flex flex-col gap-y-2">
-        <Label id="id_tipo_uso" htmlFor="id_tipo_uso">Tipo de uso *</Label>
-        <NativeSelect id="id_tipo_uso" {...register("id_tipo_uso",{ valueAsNumber: true })}>
+        <Label id="id_tipo_uso" htmlFor="id_tipo_uso">
+          Tipo de uso *
+        </Label>
+        <NativeSelect
+          id="id_tipo_uso"
+          {...register("id_tipo_uso", { valueAsNumber: true })}
+        >
           {TYPES_OF_USES.map((type) => (
             <NativeSelectOption key={type.id} value={type.id}>
               {type.label}
