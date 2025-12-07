@@ -9,10 +9,13 @@ import { ButtonBack } from "../shared";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RequestSchema } from "@/schemas";
-import { createRequestAction } from "@/server/actions";
+import { createRequestAction, editRequestAction } from "@/server/actions";
 import { toast } from "sonner";
-
-export function FormRequest() {
+import { Request } from "@/types";
+interface Props {
+  request: Request | null;
+}
+export function FormRequest({ request }: Props) {
   const {
     register,
     handleSubmit,
@@ -21,29 +24,44 @@ export function FormRequest() {
     resolver: zodResolver(RequestSchema),
     mode: "onBlur",
     defaultValues: {
-      tipo_operacion: "Comprar",
-      tipo_propiedad_id: 1,
-      presupuesto_min: undefined,
-      presupuesto_max: undefined,
-      id_estado: undefined,
-      id_ciudad: undefined,
-      zona: "",
-      habitaciones: undefined,
-      banos: undefined,
-      estacionamientos: undefined,
-      metros_cuadrados: undefined,
-      detalles_adicionales: "",
-      nombre_contacto: "",
-      correo_contacto: "",
-      telefono_contacto: "",
+      tipo_operacion: request?.tipo_operacion ?? "Comprar",
+      tipo_propiedad_id: request?.tipo_propiedad_id ?? 1,
+      presupuesto_min: request?.presupuesto_min ?? undefined,
+      presupuesto_max: request?.presupuesto_max ?? undefined,
+      id_estado: request?.id_estado ?? undefined,
+      id_ciudad: request?.id_ciudad ?? undefined,
+      zona: request?.zona ?? "",
+      habitaciones: request?.habitaciones ?? undefined,
+      banos: request?.banos ?? undefined,
+      estacionamientos: request?.estacionamientos ?? undefined,
+      metros_cuadrados: request?.metros_cuadrados ?? undefined,
+      detalles_adicionales: request?.detalles_adicionales ?? "",
+      nombre_contacto: request?.nombre_contacto ?? "",
+      correo_contacto: request?.correo_contacto ?? "",
+      telefono_contacto: request?.telefono_contacto ?? "",
     },
   });
 
   const onSubmit = handleSubmit(async (data) => {
-    const response = await createRequestAction({ request: data });
-    if (!response.ok) {
-      toast.error("Error al crear la solicitud. Por favor, intenta de nuevo.");
-      return;
+    if (request) {
+      const response = await editRequestAction({
+        id: request.id,
+        request: data,
+      });
+      if (!response.ok) {
+        toast.error(
+          "Error al editar la solicitud. Por favor, intenta de nuevo."
+        );
+        return;
+      }
+    } else {
+      const response = await createRequestAction({ request: data });
+      if (!response.ok) {
+        toast.error(
+          "Error al crear la solicitud. Por favor, intenta de nuevo."
+        );
+        return;
+      }
     }
   });
   return (
@@ -348,7 +366,7 @@ export function FormRequest() {
           className="min-w-28"
           disabled={isSubmitting}
         >
-          Crear solicitud
+          {request ? "Editar solicitud" : "Crear solicitud"}
         </Button>
       </div>
     </form>

@@ -1,3 +1,4 @@
+"use client";
 import {
   BriefcaseIcon,
   ClipboardListIcon,
@@ -20,6 +21,7 @@ import {
 import { HeaderSidebar } from "./header-sidebar";
 import Link from "next/link";
 import { NavUser } from "./nav-user";
+import { usePathname } from "next/navigation";
 
 // Menu items.
 const items = [
@@ -55,7 +57,8 @@ const items = [
   }
 ];
 
-export async function AppSidebar() {
+export function AppSidebar() {
+  const pathname = usePathname();
   return (
     <Sidebar collapsible="icon">
       <HeaderSidebar />
@@ -70,7 +73,7 @@ export async function AppSidebar() {
                     <Link
                       href={item.url}
                       title={item.title}
-                      className="font-medium"
+                      className={`font-medium ${ item.url === pathname ? "text-primary bg-muted" : "" }`}
                     >
                       <item.icon />
                       <span>{item.title}</span>

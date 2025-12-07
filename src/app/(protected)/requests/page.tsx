@@ -1,4 +1,4 @@
-import { SectionTabs, TableRequests } from "@/components/requests";
+import { SectionFilters, TableRequests } from "@/components/requests";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
@@ -13,7 +13,7 @@ import { PlusCircleIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 
-export default async function RequestsPage({ params } : { params: Promise<{ tab:string }>}) {
+export default function RequestsPage() {
   const requestsPromise = getRequests();
   return (
     <div className="flex flex-col gap-y-4">
@@ -29,7 +29,6 @@ export default async function RequestsPage({ params } : { params: Promise<{ tab:
         </Link>
       </div>
       <Separator />
-      <SectionTabs />
       <Card>
         <CardHeader>
           <CardTitle>Todas las solicitudes</CardTitle>
@@ -37,9 +36,10 @@ export default async function RequestsPage({ params } : { params: Promise<{ tab:
             Solicitudes de todas las categorías.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-col gap-y-4">
+          <SectionFilters />
           <Suspense fallback={<div>Cargando solicitudes...</div>}>
-            <TableRequests requestsPromise={requestsPromise} params={params} />
+            <TableRequests requestsPromise={requestsPromise} />
           </Suspense>
         </CardContent>
       </Card>

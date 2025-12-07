@@ -26,7 +26,7 @@ export function DialogViewRequest({ request }: Props) {
           <EyeIcon />
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="md:max-w-2xl">
         <DialogHeader>
           <DialogTitle>Detalles de la solicitud</DialogTitle>
           <DialogDescription>

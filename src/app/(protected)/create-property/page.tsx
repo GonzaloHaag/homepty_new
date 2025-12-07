@@ -15,7 +15,7 @@ export default async function CreatePropertyPage() {
         <ButtonBack />
       </div>
 
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-6 md:max-w-6xl">
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Link
           href="/create-property/unit"
           className="flex flex-col gap-y-4 bg-card p-4 rounded border border-slate-100 hover:border-primary transition-colors duration-300"

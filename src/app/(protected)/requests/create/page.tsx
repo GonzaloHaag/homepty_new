@@ -23,7 +23,7 @@ export default async function RequestsCreatePage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <FormRequest />
+          <FormRequest request={null} />
         </CardContent>
       </Card>
     </div>

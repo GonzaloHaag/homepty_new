@@ -16,22 +16,18 @@ import {
   STATES_NAMES_BY_ID,
 } from "@/utils/formatters";
 import { DialogViewRequest } from "./dialog-view-request";
+import Link from "next/link";
+import { buttonVariants } from "../ui/button";
+import { PencilIcon } from "lucide-react";
 interface Props {
   requestsPromise: Promise<QueryResponse<Request[]>>;
-  params: Promise<{
-    tab: string;
-  }>;
 }
-export async function TableRequests({ requestsPromise, params }: Props) {
-  const { tab } = await params;
-
-  console.log("Current tab:", tab);
+export async function TableRequests({ requestsPromise }: Props) {
   const response = await requestsPromise;
   if (!response.ok || !response.data) {
     return <ErrorMessage message="Error al cargar las solicitudes" />;
   }
   const requests = response.data;
-  console.log(requests);
   return (
     <Table>
       <TableHeader>
@@ -59,6 +55,9 @@ export async function TableRequests({ requestsPromise, params }: Props) {
             <TableCell>
               {/* Actions such as Edit/Delete can be placed here */}
               <DialogViewRequest request={request} />
+              <Link href={`/requests/edit/${request.id}`} title="Editar" className={`ml-2 ${buttonVariants({ variant: "outline", size: "icon" })}`}>
+                <PencilIcon className="text-green-600" />
+              </Link>
             </TableCell>
           </TableRow>
         ))}

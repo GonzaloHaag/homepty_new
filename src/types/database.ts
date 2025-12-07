@@ -763,7 +763,7 @@ export type Database = {
           presupuesto_max: number | null
           presupuesto_min: number | null
           telefono_contacto: string | null
-          tipo_operacion: string | null
+          tipo_operacion: Database["public"]["Enums"]["tipo_operacion"]
           tipo_propiedad_id: number
           updated_at: string
           usuario_id: string
@@ -786,7 +786,7 @@ export type Database = {
           presupuesto_max?: number | null
           presupuesto_min?: number | null
           telefono_contacto?: string | null
-          tipo_operacion?: string | null
+          tipo_operacion: Database["public"]["Enums"]["tipo_operacion"]
           tipo_propiedad_id: number
           updated_at?: string
           usuario_id: string
@@ -809,7 +809,7 @@ export type Database = {
           presupuesto_max?: number | null
           presupuesto_min?: number | null
           telefono_contacto?: string | null
-          tipo_operacion?: string | null
+          tipo_operacion?: Database["public"]["Enums"]["tipo_operacion"]
           tipo_propiedad_id?: number
           updated_at?: string
           usuario_id?: string
@@ -1093,6 +1093,7 @@ export type Database = {
       estado_solicitud: "nueva" | "en_proceso" | "completada" | "cancelada"
       offer_status: "Activa" | "Pausada"
       tipo_desarrollo: "Preventa" | "Edificio" | "Plaza Comercial" | "Lote"
+      tipo_operacion: "Comprar" | "Rentar"
       tipo_unidad:
         | "Departamento"
         | "Local comercial"
@@ -1229,6 +1230,7 @@ export const Constants = {
       estado_solicitud: ["nueva", "en_proceso", "completada", "cancelada"],
       offer_status: ["Activa", "Pausada"],
       tipo_desarrollo: ["Preventa", "Edificio", "Plaza Comercial", "Lote"],
+      tipo_operacion: ["Comprar", "Rentar"],
       tipo_unidad: [
         "Departamento",
         "Local comercial",
