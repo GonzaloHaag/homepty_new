@@ -1,13 +1,5 @@
 "use client";
 import {
-  BriefcaseIcon,
-  ClipboardListIcon,
-  HomeIcon,
-  MapPinIcon,
-  Settings,
-  UserIcon,
-} from "lucide-react";
-import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -15,50 +7,16 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { HeaderSidebar } from "./header-sidebar";
-import Link from "next/link";
 import { NavUser } from "./nav-user";
-import { usePathname } from "next/navigation";
-
-// Menu items.
-const items = [
-  {
-    title: "Inicio",
-    url: "/",
-    icon: HomeIcon,
-  },
-  {
-    title: "Explorar",
-    url: "/explore",
-    icon: MapPinIcon,
-  },
-  {
-    title: "Solicitudes",
-    url: "/requests",
-    icon: ClipboardListIcon,
-  },
-  {
-    title: "CRM",
-    url: "/crm",
-    icon: BriefcaseIcon,
-  },
-  {
-    title: "Settings",
-    url: "/settings",
-    icon: Settings,
-  },
-  {
-    title: "Perfil",
-    url: "/profile",
-    icon: UserIcon,
-  }
-];
+import { SIDEBAR_ITEMS } from "@/utils/sidebar";
+import { SidebarItem } from "./sidebar-item";
 
 export function AppSidebar() {
-  const pathname = usePathname();
+  const sidebarItemsMap = SIDEBAR_ITEMS.map((item) => (
+    <SidebarItem key={item.id} item={item} />
+  ));
   return (
     <Sidebar collapsible="icon">
       <HeaderSidebar />
@@ -67,20 +25,7 @@ export function AppSidebar() {
           <SidebarGroupLabel>Sistema</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link
-                      href={item.url}
-                      title={item.title}
-                      className={`font-medium ${ item.url === pathname ? "text-primary bg-muted" : "" }`}
-                    >
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {sidebarItemsMap}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

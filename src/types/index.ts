@@ -1,3 +1,4 @@
+import { type LucideIcon } from "lucide-react";
 import { Database } from "./database";
 
 export * from "./database";
@@ -22,6 +23,12 @@ export type QueryResponse<T> = {
   data?: T;
 };
 
+export type SidebarItem = {
+  id: number;
+  title: string;
+  url: string;
+  Icon: LucideIcon;
+};
 export type Request = Database["public"]["Tables"]["solicitudes"]["Row"];
 export type User = Database["public"]["Tables"]["usuarios"]["Row"];
 export type Unit = Database["public"]["Tables"]["unidades"]["Row"];

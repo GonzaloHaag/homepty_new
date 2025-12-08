@@ -25,6 +25,7 @@ export function PropertyCard({ property }: Props) {
             src={property.image}
             alt={property.title}
             fill
+            sizes="128px"
             className="object-cover group-hover:scale-105 transition-transform w-28 h-20"
           />
         </div>

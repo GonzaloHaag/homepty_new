@@ -23,23 +23,12 @@ export async function proxy(request: NextRequest) {
         },
       }
     );
-
     const {
       data: { user },
     } = await supabase.auth.getUser();
-
     if (!user) {
       return NextResponse.json({ message: "No autorizado" }, { status: 401 });
     }
-
-    /** Insertar user en la request */
-    const requestHeaders = new Headers(request.headers);
-    requestHeaders.set("user-id", user.id);
-    return NextResponse.next({
-      request: {
-        headers: requestHeaders,
-      },
-    });
   }
   return updateSession(request);
 }
