@@ -31,4 +31,14 @@ export type SidebarItem = {
 };
 export type Request = Database["public"]["Tables"]["solicitudes"]["Row"];
 export type User = Database["public"]["Tables"]["usuarios"]["Row"];
+type UnitImages = Database["public"]["Tables"]["imagenes_unidades"]["Row"];
 export type Unit = Database["public"]["Tables"]["unidades"]["Row"];
+export type UnitWithImages = Unit & {
+  imagenes_unidades: UnitImages[];
+};
+
+export type Development = Database["public"]["Tables"]["desarrollos"]["Row"];
+export type DevelopmentImage = Database["public"]["Tables"]["imagenes_desarrollos"]["Row"];
+export type DevelopmentWithImages = Development & {
+  imagenes_desarrollos: DevelopmentImage[];
+};

@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "../ui/button";
 interface Props {
   markers: { id: string; coordinates: [number, number] }[];

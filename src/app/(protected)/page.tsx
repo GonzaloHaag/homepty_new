@@ -2,10 +2,11 @@ import { Suspense } from "react";
 import { Filters, SectionProperties } from "@/components/home";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getAllUnits } from "@/server/queries";
+import { getAllDevelopments, getAllUnits } from "@/server/queries";
 
 export default async function HomePage() {
   const unitsPromise = getAllUnits();
+  const developmentsPromise = getAllDevelopments();
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-y-1">
@@ -39,7 +40,10 @@ export default async function HomePage() {
       </section>
       <Filters />
       <Suspense fallback={<div>Cargando propiedades...</div>}>
-        <SectionProperties unitsPromise={unitsPromise} />
+        <SectionProperties
+          unitsPromise={unitsPromise}
+          developmentsPromise={developmentsPromise}
+        />
       </Suspense>
     </div>
   );

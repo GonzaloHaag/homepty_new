@@ -1,0 +1,52 @@
+import { SectionLeft, SectionRight } from "@/components/property/unit";
+import { ErrorMessage } from "@/components/shared";
+import { getUnitById } from "@/server/queries";
+import Image from "next/image";
+
+export default async function PropertiesUnitViewPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+
+  const response = await getUnitById({ id: Number(id) });
+  if (!response.ok || !response.data) {
+    return <ErrorMessage message={response.message} />;
+  }
+  const unit = response.data;
+
+  const mainImage =
+    unit.imagenes_unidades.length > 0
+      ? unit.imagenes_unidades[0].image_url
+      : "/images/placeholder.svg";
+  return (
+    <section className="flex flex-col gap-y-6">
+      {/** Seccion de imagenes */}
+      <div className="grid grid-cols-3 gap-6">
+        {/** Imagen principal */}
+        <div className="min-h-96 w-full col-span-2 relative">
+          <Image
+            src={mainImage}
+            alt="Main image"
+            layout="fill"
+            objectFit="cover"
+            loading="eager"
+          />
+        </div>
+        {/** Imagenes secundarias */}
+        <div className="w-full h-full flex flex-col gap-y-4">
+          <div className="w-full h-1/2 bg-gray-200 animate-pulse" />
+          <div className="w-full h-1/2 bg-gray-200 animate-pulse" />
+        </div>
+      </div>
+      {/** Seccion de informacion */}
+      <div className="grid grid-cols-3 gap-6">
+        {/** Section left */}
+        <SectionLeft unit={unit} />
+        {/** Section right */}
+        <SectionRight unit={unit} />
+      </div>
+    </section>
+  );
+}

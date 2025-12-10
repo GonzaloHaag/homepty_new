@@ -1,3 +1,4 @@
+export { AsideProperties } from "./aside-properties";
 export { Map } from "./map";
 export { MarkerList } from "./marker-list";
 export { Marker } from "./marker";

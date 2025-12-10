@@ -97,6 +97,13 @@ export const TYPES_OF_UNITS = [
   { id: 4, label: "Lote" },
 ];
 
+export const TYPES_OF_DEVELOPMENTS = [
+  { id: 1, label: "Preventa" },
+  { id: 2, label: "Edificio" },
+  { id: 3, label: "Plaza Comercial" },
+  { id: 4, label: "Lote" },
+];
+
 export const TYPES_OF_USES = [
   { id: 1, label: "Residencial", value: 1 },
   { id: 2, label: "Comercial", value: 2 },
@@ -257,4 +264,12 @@ export const TYPES_STATUS_REQUEST = [
   { id: 2, value: "en_proceso", label: "En Proceso" },
   { id: 3, value: "completada", label: "Completada" },
   { id: 4, value: "cancelada", label: "Cancelada" },
+];
+
+export const TABS_CRM = [
+  { value: "crm", label: "CRM", href: "/crm" },
+  { value: "propiedades", label: "Propiedades", href: "/crm/properties" },
+  { value: "clientes", label: "Clientes", href: "/crm/clients" },
+  { value: "inquilinos", label: "Inquilinos", href: "/crm/tenants" },
+  { value: "calendario", label: "Calendario", href: "/crm/calendar" },
 ];

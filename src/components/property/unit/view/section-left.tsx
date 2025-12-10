@@ -1,0 +1,101 @@
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { UnitWithImages } from "@/types";
+import {
+  CITIES_NAMES_BY_ID,
+  formatMoney,
+  NAME_TYPE_ACTION_BY_ID,
+  STATES_NAMES_BY_ID,
+} from "@/utils/formatters";
+import {
+  BathIcon,
+  BedIcon,
+  MapPinIcon,
+  PhoneIcon,
+  SquareIcon,
+} from "lucide-react";
+import { MapLocation } from "../../map-location";
+import { DialogScheduleVisit } from "../../dialog-schedule-visit";
+interface Props {
+  unit: UnitWithImages;
+}
+export function SectionLeft({ unit }: Props) {
+  return (
+    <section className="w-full col-span-2 flex flex-col gap-y-4">
+      <div className="w-full p-4 rounded border border-muted flex flex-col gap-y-4">
+        <div className="flex items-center gap-x-2">
+          <Badge variant={"default"}>{unit.tipo}</Badge>
+          <Badge variant={"outline"}>
+            {NAME_TYPE_ACTION_BY_ID[unit.id_tipo_accion]}
+          </Badge>
+        </div>
+        <div className="flex flex-col gap-y-1">
+          <div className="flex items-center justify-between">
+            <h4 className="font-medium text-pretty text-xl">{unit.nombre}</h4>
+            <span className="font-bold text-2xl text-primary">
+              {formatMoney(unit.precio)}
+            </span>
+          </div>
+          <div className="flex items-center gap-x-2">
+            <MapPinIcon size={20} className="text-primary" />
+            <span className="text-sm text-gray-500">{`${unit.direccion}, ${
+              STATES_NAMES_BY_ID[unit.id_estado]
+            }, ${CITIES_NAMES_BY_ID[unit.id_ciudad]}`}</span>
+          </div>
+        </div>
+        <Separator />
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-x-2 text-gray-600">
+            <BedIcon size={20} />
+            <span className="text-sm">
+              {unit.habitaciones ?? 0} Habitaciones
+            </span>
+          </div>
+          <div className="flex items-center gap-x-2 text-gray-600">
+            <BathIcon size={20} />
+            <span className="text-sm">{unit.banios ?? 0} Baños</span>
+          </div>
+          <div className="flex items-center gap-x-2 text-gray-600">
+            <SquareIcon size={20} />
+            <span className="text-sm">{unit.area ?? 0} m² cubiertos.</span>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <DialogScheduleVisit />
+          <Button
+            type="button"
+            variant={"outline"}
+            title="Llamar ahora"
+            className="w-full"
+          >
+            <PhoneIcon size={20} />
+            Llamar ahora
+          </Button>
+        </div>
+      </div>
+      <div className="w-full bg-card p-4 rounded flex flex-col gap-y-1 border border-muted ">
+        <h4 className="font-medium text-pretty">Descripción</h4>
+        {unit.descripcion ? (
+          <span className="text-sm text-gray-500 text-pretty">
+            {unit.descripcion}
+          </span>
+        ) : (
+          <span className="text-sm text-gray-500 text-pretty">
+            Lo sentimos, esta propiedad no tiene una descripción disponible.
+          </span>
+        )}
+      </div>
+
+      <div className="w-full bg-card rounded overflow-hidden h-full border border-muted">
+        <MapLocation
+          address={`${unit.direccion}, ${
+            unit.colonia ? unit.colonia + ", " : ""
+          }${CITIES_NAMES_BY_ID[unit.id_ciudad]}, ${
+            STATES_NAMES_BY_ID[unit.id_estado]
+          }${unit.codigo_postal ? ", CP " + unit.codigo_postal : ""}`}
+        />
+      </div>
+    </section>
+  );
+}

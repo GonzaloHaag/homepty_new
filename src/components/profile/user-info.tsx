@@ -18,7 +18,6 @@ export async function UserInfo({ userPromise }: Props) {
     return <ErrorMessage message="Error al obtener el usuario." />;
   }
   const user = response.data;
-  console.log({user});
   return (
     <div className="flex flex-col gap-y-4">
       <div className="flex items-center justify-between">

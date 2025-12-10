@@ -3,3 +3,4 @@ export { ChartAnnualSalesStatistics } from "./chart-annual-sales-statistics";
 export { ChartLocationOfProperties } from "./chart-location-of-properties";
 export { ChartProgressClosedProperties } from "./chart-progress-closed-properties";
 export { ChartTypesOfProperties } from "./chart-types-of-properties";
+export { SectionTabsCrm } from "./section-tabs-crm";

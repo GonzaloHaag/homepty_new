@@ -1,0 +1,1 @@
+export { TableCrmProperties } from "./table-crm-properties";

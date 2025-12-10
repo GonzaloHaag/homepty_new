@@ -153,3 +153,12 @@ export const NAME_TYPE_PROPERTY_BY_ID: Record<number, string> = {
   8: "Lote",
   9: "Nave industrial",
 };
+
+export const NAME_TYPE_ACTION_BY_ID: Record<number, string> = {
+  1: "Venta",
+  2: "Renta",
+  3: "Traspaso",
+  4: "Pre-Venta",
+  5: "Aportacion",
+  6: "Remate",
+};

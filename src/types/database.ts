@@ -50,6 +50,27 @@ export type Database = {
         }
         Relationships: []
       }
+      amenidades_unidades: {
+        Row: {
+          created_at: string
+          id: number
+          id_amenidad: number
+          id_unidad: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          id_amenidad: number
+          id_unidad: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          id_amenidad?: number
+          id_unidad?: number
+        }
+        Relationships: []
+      }
       ciudades: {
         Row: {
           created_at: string
@@ -297,73 +318,83 @@ export type Database = {
       }
       desarrollos: {
         Row: {
-          area_construida: number
-          area_total: number
-          codigo_postal: number | null
+          area: number
+          area_construida: number | null
+          banios: number
+          caracteristicas: string | null
+          codigo_postal: string | null
           colonia: string | null
           created_at: string
           descripcion: string
-          descripcion_estado: string | null
+          descripcion_estado: string
           descripcion_inversion: string | null
           direccion: string
+          estacionamientos: number
+          habitaciones: number
           id: number
           id_ciudad: number
           id_estado: number
+          id_tipo_accion: number
+          id_tipo_uso: number
           id_usuario: string
+          nombre: string
           precio: number
           tipo: Database["public"]["Enums"]["tipo_desarrollo"]
+          updated_at: string | null
         }
         Insert: {
-          area_construida: number
-          area_total: number
-          codigo_postal?: number | null
+          area: number
+          area_construida?: number | null
+          banios?: number
+          caracteristicas?: string | null
+          codigo_postal?: string | null
           colonia?: string | null
           created_at?: string
           descripcion: string
-          descripcion_estado?: string | null
+          descripcion_estado: string
           descripcion_inversion?: string | null
           direccion: string
+          estacionamientos?: number
+          habitaciones: number
           id?: number
           id_ciudad: number
           id_estado: number
+          id_tipo_accion: number
+          id_tipo_uso: number
           id_usuario: string
-          precio?: number
+          nombre: string
+          precio: number
           tipo: Database["public"]["Enums"]["tipo_desarrollo"]
+          updated_at?: string | null
         }
         Update: {
-          area_construida?: number
-          area_total?: number
-          codigo_postal?: number | null
+          area?: number
+          area_construida?: number | null
+          banios?: number
+          caracteristicas?: string | null
+          codigo_postal?: string | null
           colonia?: string | null
           created_at?: string
           descripcion?: string
-          descripcion_estado?: string | null
+          descripcion_estado?: string
           descripcion_inversion?: string | null
           direccion?: string
+          estacionamientos?: number
+          habitaciones?: number
           id?: number
           id_ciudad?: number
           id_estado?: number
+          id_tipo_accion?: number
+          id_tipo_uso?: number
           id_usuario?: string
+          nombre?: string
           precio?: number
           tipo?: Database["public"]["Enums"]["tipo_desarrollo"]
+          updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "desarrollos_id_ciudad_fkey"
-            columns: ["id_ciudad"]
-            isOneToOne: false
-            referencedRelation: "ciudades"
-            referencedColumns: ["id_ciudad"]
-          },
-          {
-            foreignKeyName: "desarrollos_id_estado_fkey"
-            columns: ["id_estado"]
-            isOneToOne: false
-            referencedRelation: "estados"
-            referencedColumns: ["id_estado"]
-          },
-          {
-            foreignKeyName: "desarrollos_id_usuario_fkey"
+            foreignKeyName: "desarrollos_id_usuario_fkey1"
             columns: ["id_usuario"]
             isOneToOne: false
             referencedRelation: "usuarios"
@@ -400,6 +431,35 @@ export type Database = {
           },
         ]
       }
+      imagenes_desarrollos: {
+        Row: {
+          created_at: string
+          id: number
+          id_desarrollo: number
+          image_url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          id_desarrollo: number
+          image_url: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          id_desarrollo?: number
+          image_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "imagenes_desarrollos_id_desarrollo_fkey"
+            columns: ["id_desarrollo"]
+            isOneToOne: false
+            referencedRelation: "desarrollos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       imagenes_unidades: {
         Row: {
           created_at: string
@@ -419,7 +479,15 @@ export type Database = {
           id_unidad?: number
           image_url?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "imagenes_unidades_id_unidad_fkey"
+            columns: ["id_unidad"]
+            isOneToOne: false
+            referencedRelation: "unidades"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       inquilinos: {
         Row: {
@@ -1037,4 +1105,4 @@ export const Constants = {
       ],
     },
   },
-} as const;
+} as const
