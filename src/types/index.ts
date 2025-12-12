@@ -52,3 +52,5 @@ export type Property = UnitWithImages | DevelopmentWithImages;
 export type PropertyWithLocation = Property & {
   coordinates?: [number, number]; // [longitude, latitude]
 };
+
+export type Offer = Database["public"]["Tables"]["ofertas"]["Row"];

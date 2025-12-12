@@ -1,19 +1,29 @@
 "use client";
 import { TYPES_OF_PROPERTIES } from "@/utils/constants";
-import { NativeSelect, NativeSelectOption } from "../ui/native-select";
-import { Field, FieldDescription, FieldError, FieldLabel } from "../ui/field";
-import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
-import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { OfferSchema } from "@/schemas";
 import { toast } from "sonner";
-import { createOfferAction } from "@/server/actions";
+import { createOfferAction, editOfferAction } from "@/server/actions";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field";
+import {
+  NativeSelect,
+  NativeSelectOption,
+} from "@/components/ui/native-select";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Offer } from "@/types";
 interface Props {
+  offer: Offer | null;
   closeDialog: () => void;
 }
-export function FormOffer({ closeDialog }: Props) {
+export function FormOffer({ offer, closeDialog }: Props) {
   const {
     register,
     handleSubmit,
@@ -22,26 +32,40 @@ export function FormOffer({ closeDialog }: Props) {
     resolver: zodResolver(OfferSchema),
     mode: "onBlur",
     defaultValues: {
-      action: "Comprar",
-      tipo_propiedad: undefined,
-      min_price: undefined,
-      max_price: undefined,
-      ubicaciones: "",
-      contacto: "",
-      nivel_urgencia: "Baja (flexible)",
-      notas_adicionales: "",
-      status: "Activa",
+      action: offer?.action ?? "Comprar",
+      tipo_propiedad: offer?.tipo_propiedad ?? undefined,
+      min_price: offer?.min_price ?? undefined,
+      max_price: offer?.max_price ?? undefined,
+      ubicaciones: offer?.ubicaciones ?? "",
+      contacto: offer?.contacto ?? "",
+      nivel_urgencia: offer?.nivel_urgencia ?? "Baja (flexible)",
+      notas_adicionales: offer?.notas_adicionales ?? "",
+      status: offer?.status ?? "Activa",
     },
   });
 
   const onSubmit = handleSubmit(async (data) => {
-    const response = await createOfferAction({ offer: data });
-    if (!response.ok) {
-      console.log(response.message);
-      toast.error("Error al crear la solicitud. Por favor, intenta de nuevo.");
-      return;
+    if (offer) {
+      const response = await editOfferAction({
+        offerId: offer.id,
+        offer: data,
+      });
+      if (!response.ok) {
+        console.log(response.message);
+        toast.error("Error al editar la oferta. Por favor, intenta de nuevo.");
+        return;
+      }
+    } else {
+      const response = await createOfferAction({ offer: data });
+      if (!response.ok) {
+        console.log(response.message);
+        toast.error("Error al crear la oferta. Por favor, intenta de nuevo.");
+        return;
+      }
     }
-    toast.success("Oferta creada exitosamente");
+    toast.success(
+      offer ? "Oferta editada exitosamente." : "Oferta creada exitosamente."
+    );
     closeDialog();
   });
 
@@ -197,11 +221,11 @@ export function FormOffer({ closeDialog }: Props) {
       <div className="w-full flex items-center justify-end gap-x-2">
         <Button
           type="submit"
-          title="Enviar oferta"
+          title={offer ? "Editar oferta" : "Crear oferta"}
           className="min-w-28"
           disabled={isSubmitting}
         >
-          Enviar oferta
+          {offer ? "Editar oferta" : "Crear oferta"}
         </Button>
       </div>
     </form>

@@ -1,9 +1,16 @@
 "use client";
+import dynamic from "next/dynamic";
 import { FilterIcon, SearchIcon } from "lucide-react";
 import { NativeSelect, NativeSelectOption } from "../ui/native-select";
 import { TYPES_OF_PROPERTIES } from "@/utils/constants";
 import { Button } from "../ui/button";
-
+import { Input } from "../ui/input";
+const AddressAutoComplete = dynamic(
+  () => import("@/components/shared/address-autocomplete"),
+  {
+    ssr: false,
+  }
+);
 export function SectionFilters() {
   return (
     <section className="flex items-center gap-x-2">
@@ -13,6 +20,14 @@ export function SectionFilters() {
             accessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!}
             options={{ language: "es", country: "MX" }}
           /> */}
+          <AddressAutoComplete>
+            <Input
+              type="search"
+              name="address"
+              placeholder="Buscar dirección, ciudad, colonia..."
+              autoComplete="address"
+            />
+          </AddressAutoComplete>
         </div>
         <NativeSelect className="w-48">
           <NativeSelectOption value={""}>Todos los tipos</NativeSelectOption>

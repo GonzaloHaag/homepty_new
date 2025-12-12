@@ -15,7 +15,7 @@ interface Props {
 }
 export function TableRowRequest({ request }: Props) {
   return (
-    <TableRow key={request.id}>
+    <TableRow>
       <TableCell>{request.tipo_operacion}</TableCell>
       <TableCell>
         {NAME_TYPE_PROPERTY_BY_ID[request.tipo_propiedad_id]}

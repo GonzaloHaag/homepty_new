@@ -57,7 +57,7 @@ export default async function HomePage(props: {
               Desarrollos populares
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="units_popular">
+          <TabsContent value="units_popular" className="w-full">
             <Suspense
               fallback={<span className="text-gray-400">Cargando...</span>}
             >

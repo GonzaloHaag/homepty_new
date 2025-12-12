@@ -27,7 +27,7 @@ export default async function ExplorePage() {
       <SectionFilters />
       <div className="grid grid-cols-3">
         <div className="col-span-2 w-full min-h-[500px]">
-          <Map properties={properties} />
+          <Map />
         </div>
         <AsideProperties properties={properties} />
       </div>

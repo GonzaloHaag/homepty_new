@@ -551,7 +551,7 @@ export type Database = {
           notas_adicionales: string | null
           status: Database["public"]["Enums"]["offer_status"]
           tipo_propiedad: string
-          ubicaciones: string[]
+          ubicaciones: string
           user_id: string | null
         }
         Insert: {
@@ -565,7 +565,7 @@ export type Database = {
           notas_adicionales?: string | null
           status?: Database["public"]["Enums"]["offer_status"]
           tipo_propiedad: string
-          ubicaciones: string[]
+          ubicaciones: string
           user_id?: string | null
         }
         Update: {
@@ -579,7 +579,7 @@ export type Database = {
           notas_adicionales?: string | null
           status?: Database["public"]["Enums"]["offer_status"]
           tipo_propiedad?: string
-          ubicaciones?: string[]
+          ubicaciones?: string
           user_id?: string | null
         }
         Relationships: [

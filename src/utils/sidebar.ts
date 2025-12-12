@@ -4,7 +4,6 @@ import {
   ClipboardListIcon,
   HomeIcon,
   MapPinIcon,
-  Settings,
   UserIcon,
 } from "lucide-react";
 
@@ -38,11 +37,5 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
     title: "Perfil",
     url: "/profile",
     Icon: UserIcon,
-  },
-  {
-    id: 6,
-    title: "Settings",
-    url: "/settings",
-    Icon: Settings,
-  },
+  }
 ];

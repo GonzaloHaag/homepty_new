@@ -1,5 +1,6 @@
 import { DevelopmentWithImages, UnitWithImages } from "@/types";
 import { CITIES_NAMES_BY_ID, formatMoney, STATES_NAMES_BY_ID } from "@/utils/formatters";
+import { isUnit } from "@/utils/type-guards";
 import { BathIcon, BedIcon, MapPinIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,9 +9,7 @@ interface Props {
   property: UnitWithImages | DevelopmentWithImages;
 }
 
-function isUnit(property: UnitWithImages | DevelopmentWithImages): property is UnitWithImages {
-  return "imagenes_unidades" in property;
-}
+
 
 export function PropertyCard({ property }: Props) {
   const imageUrl = isUnit(property)

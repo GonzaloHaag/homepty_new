@@ -269,7 +269,8 @@ export const TYPES_STATUS_REQUEST = [
 export const TABS_CRM = [
   { value: "crm", label: "CRM", href: "/crm" },
   { value: "propiedades", label: "Propiedades", href: "/crm/properties" },
-  { value: "clientes", label: "Clientes", href: "/crm/clients" },
-  { value: "inquilinos", label: "Inquilinos", href: "/crm/tenants" },
+  // { value: "clientes", label: "Clientes", href: "/crm/clients" },
+  // { value: "inquilinos", label: "Inquilinos", href: "/crm/tenants" },
+  { value: "ofertas", label: "Ofertas", href: "/crm/offers" },
   { value: "calendario", label: "Calendario", href: "/crm/calendar" },
 ];

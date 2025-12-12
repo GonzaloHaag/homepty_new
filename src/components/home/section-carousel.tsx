@@ -7,7 +7,7 @@ import {
   CarouselPrevious,
 } from "../ui/carousel";
 import { ErrorMessage } from "../shared";
-import { CardUnit } from "../property/unit";
+import { CardUnitCarousel } from "../property/unit";
 interface Props {
   unitsPromise: Promise<QueryResponse<UnitWithImages[]>>;
 }
@@ -29,9 +29,12 @@ export async function SectionCarousel({ unitsPromise }: Props) {
           <span className="text-gray-500">No hay unidades disponibles</span>
         ) : (
           units.map((unit) => (
-            <CarouselItem key={unit.id} className="md:basis-1/2 lg:basis-1/4">
+            <CarouselItem
+              key={unit.id}
+              className="basis-full md:basis-1/2 lg:basis-1/4"
+            >
               <div className="p-1">
-                <CardUnit unit={unit} />
+                <CardUnitCarousel unit={unit} />
               </div>
             </CarouselItem>
           ))

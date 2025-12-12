@@ -1,4 +1,5 @@
 "use client";
+import dynamic from "next/dynamic";
 import { InputForm } from "@/components/shared/input-form";
 import { Label } from "@/components/ui/label";
 import {
@@ -11,6 +12,10 @@ import { LocationCharacteristics } from "@/schemas";
 import { CITIES, STATES } from "@/utils/constants";
 import { useFormContext } from "react-hook-form";
 
+const AddressAutoComplete = dynamic(
+  () => import("@/components/shared/address-autocomplete"),
+  { ssr: false }
+);
 export function LocationCharacteristicsStep() {
   const {
     register,
@@ -54,13 +59,16 @@ export function LocationCharacteristicsStep() {
         />
       </div>
       <div className="w-full col-span-2 grid grid-cols-2 gap-6 items-start">
-        <InputForm
-          label="Dirección (calle y número) *"
-          type="text"
-          placeholder="Ej: Av. Siempre Viva 123"
-          {...register("direccion")}
-          error={errors.direccion?.message}
-        />
+        <AddressAutoComplete>
+          <InputForm
+            label="Dirección (calle y número) *"
+            type="text"
+            placeholder="Ej: Av. Siempre Viva 123"
+            {...register("direccion")}
+            error={errors.direccion?.message}
+            autoComplete="address"
+          />
+        </AddressAutoComplete>
         <InputForm
           label="Colonia"
           type="text"

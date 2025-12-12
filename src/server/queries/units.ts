@@ -14,7 +14,6 @@ export async function getAllUnits({
   type_property?: string;
 } = {}): Promise<QueryResponse<UnitWithImages[]>> {
   const supabase = await createClient();
-  console.log("query server:", search);
   let queryBuilder = supabase
     .from("unidades")
     .select("*, imagenes_unidades(*)")
