@@ -13,8 +13,13 @@ import { PlusCircleIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 
-export default function RequestsPage() {
-  const requestsPromise = getRequests();
+export default async function RequestsPage(props: {
+  searchParams?: Promise<{ status?: string; tipo_propiedad_id?: string }>;
+}) {
+  const searchParams = await props.searchParams;
+  const status = searchParams?.status || "";
+  const tipo_propiedad_id = searchParams?.tipo_propiedad_id || "";
+  const requestsPromise = getRequests({ status, tipo_propiedad_id });
   return (
     <div className="flex flex-col gap-y-4">
       <div className="flex items-center justify-between">
@@ -38,7 +43,10 @@ export default function RequestsPage() {
         </CardHeader>
         <CardContent className="flex flex-col gap-y-4">
           <SectionFilters />
-          <Suspense fallback={<div>Cargando solicitudes...</div>}>
+          <Suspense
+            key={status + tipo_propiedad_id}
+            fallback={<div>Cargando solicitudes...</div>}
+          >
             <TableRequests requestsPromise={requestsPromise} />
           </Suspense>
         </CardContent>

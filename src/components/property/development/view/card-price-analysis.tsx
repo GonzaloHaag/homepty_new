@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { DevelopmentWithImages } from "@/types";
 import { formatMoney } from "@/utils/formatters";
 import { TrendingUpIcon } from "lucide-react";
@@ -23,26 +24,28 @@ export function CardPriceAnalysis({ development }: Props) {
         </span>
       </div>
 
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-600">Área total:</span>
-          <span className="font-medium">
-            {development.area} m<sup>2</sup>
-          </span>
-        </div>
-        {development.area_construida && (
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600">Área construida:</span>
-            <span className="font-medium">
-              {development.area_construida} m<sup>2</sup>
-            </span>
-          </div>
-        )}
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-600">Valor estimado:</span>
-          <span className="font-medium">{formatMoney(development.precio)}</span>
-        </div>
-      </div>
+      <Table>
+        <TableBody>
+          <TableRow>
+            <TableCell>Área total:</TableCell>
+            <TableCell className="text-right font-bold">
+              {development.area ?? 0} m²
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>Valor estimado:</TableCell>
+            <TableCell className="text-right font-bold">
+              {formatMoney(development.precio)}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>Pago mensual estimado:</TableCell>
+            <TableCell className="text-right font-bold">
+              {formatMoney(development.precio * 0.008)}
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
 
       <div className="flex items-center gap-x-2 text-sm text-gray-600 pt-2 border-t border-muted">
         <div className="w-4 h-4 rounded-full border-2 border-gray-400 flex items-center justify-center">

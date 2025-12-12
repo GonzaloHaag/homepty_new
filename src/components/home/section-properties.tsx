@@ -23,7 +23,7 @@ export async function SectionProperties({
     !developmentsResponse.ok ||
     !developmentsResponse.data
   ) {
-    return <ErrorMessage message="Error al cargar las unidades" />;
+    return <ErrorMessage message="Error al cargar las propiedades" />;
   }
 
   const units = unitsResponse.data;

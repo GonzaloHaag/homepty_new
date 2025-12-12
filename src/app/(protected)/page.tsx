@@ -1,12 +1,39 @@
 import { Suspense } from "react";
-import { Filters, SectionProperties } from "@/components/home";
+import {
+  DialogOffers,
+  Filters,
+  SectionCarousel,
+  SectionProperties,
+  SectionPropertiesSkeleton,
+  SheetProfitabilityAnalysis,
+} from "@/components/home";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getAllDevelopments, getAllUnits } from "@/server/queries";
 
-export default async function HomePage() {
-  const unitsPromise = getAllUnits();
-  const developmentsPromise = getAllDevelopments();
+export default async function HomePage(props: {
+  searchParams?: Promise<{
+    search?: string;
+    type_operation?: string;
+    type_property?: string;
+    page?: string;
+  }>;
+}) {
+  const searchParams = await props.searchParams;
+  const search = searchParams?.search || "";
+  const typeOperation = searchParams?.type_operation || "";
+  const typeProperty = searchParams?.type_property || "";
+  const unitsPopularPromise = getAllUnits();
+  const unitsPromise = getAllUnits({
+    search,
+    type_operation: typeOperation,
+    type_property: typeProperty,
+  });
+  const developmentsPromise = getAllDevelopments({
+    search,
+    type_operation: typeOperation,
+    type_property: typeProperty,
+  });
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-y-1">
@@ -21,25 +48,38 @@ export default async function HomePage() {
       </div>
       <Separator />
       <section className="flex flex-col gap-y-4">
-        <Tabs defaultValue="popular" className="w-full">
+        <Tabs defaultValue="units_popular" className="w-full">
           <TabsList>
-            <TabsTrigger value="popular" className="min-w-32">
-              Populares
+            <TabsTrigger value="units_popular" className="min-w-32">
+              Unidades populares
             </TabsTrigger>
-            <TabsTrigger value="recommended" className="min-w-32">
-              Recomendados
+            <TabsTrigger value="developments_popular" className="min-w-32">
+              Desarrollos populares
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="popular">
-            LIsta de propiedades populares aquí.
+          <TabsContent value="units_popular">
+            <Suspense
+              fallback={<span className="text-gray-400">Cargando...</span>}
+            >
+              <SectionCarousel unitsPromise={unitsPopularPromise} />
+            </Suspense>
           </TabsContent>
-          <TabsContent value="recommended">
-            Lista de propiedades recomendadas aquí.
+          <TabsContent value="developments_popular">
+            <span className="text-gray-400">
+              No hay desarrollos populares disponibles
+            </span>
           </TabsContent>
         </Tabs>
       </section>
-      <Filters />
-      <Suspense fallback={<div>Cargando propiedades...</div>}>
+      <Separator />
+      <section className="w-full flex flex-col gap-4 bg-muted/50 p-4 rounded">
+        <Filters />
+        <div className="flex items-center gap-4">
+          <SheetProfitabilityAnalysis />
+          <DialogOffers />
+        </div>
+      </section>
+      <Suspense key={search} fallback={<SectionPropertiesSkeleton />}>
         <SectionProperties
           unitsPromise={unitsPromise}
           developmentsPromise={developmentsPromise}

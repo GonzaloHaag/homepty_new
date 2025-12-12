@@ -17,7 +17,7 @@ interface Props {
 export function CardUnit({ unit }: Props) {
   const imageUrl = unit.imagenes_unidades.length > 0 ? unit.imagenes_unidades[0].image_url : "/images/placeholder.svg";
   return (
-    <Link href={`/unit/${unit.id}`} className="block">
+    <Link href={`/properties/unit/view/${unit.id}`} className="block">
       <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-200 relative group min-h-[380px]">
         {/* Image */}
         <div className="relative h-48 overflow-hidden">

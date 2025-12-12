@@ -18,7 +18,7 @@ export function PropertyCard({ property }: Props) {
     : property.imagenes_desarrollos[0]?.image_url;
 
   return (
-    <Link href={"#"} className="group cursor-pointer transition-colors">
+    <Link href={`${isUnit(property) ? `/properties/unit/view/${property.id}` : `/properties/development/view/${property.id}`}`} className="group cursor-pointer transition-colors">
       <div className="p-4 flex gap-4">
         {/* Thumbnail */}
         <div className="w-32 h-24 shrink-0 overflow-hidden bg-muted relative">

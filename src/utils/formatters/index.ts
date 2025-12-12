@@ -162,3 +162,10 @@ export const NAME_TYPE_ACTION_BY_ID: Record<number, string> = {
   5: "Aportacion",
   6: "Remate",
 };
+
+export const NAME_REQUEST_STATUS: Record<string, string> = {
+   "nueva": "Nueva",
+   "en_proceso": "En Proceso",
+   "completada": "Completada",
+   "cancelada": "Cancelada",
+};

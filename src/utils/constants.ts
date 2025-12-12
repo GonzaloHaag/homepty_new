@@ -1,33 +1,33 @@
 export const TYPES_OF_OPERATIONS = [
   {
     id: 1,
-    value: "1",
-    label: "Aportación",
+    value: 1,
+    label: "Venta",
   },
   {
     id: 2,
-    value: "2",
-    label: "Pre-Venta",
-  },
-  {
-    id: 3,
-    value: "3",
-    label: "Remate",
-  },
-  {
-    id: 4,
-    value: "4",
+    value: 2,
     label: "Renta",
   },
   {
-    id: 5,
-    value: "5",
+    id: 3,
+    value: 3,
     label: "Traspaso",
   },
   {
+    id: 4,
+    value: 4,
+    label: "Pre-Venta",
+  },
+  {
+    id: 5,
+    value: 5,
+    label: "Aportación",
+  },
+  {
     id: 6,
-    value: "6",
-    label: "Venta",
+    value: 6,
+    label: "Remate",
   },
 ];
 

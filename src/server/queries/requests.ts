@@ -1,15 +1,34 @@
 import { verifySession } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { QueryResponse, Request } from "@/types";
+import { QueryResponse, Request, RequestStatus } from "@/types";
 
-export async function getRequests(): Promise<QueryResponse<Request[]>> {
+export async function getRequests({
+  status,
+  tipo_propiedad_id,
+}: {
+  status: string;
+  tipo_propiedad_id: string;
+}): Promise<QueryResponse<Request[]>> {
   const { userId } = await verifySession();
   const supabase = await createClient();
-  const { data, error } = await supabase
+
+  let queryBuilder = supabase
     .from("solicitudes")
     .select("*")
     .eq("usuario_id", userId)
     .order("created_at", { ascending: false });
+
+  if (status !== "") {
+    queryBuilder = queryBuilder.eq("estado_solicitud", status as RequestStatus);
+  }
+
+  if (tipo_propiedad_id !== "") {
+    queryBuilder = queryBuilder.eq(
+      "tipo_propiedad_id",
+      Number(tipo_propiedad_id)
+    );
+  }
+  const { data, error } = await queryBuilder;
 
   if (error) {
     console.error("Error al obtener las solicitudes:", error);

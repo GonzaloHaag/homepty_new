@@ -1,0 +1,1 @@
+export { LoadingPageViewSkeleton } from "./loading-page-view-skeleton";

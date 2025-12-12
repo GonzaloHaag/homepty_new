@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Table, TableCell, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { DevelopmentWithImages } from "@/types";
 import { formatMoney } from "@/utils/formatters";
 import { CalculatorIcon } from "lucide-react";
@@ -27,7 +27,8 @@ export function CardCreditSimulator({ development }: Props) {
       </div>
 
       <Table>
-        <TableRow>
+        <TableBody>
+     <TableRow>
           <TableCell>Valor de la propiedad:</TableCell>
           <TableCell className="text-right font-bold">
             {formatMoney(development.precio)}
@@ -45,6 +46,8 @@ export function CardCreditSimulator({ development }: Props) {
             {formatMoney(monthlyPayment)}
           </TableCell>
         </TableRow>
+        </TableBody>
+   
       </Table>
 
       <Button className="w-full" variant={"outline"} title="Solicitar" disabled>

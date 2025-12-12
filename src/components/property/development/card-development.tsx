@@ -8,16 +8,26 @@ import {
   SquareIcon,
 } from "lucide-react";
 import { DevelopmentWithImages } from "@/types";
-import { CITIES_NAMES_BY_ID, formatMoney, STATES_NAMES_BY_ID } from "@/utils/formatters";
+import {
+  CITIES_NAMES_BY_ID,
+  formatMoney,
+  STATES_NAMES_BY_ID,
+} from "@/utils/formatters";
 import { Button } from "@/components/ui/button";
 
 interface Props {
-   development: DevelopmentWithImages;
+  development: DevelopmentWithImages;
 }
 export function CardDevelopment({ development }: Props) {
-  const imageUrl = development.imagenes_desarrollos.length > 0 ? development.imagenes_desarrollos[0].image_url : "/images/placeholder.svg";
+  const imageUrl =
+    development.imagenes_desarrollos.length > 0
+      ? development.imagenes_desarrollos[0].image_url
+      : "/images/placeholder.svg";
   return (
-    <Link href={`/unit/${development.id}`} className="block">
+    <Link
+      href={`/properties/development/view/${development.id}`}
+      className="block"
+    >
       <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-200 relative group min-h-[380px]">
         {/* Image */}
         <div className="relative h-48 overflow-hidden">
@@ -29,9 +39,7 @@ export function CardDevelopment({ development }: Props) {
           />
           <div className="absolute top-3 left-3 bg-white px-2 py-1 rounded-md shadow-sm">
             <span className="text-sm font-semibold text-gray-900">
-              {formatMoney(
-                development.precio ?? 0
-              )}
+              {formatMoney(development.precio ?? 0)}
             </span>
           </div>
 
@@ -53,7 +61,9 @@ export function CardDevelopment({ development }: Props) {
           {/* Location */}
           <div className="flex items-center text-gray-600 mb-4">
             <MapPinIcon size={16} className="mr-1" />
-            <span className="text-sm truncate">{`${STATES_NAMES_BY_ID[development.id_estado]}, ${CITIES_NAMES_BY_ID[development.id_ciudad]}`}</span>
+            <span className="text-sm truncate">{`${
+              STATES_NAMES_BY_ID[development.id_estado]
+            }, ${CITIES_NAMES_BY_ID[development.id_ciudad]}`}</span>
           </div>
 
           {/* Property Details */}
@@ -75,16 +85,14 @@ export function CardDevelopment({ development }: Props) {
 
           {/* Areas */}
           <div className="flex items-center justify-between">
-              <div className="flex items-center text-gray-600 pt-3">
+            <div className="flex items-center text-gray-600 pt-3">
               <SquareIcon size={16} className="mr-2" />
               <div className="text-xs flex gap-1">
-                <div className="font-medium">
-                  {development.area ?? 0} m²
-                </div>
+                <div className="font-medium">{development.area ?? 0} m²</div>
                 <span className="text-gray-500">Const</span>
               </div>
             </div>
-              <div className="flex items-center text-gray-600 pt-3">
+            <div className="flex items-center text-gray-600 pt-3">
               <SquareIcon size={16} className="mr-2" />
               <div className="text-xs flex gap-1">
                 <div className="font-medium">

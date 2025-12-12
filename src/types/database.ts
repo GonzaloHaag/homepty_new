@@ -550,7 +550,7 @@ export type Database = {
           nivel_urgencia: string
           notas_adicionales: string | null
           status: Database["public"]["Enums"]["offer_status"]
-          tipos_propiedades: string[]
+          tipo_propiedad: string
           ubicaciones: string[]
           user_id: string | null
         }
@@ -564,7 +564,7 @@ export type Database = {
           nivel_urgencia: string
           notas_adicionales?: string | null
           status?: Database["public"]["Enums"]["offer_status"]
-          tipos_propiedades: string[]
+          tipo_propiedad: string
           ubicaciones: string[]
           user_id?: string | null
         }
@@ -578,7 +578,7 @@ export type Database = {
           nivel_urgencia?: string
           notas_adicionales?: string | null
           status?: Database["public"]["Enums"]["offer_status"]
-          tipos_propiedades?: string[]
+          tipo_propiedad?: string
           ubicaciones?: string[]
           user_id?: string | null
         }
@@ -830,6 +830,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "desarrollos"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "unidades_id_tipo_accion_fkey"
+            columns: ["id_tipo_accion"]
+            isOneToOne: false
+            referencedRelation: "accionespropiedades"
+            referencedColumns: ["id_accion_propiedad"]
           },
           {
             foreignKeyName: "unidades_id_usuario_fkey"
