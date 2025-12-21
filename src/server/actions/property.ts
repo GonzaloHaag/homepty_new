@@ -2,11 +2,105 @@
 import { verifySession } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { uploadImage } from "@/lib/supabase/storage";
-import { PropertyDevelopmentSchema } from "@/schemas/property-development-schema";
+import { PropertySchema } from "@/schemas";
 import { revalidatePath, revalidateTag } from "next/cache";
 import z from "zod";
 
-export async function createPropertyDevelopmentAction({
+export async function createUnitAction({
+  unit,
+  unitFiles,
+}: {
+  unit: unknown;
+  unitFiles: File[];
+}) {
+  const { userId } = await verifySession();
+  const supabase = await createClient();
+  // Paso 1 -- Subir imagenes de la unidad al storage
+  const uploadUnitImages = await Promise.all(
+    unitFiles.map(async (file) => {
+      const { error, imageUrl } = await uploadImage({
+        file,
+        bucket: "properties_images",
+      });
+      if (error) {
+        throw new Error("Error al subir las imagenes de la unidad" + error);
+      }
+      return imageUrl;
+    })
+  );
+  // Paso 2 -- Subir unidad
+  const validatedFields = PropertySchema.safeParse(unit);
+  if (!validatedFields.success) {
+    console.log("Error de validación:", validatedFields.error);
+    return {
+      ok: false,
+      message: "Error de validación. Por favor, revisa los campos.",
+      errors: z.flattenError(validatedFields.error).fieldErrors,
+    };
+  }
+
+  const { amenidades, ...unitData } = validatedFields.data;
+  const { data: unidad, error: errorUnidad } = await supabase
+    .from("propiedades")
+    .insert({
+      ...unitData,
+      id_usuario: userId,
+      id_desarrollo: null,
+      is_unit: true,
+      parent_id: null,
+    })
+    .select()
+    .single();
+  if (errorUnidad) {
+    return {
+      ok: false,
+      message: errorUnidad.message,
+    };
+  }
+
+  // Paso 3 - Relacionar unidad e imagenes de la misma
+
+  const { error } = await supabase.from("imagenes_propiedades").insert(
+    uploadUnitImages.map((uploadImage) => ({
+      id_propiedad: unidad.id,
+      image_url: uploadImage,
+    }))
+  );
+
+  if (error) {
+    return {
+      ok: false,
+      message: error.message,
+    };
+  }
+
+  // Paso 4 - Subir a la tabla amenidades con id_amenidad y id_unidad
+  if (amenidades && amenidades.length > 0) {
+    const { error: errorAmenidades } = await supabase
+      .from("amenidades_propiedades")
+      .insert(
+        amenidades.map((id_amenidad) => ({
+          id_propiedad: unidad.id,
+          id_amenidad,
+        }))
+      );
+    if (errorAmenidades) {
+      console.log("Error al insertar amenidades:", errorAmenidades);
+      return {
+        ok: false,
+        message: errorAmenidades.message,
+      };
+    }
+  }
+  revalidatePath("/");
+  revalidateTag("properties", "max");
+  return {
+    ok: true,
+    message: "Unidad creada con éxito",
+  };
+}
+
+export async function createDevelopmentAction({
   development,
   developmentFiles,
   unitIds = [],
@@ -23,7 +117,7 @@ export async function createPropertyDevelopmentAction({
     developmentFiles.map(async (file) => {
       const { error, imageUrl } = await uploadImage({
         file,
-        bucket: "developments_images",
+        bucket: "properties_images",
       });
       if (error) {
         throw new Error("Error al subir las imagenes del desarrollo: " + error);
@@ -33,7 +127,7 @@ export async function createPropertyDevelopmentAction({
   );
 
   // Paso 2 -- Subir desarrollo
-  const validatedFields = PropertyDevelopmentSchema.safeParse(development);
+  const validatedFields = PropertySchema.safeParse(development);
   if (!validatedFields.success) {
     console.log("Error de validación:", validatedFields.error);
     return {
@@ -44,7 +138,7 @@ export async function createPropertyDevelopmentAction({
   }
 
   const { data: desarrolloData, error: errorDesarrollo } = await supabase
-    .from("desarrollos")
+    .from("propiedades")
     .insert({
       tipo: validatedFields.data.tipo,
       nombre: validatedFields.data.nombre,
@@ -66,6 +160,8 @@ export async function createPropertyDevelopmentAction({
       direccion: validatedFields.data.direccion,
       colonia: validatedFields.data.colonia,
       id_usuario: userId,
+      is_unit: false,
+      parent_id: null,
     })
     .select()
     .single();
@@ -78,9 +174,9 @@ export async function createPropertyDevelopmentAction({
   }
 
   // Paso 3 - Relacionar desarrollo e imagenes del mismo
-  const { error } = await supabase.from("imagenes_desarrollos").insert(
+  const { error } = await supabase.from("imagenes_propiedades").insert(
     uploadDevelopmentImages.map((uploadImage) => ({
-      id_desarrollo: desarrolloData.id,
+      id_propiedad: desarrolloData.id,
       image_url: uploadImage,
     }))
   );
@@ -95,24 +191,23 @@ export async function createPropertyDevelopmentAction({
   // Paso 4 - Asignar unidades seleccionadas al desarrollo
   if (unitIds.length > 0) {
     const { error: unitsError } = await supabase
-      .from("unidades")
-      .update({ id_desarrollo: desarrolloData.id })
+      .from("propiedades")
+      .update({ parent_id: desarrolloData.id })
       .in("id", unitIds);
 
     if (unitsError) {
       return {
         ok: false,
-        message: "Error al asignar las unidades al desarrollo: " + unitsError.message,
+        message:
+          "Error al asignar las unidades al desarrollo: " + unitsError.message,
       };
     }
   }
 
   revalidatePath("/");
   revalidateTag("properties", "max");
-  
   return {
     ok: true,
-    message: "Desarrollo creado con éxito",
-    developmentId: desarrolloData.id,
+    message: "Desarrollo creado con éxito"
   };
 }

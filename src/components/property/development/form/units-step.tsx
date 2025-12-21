@@ -2,7 +2,7 @@
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { InfoIcon, XIcon } from "lucide-react";
-import { UnitWithImages } from "@/types";
+import {  PropertyWithImages } from "@/types";
 import { Button } from "@/components/ui/button";
 import {
   NativeSelect,
@@ -12,9 +12,9 @@ import { useState } from "react";
 import Image from "next/image";
 
 interface Props {
-  availableUnits: UnitWithImages[];
-  selectedUnits: UnitWithImages[];
-  onSelectUnit: (unit: UnitWithImages) => void;
+  availableUnits: PropertyWithImages[];
+  selectedUnits: PropertyWithImages[];
+  onSelectUnit: (unit: PropertyWithImages) => void;
   onRemoveUnit: (unitId: number) => void;
 }
 
@@ -88,9 +88,9 @@ export function UnitsStep({ availableUnits, selectedUnits, onSelectUnit, onRemov
               {selectedUnits.map((unit) => (
                 <Card key={unit.id} className="p-4">
                   <div className="flex items-center gap-x-4">
-                    {unit.imagenes_unidades[0] && (
+                    {unit.imagenes_propiedades[0] && (
                       <Image
-                        src={unit.imagenes_unidades[0].image_url}
+                        src={unit.imagenes_propiedades[0].image_url}
                         alt={unit.nombre}
                         width={80}
                         height={80}

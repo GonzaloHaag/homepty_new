@@ -10,7 +10,7 @@ import {
   NativeSelectOption,
 } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
-import { type BasicInfoDevelopment } from "@/schemas/property-development-schema";
+import { type BasicInfoProperty } from "@/schemas";
 import { TYPES_OF_DEVELOPMENTS, TYPES_OF_OPERATIONS, TYPES_OF_USES } from "@/utils/constants";
 import { UploadIcon } from "lucide-react";
 import Image from "next/image";
@@ -32,7 +32,7 @@ export function BasicInformationStep({
   const {
     register,
     formState: { errors },
-  } = useFormContext<BasicInfoDevelopment>();
+  } = useFormContext<BasicInfoProperty>();
 
   return (
     <section className="grid grid-cols-2 items-start gap-6">

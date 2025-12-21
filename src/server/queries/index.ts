@@ -1,5 +1,12 @@
 export { getUserInfo } from "./user/get-user-info";
 export { getRequests, getRequestById } from "./requests";
-export { getAllUnits, getAvailableUnitsForDevelopment, getUnitsByCurrentUser, getUnitById } from "./units";
-export { getAllDevelopments, getDevelopmentsByCurrentUser, getDevelopmentById } from "./developments";
+export {
+  getAllProperties,
+  getPropertiesByCurrentUser,
+  getAllUnitsByCurrentUser,
+  getAllDevelopmentsByCurrentUser,
+  getPropertyById,
+  getAvailableUnitsForDevelopment,
+} from "./properties";
 export { getOffersByCurrentUser } from "./offers";
+export { getClientsByCurrentUser } from "./clients";

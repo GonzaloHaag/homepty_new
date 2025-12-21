@@ -6,26 +6,25 @@ import { defineStepper } from "@/components/ui/stepper";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 import z from "zod";
-import { BasicInfoSchema, LocationCharacteristicsSchema } from "@/schemas";
+import { BasicInfoPropertySchema, LocationCharacteristicsPropertySchema  } from "@/schemas";
 import { BasicInformationStep } from "./basic-information-step";
-
+import { createUnitAction } from "@/server/actions";
 import { Confirm } from "./confirm";
 import { toast } from "sonner";
 import { LocationCharacteristicsStep } from "./location-characteristics-step";
 import { ButtonBack } from "@/components/shared";
 import { Card } from "@/components/ui/card";
-import { createPropertyUnitAction } from "@/server/actions";
 
 const { useStepper, steps, utils } = defineStepper(
   {
     id: "basic-info",
     label: "Información básica",
-    schema: BasicInfoSchema,
+    schema: BasicInfoPropertySchema,
   },
   {
     id: "location-characteristics",
     label: "Ubicación y características",
-    schema: LocationCharacteristicsSchema,
+    schema: LocationCharacteristicsPropertySchema,
   },
   { id: "confirm", label: "Confirmar", schema: z.object({}) }
 );
@@ -91,7 +90,7 @@ export function FormPropertyUnit() {
         console.log("All form values:", allFormValues);
 
         /** Enviar al back */
-        const response = await createPropertyUnitAction({
+        const response = await createUnitAction({
           unit: allFormValues,
           unitFiles: unitsFileUrls,
         });

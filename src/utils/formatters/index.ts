@@ -164,8 +164,40 @@ export const NAME_TYPE_ACTION_BY_ID: Record<number, string> = {
 };
 
 export const NAME_REQUEST_STATUS: Record<string, string> = {
-   "nueva": "Nueva",
-   "en_proceso": "En Proceso",
-   "completada": "Completada",
-   "cancelada": "Cancelada",
+  nueva: "Nueva",
+  en_proceso: "En Proceso",
+  completada: "Completada",
+  cancelada: "Cancelada",
+};
+
+export const AMENITIES = [
+  { id: 5, nombre: "Alberca" },
+  { id: 11, nombre: "Asador" },
+  { id: 4, nombre: "Asoleadero" },
+  { id: 2, nombre: "Business Center" },
+  { id: 6, nombre: "CoWorking" },
+  { id: 3, nombre: "Elevador" },
+  { id: 9, nombre: "Estacionamiento de Visitantes" },
+  { id: 1, nombre: "Gimnasio" },
+  { id: 8, nombre: "Salón de eventos" },
+  { id: 7, nombre: "Terraza" },
+  { id: 10, nombre: "Vigilancia 24 Hrs" },
+  { id: 12, nombre: "Zona de Mascotas" },
+  { id: 13, nombre: "Zonas Verdes" },
+];
+
+export const NAME_AMENITY_BY_ID: Record<number, string> = {
+  5: "Alberca",
+  11: "Asador",
+  4: "Asoleadero",
+  2: "Business Center",
+  6: "CoWorking",
+  3: "Elevador",
+  9: "Estacionamiento de Visitantes",
+  1: "Gimnasio",
+  8: "Salón de eventos",
+  7: "Terraza",
+  10: "Vigilancia 24 Hrs",
+  12: "Zona de Mascotas",
+  13: "Zonas Verdes",
 };

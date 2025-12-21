@@ -1,0 +1,188 @@
+"use server";
+import { verifySession } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
+import {
+  PropertyType,
+  PropertyWithImages,
+  PropertyWithImagesAndAmenities,
+  QueryResponse,
+} from "@/types";
+interface PropsGetAllProperties {
+  search: string;
+  type_operation: string;
+  type_property: string;
+}
+export async function getAllProperties({
+  search = "",
+  type_operation = "",
+  type_property = "",
+}: PropsGetAllProperties): Promise<QueryResponse<PropertyWithImages[]>> {
+  const supabase = await createClient();
+  let queryBuilder = supabase
+    .from("propiedades")
+    .select("*, imagenes_propiedades(*)")
+    .order("created_at", { ascending: false });
+
+  if (search !== "") {
+    queryBuilder = queryBuilder.ilike("nombre", `%${search}%`);
+  }
+
+  if (type_operation !== "") {
+    queryBuilder = queryBuilder.eq("id_tipo_accion", Number(type_operation));
+  }
+  if (type_property !== "") {
+    queryBuilder = queryBuilder.eq("tipo", type_property as PropertyType);
+  }
+  const { error, data } = await queryBuilder;
+
+  if (error) {
+    console.log("Error al obtener las propiedades:", error);
+    return {
+      ok: false,
+      message: "Error al obtener las propiedades. Por favor, intenta de nuevo.",
+    };
+  }
+
+  return {
+    ok: true,
+    message: "Propiedades obtenidas con éxito",
+    data,
+  };
+}
+
+export async function getPropertiesByCurrentUser(): Promise<
+  QueryResponse<PropertyWithImages[]>
+> {
+  const { userId } = await verifySession();
+  const supabase = await createClient();
+  const { error, data } = await supabase
+    .from("propiedades")
+    .select("*, imagenes_propiedades(*)")
+    .eq("id_usuario", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.log("Error al obtener las propiedades del usuario:", error);
+    return {
+      ok: false,
+      message: "Error al obtener las propiedades. Por favor, intenta de nuevo.",
+    };
+  }
+
+  return {
+    ok: true,
+    message: "Propiedades del usuario obtenidas con éxito",
+    data,
+  };
+}
+
+export async function getAllUnitsByCurrentUser(): Promise<
+  QueryResponse<PropertyWithImages[]>
+> {
+  const { userId } = await verifySession();
+  const supabase = await createClient();
+  const { error, data } = await supabase
+    .from("propiedades")
+    .select("*, imagenes_propiedades(*)")
+    .eq("id_usuario", userId)
+    .eq("is_unit", true)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.log("Error al obtener las unidades del usuario:", error);
+    return {
+      ok: false,
+      message: "Error al obtener las unidades. Por favor, intenta de nuevo.",
+    };
+  }
+
+  return {
+    ok: true,
+    message: "Unidades del usuario obtenidas con éxito",
+    data,
+  };
+}
+
+export async function getAllDevelopmentsByCurrentUser(): Promise<
+  QueryResponse<PropertyWithImages[]>
+> {
+  const { userId } = await verifySession();
+  const supabase = await createClient();
+  const { error, data } = await supabase
+    .from("propiedades")
+    .select("*, imagenes_propiedades(*)")
+    .eq("id_usuario", userId)
+    .eq("is_unit", false)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.log("Error al obtener los desarrollos del usuario:", error);
+    return {
+      ok: false,
+      message: "Error al obtener los desarrollos. Por favor, intenta de nuevo.",
+    };
+  }
+
+  return {
+    ok: true,
+    message: "Desarrollos del usuario obtenidos con éxito",
+    data,
+  };
+}
+
+export async function getPropertyById({
+  id,
+}: {
+  id: number;
+}): Promise<QueryResponse<PropertyWithImagesAndAmenities>> {
+  const { userId } = await verifySession();
+  const supabase = await createClient();
+  const { error, data } = await supabase
+    .from("propiedades")
+    .select("*, imagenes_propiedades(*), amenidades_propiedades(*)")
+    .eq("id", id)
+    .eq("id_usuario", userId)
+    .single();
+
+  if (error) {
+    console.log("Error al obtener la propiedad por ID:", error);
+    return {
+      ok: false,
+      message: "Error al obtener la propiedad. Por favor, intenta de nuevo.",
+    };
+  }
+
+  return {
+    ok: true,
+    message: "Propiedad obtenida con éxito",
+    data,
+  };
+}
+
+export async function getAvailableUnitsForDevelopment(): Promise<
+  QueryResponse<PropertyWithImages[]>
+> {
+  const { userId } = await verifySession();
+  const supabase = await createClient();
+  const { error, data } = await supabase
+    .from("propiedades")
+    .select("*, imagenes_propiedades(*)")
+    .eq("id_usuario", userId)
+    .eq("is_unit", true)
+    .is("parent_id", null)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.log("Error al obtener las unidades disponibles:", error);
+    return {
+      ok: false,
+      message: "Error al obtener las unidades. Por favor, intenta de nuevo.",
+    };
+  }
+
+  return {
+    ok: true,
+    message: "Unidades disponibles obtenidas con éxito",
+    data,
+  };
+}

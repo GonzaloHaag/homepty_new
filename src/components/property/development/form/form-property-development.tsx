@@ -6,10 +6,7 @@ import { defineStepper } from "@/components/ui/stepper";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 import z from "zod";
-import {
-  BasicInfoDevelopmentSchema,
-  LocationCharacteristicsDevelopmentSchema,
-} from "@/schemas/property-development-schema";
+import { BasicInfoPropertySchema, LocationCharacteristicsPropertySchema } from "@/schemas";
 import { BasicInformationStep } from "./basic-information-step";
 import { Confirm } from "./confirm";
 import { toast } from "sonner";
@@ -17,19 +14,19 @@ import { LocationCharacteristicsStep } from "./location-characteristics-step";
 import { UnitsStep } from "./units-step";
 import { ButtonBack } from "@/components/shared";
 import { Card } from "@/components/ui/card";
-import { createPropertyDevelopmentAction } from "@/server/actions";
-import { UnitWithImages } from "@/types";
+import { createDevelopmentAction } from "@/server/actions";
+import { PropertyWithImages } from "@/types";
 
 const { useStepper, steps, utils } = defineStepper(
   {
     id: "basic-info",
     label: "Información básica",
-    schema: BasicInfoDevelopmentSchema,
+    schema: BasicInfoPropertySchema,
   },
   {
     id: "location-characteristics",
     label: "Ubicación y características",
-    schema: LocationCharacteristicsDevelopmentSchema,
+    schema: LocationCharacteristicsPropertySchema,
   },
   {
     id: "units",
@@ -40,13 +37,13 @@ const { useStepper, steps, utils } = defineStepper(
 );
 
 interface Props {
-  availableUnits: UnitWithImages[];
+  availableUnits: PropertyWithImages[];
 }
 
 export function FormPropertyDevelopment({ availableUnits }: Props) {
   const [developmentImageUrls, setDevelopmentImageUrls] = useState<string[]>([]);
   const [developmentFileUrls, setDevelopmentFileUrls] = useState<File[]>([]);
-  const [selectedUnits, setSelectedUnits] = useState<UnitWithImages[]>([]);
+  const [selectedUnits, setSelectedUnits] = useState<PropertyWithImages[]>([]);
   
   const inputRef = useRef<HTMLInputElement | null>(null);
   
@@ -63,7 +60,7 @@ export function FormPropertyDevelopment({ availableUnits }: Props) {
     }
   };
 
-  const handleSelectUnit = (unit: UnitWithImages) => {
+  const handleSelectUnit = (unit: PropertyWithImages) => {
     if (!selectedUnits.some(u => u.id === unit.id)) {
       setSelectedUnits([...selectedUnits, unit]);
     }
@@ -79,7 +76,7 @@ export function FormPropertyDevelopment({ availableUnits }: Props) {
     mode: "onBlur",
     resolver: zodResolver(stepper.current.schema),
     defaultValues: {
-      tipo: "Preventa",
+      tipo: "Lote",
       nombre: "",
       id_tipo_accion: 1,
       id_tipo_uso: 1,
@@ -116,7 +113,7 @@ export function FormPropertyDevelopment({ availableUnits }: Props) {
         const allFormValues = getValues();
         console.log("All form values:", allFormValues);
 
-        const response = await createPropertyDevelopmentAction({
+        const response = await createDevelopmentAction({
           development: allFormValues,
           developmentFiles: developmentFileUrls,
           unitIds: selectedUnits.map(u => u.id),

@@ -14,7 +14,7 @@ interface Props {
 }
 export function TableRowCrmProperty({ property }: Props) {
   return (
-    <TableRow key={property.id}>
+    <TableRow>
       <TableCell className="font-medium">{property.nombre}</TableCell>
       <TableCell>{property.tipo}</TableCell>
       <TableCell>{NAME_TYPE_ACTION_BY_ID[property.id_tipo_accion]}</TableCell>

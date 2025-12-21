@@ -1,10 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { DevelopmentWithImages } from "@/types";
 import {
   CITIES_NAMES_BY_ID,
   formatMoney,
+  NAME_AMENITY_BY_ID,
   NAME_TYPE_ACTION_BY_ID,
   STATES_NAMES_BY_ID,
 } from "@/utils/formatters";
@@ -18,9 +18,10 @@ import {
 } from "lucide-react";
 import { MapLocation } from "../../map-location";
 import { DialogScheduleVisit } from "../../dialog-schedule-visit";
+import { PropertyWithImagesAndAmenities } from "@/types";
 
 interface Props {
-  development: DevelopmentWithImages;
+  development: PropertyWithImagesAndAmenities;
 }
 export function SectionLeft({ development }: Props) {
   return (
@@ -43,9 +44,11 @@ export function SectionLeft({ development }: Props) {
           </div>
           <div className="flex items-center gap-x-2">
             <MapPinIcon size={20} className="text-primary" />
-            <span className="text-sm text-gray-500">{`${development.direccion}, ${
-              STATES_NAMES_BY_ID[development.id_estado]
-            }, ${CITIES_NAMES_BY_ID[development.id_ciudad]}`}</span>
+            <span className="text-sm text-gray-500">{`${
+              development.direccion
+            }, ${STATES_NAMES_BY_ID[development.id_estado]}, ${
+              CITIES_NAMES_BY_ID[development.id_ciudad]
+            }`}</span>
           </div>
         </div>
         <Separator />
@@ -68,7 +71,7 @@ export function SectionLeft({ development }: Props) {
             <div className="flex items-center gap-x-2 text-gray-600">
               <HomeIcon size={20} />
               <span className="text-sm">
-                {development.area_construida} m² construidos
+                {development.area_construida ?? 0} m² construidos
               </span>
             </div>
           )}
@@ -86,17 +89,36 @@ export function SectionLeft({ development }: Props) {
           </Button>
         </div>
       </div>
-      <div className="w-full bg-card p-4 rounded flex flex-col gap-y-1 border border-muted ">
-        <h4 className="font-medium text-pretty">Descripción</h4>
-        {development.descripcion ? (
-          <span className="text-sm text-gray-500 text-pretty">
-            {development.descripcion}
-          </span>
-        ) : (
-          <span className="text-sm text-gray-500 text-pretty">
-            Lo sentimos, este desarrollo no tiene una descripción disponible.
-          </span>
-        )}
+      <div className="w-full bg-card p-4 rounded flex flex-col gap-y-4 border border-muted ">
+        <div className="flex flex-col gap-y-1">
+          <h4 className="font-medium text-pretty">Descripción</h4>
+          {development.descripcion ? (
+            <span className="text-sm text-gray-500 text-pretty">
+              {development.descripcion}
+            </span>
+          ) : (
+            <span className="text-sm text-gray-500 text-pretty">
+              Lo sentimos, esta propiedad no tiene una descripción disponible.
+            </span>
+          )}
+        </div>
+        <div className="flex flex-col gap-y-1">
+          <h4 className="font-medium text-pretty">Amenidades</h4>
+          <section className="flex flex-wrap gap-2">
+            {development.amenidades_propiedades &&
+            development.amenidades_propiedades.length > 0 ? (
+              development.amenidades_propiedades.map((amenidad) => (
+                <Badge key={amenidad.id} variant="outline">
+                  {NAME_AMENITY_BY_ID[amenidad.id_amenidad]}
+                </Badge>
+              ))
+            ) : (
+              <span className="text-sm text-gray-500 text-pretty">
+                Lo sentimos, esta propiedad no tiene amenidades disponibles.
+              </span>
+            )}
+          </section>
+        </div>
       </div>
 
       <div className="w-full bg-card rounded overflow-hidden h-full border border-muted">
@@ -105,7 +127,9 @@ export function SectionLeft({ development }: Props) {
             development.colonia ? development.colonia + ", " : ""
           }${CITIES_NAMES_BY_ID[development.id_ciudad]}, ${
             STATES_NAMES_BY_ID[development.id_estado]
-          }${development.codigo_postal ? ", CP " + development.codigo_postal : ""}`}
+          }${
+            development.codigo_postal ? ", CP " + development.codigo_postal : ""
+          }`}
         />
       </div>
     </section>

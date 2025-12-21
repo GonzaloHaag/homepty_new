@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/native-select";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { LocationCharacteristicsDevelopment } from "@/schemas/property-development-schema";
+import { LocationCharacteristicsProperty } from "@/schemas";
 import { CITIES, STATES } from "@/utils/constants";
 import { useFormContext } from "react-hook-form";
 
@@ -15,7 +15,7 @@ export function LocationCharacteristicsStep() {
   const {
     register,
     formState: { errors },
-  } = useFormContext<LocationCharacteristicsDevelopment>();
+  } = useFormContext<LocationCharacteristicsProperty>();
 
   return (
     <section className="grid grid-cols-2 items-start gap-6">

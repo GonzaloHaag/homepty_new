@@ -53,7 +53,7 @@ export default async function PropertiesCreatePage() {
           </div>
         </Link>
         <Link
-          href="/create-property/unit"
+          href="#"
           className="flex flex-col gap-y-4 bg-card p-4 rounded border border-slate-100 hover:border-primary transition-colors duration-300"
         >
           <div className="flex items-center justify-center size-12 rounded bg-muted">

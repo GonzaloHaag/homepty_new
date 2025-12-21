@@ -10,7 +10,7 @@ import {
   NativeSelectOption,
 } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
-import { type BasicInfo } from "@/schemas";
+import { type BasicInfoProperty } from "@/schemas";
 import {
   TYPES_OF_OPERATIONS,
   TYPES_OF_UNITS,
@@ -34,7 +34,7 @@ export function BasicInformationStep({
   const {
     register,
     formState: { errors },
-  } = useFormContext<BasicInfo>();
+  } = useFormContext<BasicInfoProperty>();
   return (
     <section className="grid grid-cols-2 items-start gap-6">
       <div className="flex flex-col gap-y-2">

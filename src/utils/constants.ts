@@ -34,48 +34,48 @@ export const TYPES_OF_OPERATIONS = [
 export const TYPES_OF_PROPERTIES = [
   {
     id: 1,
-    value: 1,
+    value: "Casa",
     label: "Casa",
   },
   {
     id: 2,
-    value: 2,
+    value: "Departamento",
     label: "Departamento",
   },
   {
     id: 3,
-    value: 3,
+    value: "Terreno",
     label: "Terreno",
   },
   {
     id: 4,
-    value: 4,
+    value: "Oficina",
     label: "Oficina",
   },
   {
     id: 5,
-    value: 5,
+    value: "Local comercial",
     label: "Local comercial",
   },
   {
     id: 6,
-    value: 6,
+    value: "Bodega",
     label: "Bodega",
   },
   {
     id: 7,
-    value: 7,
+    value: "Loft",
     label: "Loft",
   },
   {
     id: 8,
-    value: 8,
+    value: "Lote",
     label: "Lote",
   },
   {
     id: 9,
-    value: 9,
-    label: "Nave industrial",
+    value: "Nave comercial",
+    label: "Nave comercial",
   },
 ];
 
@@ -90,18 +90,18 @@ export const USER_ACTIVITY = [
 ];
 
 export const TYPES_OF_UNITS = [
-  { id: 1, label: "Departamento" },
-  { id: 5, label: "Casa" },
-  { id: 2, label: "Local comercial" },
-  { id: 3, label: "Oficina" },
-  { id: 4, label: "Lote" },
+  { id: 1, label: "Departamento", value: "Departamento" },
+  { id: 5, label: "Casa", value: "Casa" },
+  { id: 2, label: "Local comercial", value: "Local comercial" },
+  { id: 3, label: "Oficina", value: "Oficina" },
+  { id: 4, label: "Lote", value: "Lote" },
 ];
 
 export const TYPES_OF_DEVELOPMENTS = [
-  { id: 1, label: "Preventa" },
-  { id: 2, label: "Edificio" },
-  { id: 3, label: "Plaza Comercial" },
-  { id: 4, label: "Lote" },
+  { id: 1, label: "Preventa", value: "Preventa" },
+  { id: 2, label: "Edificio", value: "Edificio" },
+  { id: 3, label: "Plaza Comercial", value: "Plaza Comercial" },
+  { id: 4, label: "Lote", value: "Lote" },
 ];
 
 export const TYPES_OF_USES = [
@@ -269,7 +269,7 @@ export const TYPES_STATUS_REQUEST = [
 export const TABS_CRM = [
   { value: "crm", label: "CRM", href: "/crm" },
   { value: "propiedades", label: "Propiedades", href: "/crm/properties" },
-  // { value: "clientes", label: "Clientes", href: "/crm/clients" },
+  { value: "clientes", label: "Clientes", href: "/crm/clients" },
   // { value: "inquilinos", label: "Inquilinos", href: "/crm/tenants" },
   { value: "ofertas", label: "Ofertas", href: "/crm/offers" },
   { value: "calendario", label: "Calendario", href: "/crm/calendar" },

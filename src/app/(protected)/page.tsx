@@ -2,14 +2,12 @@ import { Suspense } from "react";
 import {
   DialogOffers,
   Filters,
-  SectionCarousel,
   SectionProperties,
   SectionPropertiesSkeleton,
   SheetProfitabilityAnalysis,
 } from "@/components/home";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getAllDevelopments, getAllUnits } from "@/server/queries";
+import { getAllProperties } from "@/server/queries";
 
 export default async function HomePage(props: {
   searchParams?: Promise<{
@@ -23,13 +21,7 @@ export default async function HomePage(props: {
   const search = searchParams?.search || "";
   const typeOperation = searchParams?.type_operation || "";
   const typeProperty = searchParams?.type_property || "";
-  const unitsPopularPromise = getAllUnits();
-  const unitsPromise = getAllUnits({
-    search,
-    type_operation: typeOperation,
-    type_property: typeProperty,
-  });
-  const developmentsPromise = getAllDevelopments({
+  const propertiesPromise = getAllProperties({
     search,
     type_operation: typeOperation,
     type_property: typeProperty,
@@ -47,22 +39,21 @@ export default async function HomePage(props: {
         </p>
       </div>
       <Separator />
-      <section className="flex flex-col gap-y-4">
+      {/* <section className="flex flex-col gap-y-4">
         <Tabs defaultValue="units_popular" className="w-full">
           <TabsList>
             <TabsTrigger value="units_popular" className="min-w-32">
-              Unidades populares
+              <HomeIcon /> Unidades populares
             </TabsTrigger>
             <TabsTrigger value="developments_popular" className="min-w-32">
-              Desarrollos populares
+              <Building2Icon /> Desarrollos populares
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="units_popular" className="w-full">
-            <Suspense
-              fallback={<span className="text-gray-400">Cargando...</span>}
-            >
-              <SectionCarousel unitsPromise={unitsPopularPromise} />
-            </Suspense>
+          <TabsContent
+            value="units_popular"
+            className="w-full"
+          >
+            <SectionCarousel unitsPromise={unitsPopularPromise} />
           </TabsContent>
           <TabsContent value="developments_popular">
             <span className="text-gray-400">
@@ -71,18 +62,17 @@ export default async function HomePage(props: {
           </TabsContent>
         </Tabs>
       </section>
-      <Separator />
+      <Separator /> */}
       <section className="w-full flex flex-col gap-4 bg-muted/50 p-4 rounded">
         <Filters />
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col md:flex-row md:items-center gap-4">
           <SheetProfitabilityAnalysis />
           <DialogOffers />
         </div>
       </section>
       <Suspense key={search} fallback={<SectionPropertiesSkeleton />}>
         <SectionProperties
-          unitsPromise={unitsPromise}
-          developmentsPromise={developmentsPromise}
+          propertiesPromise={propertiesPromise}
         />
       </Suspense>
     </div>

@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { DevelopmentWithImages } from "@/types";
+import { Property } from "@/types";
 import { DollarSignIcon, HomeIcon } from "lucide-react";
 import { CardCreditSimulator } from "./card-credit-simulator";
 import { CardPriceAnalysis } from "./card-price-analysis";
 
 interface Props {
-  development: DevelopmentWithImages;
+  development: Property;
 }
 export function SectionRight({ development }: Props) {
   return (

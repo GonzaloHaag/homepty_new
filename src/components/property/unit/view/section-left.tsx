@@ -1,10 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { UnitWithImages } from "@/types";
 import {
   CITIES_NAMES_BY_ID,
   formatMoney,
+  NAME_AMENITY_BY_ID,
   NAME_TYPE_ACTION_BY_ID,
   STATES_NAMES_BY_ID,
 } from "@/utils/formatters";
@@ -17,10 +17,12 @@ import {
 } from "lucide-react";
 import { MapLocation } from "../../map-location";
 import { DialogScheduleVisit } from "../../dialog-schedule-visit";
+import { PropertyWithImagesAndAmenities } from "@/types";
 interface Props {
-  unit: UnitWithImages;
+  unit: PropertyWithImagesAndAmenities;
 }
 export function SectionLeft({ unit }: Props) {
+    console.log(unit);
   return (
     <section className="w-full col-span-2 flex flex-col gap-y-4">
       <div className="w-full p-4 rounded border border-muted flex flex-col gap-y-4">
@@ -74,17 +76,39 @@ export function SectionLeft({ unit }: Props) {
           </Button>
         </div>
       </div>
-      <div className="w-full bg-card p-4 rounded flex flex-col gap-y-1 border border-muted ">
-        <h4 className="font-medium text-pretty">Descripción</h4>
-        {unit.descripcion ? (
-          <span className="text-sm text-gray-500 text-pretty">
-            {unit.descripcion}
-          </span>
-        ) : (
-          <span className="text-sm text-gray-500 text-pretty">
-            Lo sentimos, esta propiedad no tiene una descripción disponible.
-          </span>
-        )}
+      <div className="w-full bg-card p-4 rounded flex flex-col gap-y-4 border border-muted ">
+        <div className="flex flex-col gap-y-1">
+          <h4 className="font-medium text-pretty">Descripción</h4>
+          {unit.descripcion ? (
+            <span className="text-sm text-gray-500 text-pretty">
+              {unit.descripcion}
+            </span>
+          ) : (
+            <span className="text-sm text-gray-500 text-pretty">
+              Lo sentimos, esta propiedad no tiene una descripción disponible.
+            </span>
+          )}
+        </div>
+        <div className="flex flex-col gap-y-1">
+           <h4 className="font-medium text-pretty">Amenidades</h4>
+           <section className="flex flex-wrap gap-2">
+              {unit.amenidades_propiedades && unit.amenidades_propiedades.length > 0 ? (
+                unit.amenidades_propiedades.map((amenidad) => (
+                  <Badge
+                    key={amenidad.id}
+                    variant="outline"
+                    
+                  >
+                    {NAME_AMENITY_BY_ID[amenidad.id_amenidad]}
+                  </Badge>
+                ))
+              ) : (
+                <span className="text-sm text-gray-500 text-pretty">
+                  Lo sentimos, esta propiedad no tiene amenidades disponibles.
+                </span>
+              )} 
+           </section>
+        </div>
       </div>
 
       <div className="w-full bg-card rounded overflow-hidden h-full border border-muted">

@@ -5,7 +5,6 @@ import {
   PhoneIcon,
 } from "lucide-react";
 import { DialogEditUser } from "./dialog-edit-user";
-
 import { ErrorMessage } from "../shared";
 import { STATES_NAMES_BY_ID } from "@/utils/formatters";
 import { QueryResponse, User } from "@/types";

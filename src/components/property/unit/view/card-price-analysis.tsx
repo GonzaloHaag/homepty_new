@@ -1,9 +1,9 @@
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { UnitWithImages } from "@/types";
+import { Property } from "@/types";
 import { formatMoney } from "@/utils/formatters";
 import { TrendingUpIcon } from "lucide-react";
 interface Props {
-  unit: UnitWithImages;
+  unit: Property
 }
 export function CardPriceAnalysis({ unit }: Props) {
   return (

@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { UnitWithImages } from "@/types";
+import { Property } from "@/types";
 import { formatMoney } from "@/utils/formatters";
 import { CalculatorIcon } from "lucide-react";
 
 interface Props {
-  unit: UnitWithImages;
+  unit: Property;
 }
 export function CardCreditSimulator({ unit }: Props) {
   return (

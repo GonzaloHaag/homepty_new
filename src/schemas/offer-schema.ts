@@ -10,4 +10,4 @@ export const OfferSchema = z.object({
     notas_adicionales: z.string().max(500, { message: "Las notas adicionales no pueden exceder los 500 caracteres" }).trim().optional(),
     tipo_propiedad: z.string().min(1, { message: "El tipo de propiedad es requerido" }).trim(),
     status: z.enum(["Activa", "Pausada"], { message: "El estatus es requerido" }),
-});
+}).required();

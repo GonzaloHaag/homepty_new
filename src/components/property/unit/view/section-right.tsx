@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { UnitWithImages } from "@/types";
+import { Property } from "@/types";
 import { DollarSignIcon, HomeIcon } from "lucide-react";
 import { CardPriceAnalysis } from "./card-price-analysis";
 import { CardCreditSimulator } from "./card-credit-simulator";
 
 interface Props {
-  unit: UnitWithImages;
+  unit: Property;
 }
 export function SectionRight({ unit }: Props) {
   return (

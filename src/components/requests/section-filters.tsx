@@ -45,7 +45,7 @@ export function SectionFilters() {
         >
           <NativeSelectOption value={0}>Todas</NativeSelectOption>
           {TYPES_OF_PROPERTIES.map((type) => (
-            <NativeSelectOption key={type.value} value={type.value}>
+            <NativeSelectOption key={type.value} value={type.id}>
               {type.label}
             </NativeSelectOption>
           ))}

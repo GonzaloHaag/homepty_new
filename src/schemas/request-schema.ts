@@ -41,4 +41,4 @@ export const RequestSchema = z.object({
     .string()
     .max(15, "El teléfono no puede tener más de 15 caracteres")
     .nullable(),
-});
+}).required();

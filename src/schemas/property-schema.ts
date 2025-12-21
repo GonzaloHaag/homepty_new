@@ -1,10 +1,20 @@
 import z from "zod";
 
-export const BasicInfoDevelopmentSchema = z.object({
+export const BasicInfoPropertySchema = z.object({
   tipo: z.enum(
-    ["Preventa", "Edificio", "Plaza Comercial", "Lote"],
+    [
+      "Casa",
+      "Departamento",
+      "Terreno",
+      "Oficina",
+      "Local comercial",
+      "Bodega",
+      "Lote",
+      "Loft",
+      "Nave comercial",
+    ],
     {
-      message: "Debes seleccionar un tipo de desarrollo",
+      message: "Debes seleccionar un tipo de propiedad",
     }
   ),
   nombre: z.string().min(4, "Mínimo 4 caracteres"),
@@ -15,7 +25,7 @@ export const BasicInfoDevelopmentSchema = z.object({
   descripcion_inversion: z.string().optional(),
 });
 
-export const LocationCharacteristicsDevelopmentSchema = z.object({
+export const LocationCharacteristicsPropertySchema = z.object({
   area: z.number().positive("Debe ser positivo"),
   area_construida: z.number().positive("Debe ser positivo").optional(),
   precio: z.number().positive("Debe ser positivo"),
@@ -28,13 +38,15 @@ export const LocationCharacteristicsDevelopmentSchema = z.object({
   direccion: z.string("Campo obligatorio").min(5, "Mínimo 5 caracteres"),
   codigo_postal: z.string().optional(),
   colonia: z.string().optional(),
+  amenidades: z.array(z.number().int()).optional(),
 });
 
-export const PropertyDevelopmentSchema = z.object({
-  ...BasicInfoDevelopmentSchema.shape,
-  ...LocationCharacteristicsDevelopmentSchema.shape
+export const PropertySchema = z.object({
+  ...BasicInfoPropertySchema.shape,
+  ...LocationCharacteristicsPropertySchema.shape
 });
 
-export type BasicInfoDevelopment = z.infer<typeof BasicInfoDevelopmentSchema>;
-export type LocationCharacteristicsDevelopment = z.infer<typeof LocationCharacteristicsDevelopmentSchema>;
-export type Development = z.infer<typeof PropertyDevelopmentSchema>;
+export type BasicInfoProperty = z.infer<typeof BasicInfoPropertySchema>;
+export type LocationCharacteristicsProperty = z.infer<
+  typeof LocationCharacteristicsPropertySchema
+>;

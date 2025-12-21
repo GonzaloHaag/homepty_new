@@ -1,51 +1,26 @@
-import { DevelopmentWithImages, QueryResponse, UnitWithImages } from "@/types";
+import { PropertyWithImages, QueryResponse } from "@/types";
 import { ErrorMessage } from "../shared";
-import { CardUnit } from "../property/unit";
-import { CardDevelopment } from "../property/development";
+import { CardProperty } from "../property";
 
 interface Props {
-  /** Recibir la promesa de unidades y desarrollos */
-  unitsPromise: Promise<QueryResponse<UnitWithImages[]>>;
-  developmentsPromise: Promise<QueryResponse<DevelopmentWithImages[]>>;
+  propertiesPromise: Promise<QueryResponse<PropertyWithImages[]>>;
 }
-export async function SectionProperties({
-  unitsPromise,
-  developmentsPromise,
-}: Props) {
-  const [unitsResponse, developmentsResponse] = await Promise.all([
-    unitsPromise,
-    developmentsPromise,
-  ]);
-
-  if (
-    !unitsResponse.ok ||
-    !unitsResponse.data ||
-    !developmentsResponse.ok ||
-    !developmentsResponse.data
-  ) {
+export async function SectionProperties({ propertiesPromise }: Props) {
+  const propertiesResponse = await propertiesPromise;
+  if (!propertiesResponse.ok || !propertiesResponse.data) {
     return <ErrorMessage message="Error al cargar las propiedades" />;
   }
-
-  const units = unitsResponse.data;
-  const developments = developmentsResponse.data;
-
-  const isEmpty = units.length === 0 && developments.length === 0;
+  const properties = propertiesResponse.data;
+  if (properties.length === 0) {
+    return (
+      <span className="text-center w-full text-gray-500 text-sm">No se encontraron propiedades.</span>
+    );
+  }
   return (
-    <section className="grid grid-cols-4 gap-4">
-      {isEmpty ? (
-        <span className="text-center col-span-4">
-          No se encontraron propiedades.
-        </span>
-      ) : (
-        <>
-          {units.map((unit) => (
-            <CardUnit key={unit.id} unit={unit} />
-          ))}
-          {developments.map((development) => (
-            <CardDevelopment key={development.id} development={development} />
-          ))}
-        </>
-      )}
+    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+      {properties.map((property) => (
+        <CardProperty key={property.id} property={property} />
+      ))}
     </section>
   );
 }

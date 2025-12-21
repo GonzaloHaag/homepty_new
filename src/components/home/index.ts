@@ -5,3 +5,4 @@ export { SectionCarousel } from "./section-carousel";
 export { SheetProfitabilityAnalysis } from "./sheet-profitability-analysis";
 export { DialogOffers } from "./dialog-offers";
 export { FormOffer } from "./form-offer";
+export { SectionMoreFilters } from "./section-more-filters";
