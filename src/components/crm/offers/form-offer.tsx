@@ -4,10 +4,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { OfferSchema } from "@/schemas";
 import { toast } from "sonner";
-import { createOfferAction, editOfferAction } from "@/server/actions";
+import { createOfferAction, updateOfferAction } from "@/server/actions";
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldLabel,
 } from "@/components/ui/field";
@@ -15,10 +14,10 @@ import {
   NativeSelect,
   NativeSelectOption,
 } from "@/components/ui/native-select";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Offer } from "@/types";
+import { InputForm } from "@/components/shared";
 interface Props {
   offer: Offer | null;
   closeDialog: () => void;
@@ -33,9 +32,9 @@ export function FormOffer({ offer, closeDialog }: Props) {
     mode: "onBlur",
     defaultValues: {
       action: offer?.action ?? "Comprar",
-      tipo_propiedad: offer?.tipo_propiedad ?? undefined,
-      min_price: offer?.min_price ?? undefined,
-      max_price: offer?.max_price ?? undefined,
+      tipo_propiedad: offer?.tipo_propiedad ?? "",
+      min_price: offer?.min_price ?? 0,
+      max_price: offer?.max_price ?? 0,
       ubicaciones: offer?.ubicaciones ?? "",
       contacto: offer?.contacto ?? "",
       nivel_urgencia: offer?.nivel_urgencia ?? "Baja (flexible)",
@@ -46,7 +45,7 @@ export function FormOffer({ offer, closeDialog }: Props) {
 
   const onSubmit = handleSubmit(async (data) => {
     if (offer) {
-      const response = await editOfferAction({
+      const response = await updateOfferAction({
         offerId: offer.id,
         offer: data,
       });
@@ -113,72 +112,42 @@ export function FormOffer({ offer, closeDialog }: Props) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Field>
-            <FieldLabel htmlFor="min_price">Precio mínimo *</FieldLabel>
-            <Input
-              id="min_price"
-              type="number"
-              placeholder="Ej: 1000"
-              {...register("min_price", { valueAsNumber: true })}
-              aria-invalid={!!errors.min_price}
-            />
-            {errors.min_price && (
-              <FieldError>{errors.min_price.message}</FieldError>
-            )}
-          </Field>
-
-          <Field>
-            <FieldLabel htmlFor="max_price">Precio máximo *</FieldLabel>
-            <Input
-              id="max_price"
-              type="number"
-              placeholder="Ej: 5000"
-              {...register("max_price", { valueAsNumber: true })}
-              aria-invalid={!!errors.max_price}
-            />
-            {errors.max_price && (
-              <FieldError>{errors.max_price.message}</FieldError>
-            )}
-          </Field>
+          <InputForm
+            label="Precio mínimo *"
+            id="min_price"
+            type="number"
+            placeholder="Ej: 1000"
+            {...register("min_price", { valueAsNumber: true })}
+            error={errors.min_price?.message}
+          />
+          <InputForm
+            label="Precio máximo *"
+            id="max_price"
+            type="number"
+            placeholder="Ej: 5000"
+            {...register("max_price", { valueAsNumber: true })}
+            error={errors.max_price?.message}
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Field>
-            <FieldLabel htmlFor="ubicaciones">
-              Ubicacion(es) de interés
-            </FieldLabel>
-            <Input
-              id="ubicaciones"
-              type="text"
-              placeholder="Aguacates, Aguas calientes"
-              {...register("ubicaciones")}
-              aria-invalid={!!errors.ubicaciones}
-            />
-            <FieldDescription className="text-xs text-muted-foreground mt-1">
-              Separa múltiples ubicaciones con comas
-            </FieldDescription>
-            {errors.ubicaciones && (
-              <FieldError>{errors.ubicaciones.message}</FieldError>
-            )}
-          </Field>
-
-          <Field>
-            <FieldLabel htmlFor="contacto">
-              Método de contacto preferido
-            </FieldLabel>
-            <Input
-              id="contacto"
-              type="email"
-              placeholder="Ej: test@example.com"
-              {...register("contacto")}
-              aria-invalid={!!errors.contacto}
-            />
-            {errors.contacto && (
-              <FieldError>{errors.contacto.message}</FieldError>
-            )}
-          </Field>
+          <InputForm
+            label="Ubicación(es) de interés"
+            id="ubicaciones"
+            type="text"
+            placeholder="Aguacates, Aguas calientes"
+            {...register("ubicaciones")}
+            error={errors.ubicaciones?.message}
+          />
+          <InputForm
+            label="Contacto"
+            id="contacto"
+            type="email"
+            placeholder="Ej: test@example.com"
+            {...register("contacto")}
+            error={errors.contacto?.message}
+          />
         </div>
-
         <Field>
           <FieldLabel htmlFor="nivel_urgencia">Nivel de urgencia</FieldLabel>
           <NativeSelect

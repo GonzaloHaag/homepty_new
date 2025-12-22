@@ -8,28 +8,40 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { PlusCircleIcon } from "lucide-react";
+import { PencilIcon, PlusCircleIcon } from "lucide-react";
 
 import { useState } from "react";
-export function DialogClient() {
+import { FormClient } from "./form-client";
+import { Client } from "@/types";
+interface Props {
+  client: Client | null;
+}
+export function DialogClient({ client }: Props) {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
-
   const handleDialog = () => {
     setOpenDialog((prevState) => !prevState);
   };
   return (
     <Dialog open={openDialog} onOpenChange={setOpenDialog}>
       <DialogTrigger asChild>
-        <Button type="button" title="nuevo cliente" size={"lg"}>
-          <PlusCircleIcon /> Nuevo cliente
+        <Button type="button" variant={client ? "outline" : "default"} title={client ? "Editar cliente" : "Nuevo cliente"} size={client ? "icon" : "default"}>
+          {
+             client ? (
+               <PencilIcon className="text-green-600" />
+             ) : (
+                <>
+                 <PlusCircleIcon /> Nuevo cliente
+                </>
+             )
+          }
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-4xl">
+      <DialogContent className="sm:max-w-4xl max-h-[95svh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Nuevo cliente</DialogTitle>
-          <DialogDescription>Colocá los detalles del cliente</DialogDescription>
+          <DialogTitle>{client ? "Editar cliente" : "Nuevo cliente"}</DialogTitle>
+          <DialogDescription>{client ? "Modificá los detalles del cliente" : "Colocá los detalles del cliente"}</DialogDescription>
         </DialogHeader>
-        {/* <FormClient handleDialog={handleDialog} /> */}
+        <FormClient client={client} handleDialog={handleDialog} />
       </DialogContent>
     </Dialog>
   );

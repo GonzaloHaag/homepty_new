@@ -37,10 +37,10 @@ export function BasicInformationStep({
   return (
     <section className="grid grid-cols-2 items-start gap-6">
       <div className="flex flex-col gap-y-2">
-        <Label htmlFor="tipo_desarrollo">Tipo de desarrollo *</Label>
+        <Label htmlFor="tipo">Tipo de desarrollo *</Label>
         <div className="flex flex-col gap-y-1">
           <NativeSelect
-            id="tipo_desarrollo"
+            id="tipo"
             {...register("tipo")}
             aria-invalid={errors.tipo ? "true" : "false"}
           >
@@ -48,7 +48,7 @@ export function BasicInformationStep({
               Seleccionar tipo de desarrollo
             </NativeSelectOption>
             {TYPES_OF_DEVELOPMENTS.map((dev_type) => (
-              <NativeSelectOption key={dev_type.id} value={dev_type.label}>
+              <NativeSelectOption key={dev_type.id} value={dev_type.value}>
                 {dev_type.label}
               </NativeSelectOption>
             ))}

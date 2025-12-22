@@ -1,4 +1,5 @@
 "use client";
+import AddressAutoComplete from "@/components/shared/address-autocomplete";
 import { InputForm } from "@/components/shared/input-form";
 import { Label } from "@/components/ui/label";
 import {
@@ -56,13 +57,16 @@ export function LocationCharacteristicsStep() {
       </div>
 
       <div className="w-full col-span-2 grid grid-cols-2 gap-6 items-start">
-        <InputForm
-          label="Dirección (calle y número) *"
-          type="text"
-          placeholder="Ej: Av. Siempre Viva 123"
-          {...register("direccion")}
-          error={errors.direccion?.message}
-        />
+        <AddressAutoComplete>
+          <InputForm
+            label="Dirección (calle y número) *"
+            type="text"
+            placeholder="Ej: Av. Siempre Viva 123"
+            {...register("direccion")}
+            error={errors.direccion?.message}
+            autoComplete="address"
+          />
+        </AddressAutoComplete>
         <InputForm
           label="Colonia"
           type="text"
@@ -75,27 +79,27 @@ export function LocationCharacteristicsStep() {
       <Separator className="col-span-2" />
 
       <div className="w-full col-span-2 grid grid-cols-3 gap-6">
-         <InputForm
-        label="Precio total del desarrollo *"
-        type="number"
-        placeholder="Ej: 5000000"
-        {...register("precio", { valueAsNumber: true })}
-        error={errors.precio?.message}
-      />
-      <InputForm
-        label="Área total (m²) *"
-        type="number"
-        placeholder="Ej: 5000"
-        {...register("area", { valueAsNumber: true })}
-        error={errors.area?.message}
-      />
-      <InputForm
-        label="Área construida (m²)"
-        type="number"
-        placeholder="Ej: 3500"
-        {...register("area_construida", { valueAsNumber: true })}
-        error={errors.area_construida?.message}
-      />
+        <InputForm
+          label="Precio total del desarrollo *"
+          type="number"
+          placeholder="Ej: 5000000"
+          {...register("precio", { valueAsNumber: true })}
+          error={errors.precio?.message}
+        />
+        <InputForm
+          label="Área total (m²) *"
+          type="number"
+          placeholder="Ej: 5000"
+          {...register("area", { valueAsNumber: true })}
+          error={errors.area?.message}
+        />
+        <InputForm
+          label="Área construida (m²)"
+          type="number"
+          placeholder="Ej: 3500"
+          {...register("area_construida", { valueAsNumber: true })}
+          error={errors.area_construida?.message}
+        />
       </div>
 
       <div className="w-full col-span-2 grid grid-cols-3 gap-6">

@@ -1,6 +1,6 @@
 import { SectionLeft, SectionRight } from "@/components/property/development";
 import { ErrorMessage } from "@/components/shared";
-import { getDevelopmentById } from "@/server/queries";
+import { getPropertyById } from "@/server/queries";
 import Image from "next/image";
 
 export default async function PropertiesDevelopmentViewPage({
@@ -10,15 +10,15 @@ export default async function PropertiesDevelopmentViewPage({
 }) {
   const { id } = await params;
 
-  const response = await getDevelopmentById({ id: Number(id) });
+  const response = await getPropertyById({ id: Number(id) });
   if (!response.ok || !response.data) {
     return <ErrorMessage message={response.message} />;
   }
   const development = response.data;
 
   const mainImage =
-    development.imagenes_desarrollos.length > 0
-      ? development.imagenes_desarrollos[0].image_url
+    development.imagenes_propiedades.length > 0
+      ? development.imagenes_propiedades[0].image_url
       : "/images/placeholder.svg";
 
   return (

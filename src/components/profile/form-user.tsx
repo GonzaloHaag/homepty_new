@@ -14,7 +14,7 @@ import { DialogFooter } from "../ui/dialog";
 import { DialogCloseButton } from "../shared";
 import { Button } from "../ui/button";
 import { useActionState, useEffect } from "react";
-import { editUserAction } from "@/server/actions";
+import { updateUserAction } from "@/server/actions";
 import { User } from "@/types";
 import { toast } from "sonner";
 interface Props {
@@ -23,7 +23,7 @@ interface Props {
 }
 export function FormUser({ user, closeDialog }: Props) {
   const [state, formAction, pending] = useActionState(
-    editUserAction.bind(undefined, user.id),
+    updateUserAction.bind(undefined, user.id),
     undefined
   );
   useEffect(() => {

@@ -1,6 +1,6 @@
-import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { forwardRef, type InputHTMLAttributes } from "react";
+import { Field, FieldLabel } from "../ui/field";
 
 interface InputFormProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
@@ -13,10 +13,10 @@ interface InputFormProps extends InputHTMLAttributes<HTMLInputElement> {
 export const InputForm = forwardRef<HTMLInputElement, InputFormProps>(
   ({ label, labelFor, error, placeholder, type, ...props }, ref) => {
     return (
-      <div className="flex flex-col gap-y-2 text-sm">
-        <Label htmlFor={labelFor} className="font-medium text-gray-700">
+      <Field className="flex flex-col gap-y-2 text-sm">
+        <FieldLabel htmlFor={labelFor} className="font-medium text-gray-700">
           {label}
-        </Label>
+        </FieldLabel>
         <Input
           ref={ref}
           placeholder={placeholder}
@@ -25,7 +25,7 @@ export const InputForm = forwardRef<HTMLInputElement, InputFormProps>(
           {...props}
         />
         {error && <p className="text-xs text-red-600">{error}</p>}
-      </div>
+      </Field>
     );
   }
 );

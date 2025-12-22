@@ -1,6 +1,8 @@
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Client } from "@/types";
 import { formatMoney } from "@/utils/formatters";
+import { DialogClient } from "./dialog-client";
+import { AlertDialogDelete } from "./alert-dialog-delete";
 interface Props {
   client: Client;
 }
@@ -14,19 +16,16 @@ export function TableRowCrmClient({ client }: Props) {
       <TableCell>
         {client.presupuesto_desde_cliente
           ? formatMoney(client.presupuesto_desde_cliente)
-          : "N/A"}{" "}
+          : "0"}{" "}
         -{" "}
         {client.presupuesto_hasta_cliente
           ? formatMoney(client.presupuesto_hasta_cliente)
-          : "N/A"}
+          : "0"}
       </TableCell>
       <TableCell>{new Date(client.created_at).toLocaleDateString()}</TableCell>
       <TableCell>
-        {/* Aquí puedes agregar botones o enlaces para acciones como editar o ver detalles */}
-        {/* Ejemplo: */}
-        {/* <Link href={`/clients/view/${client.id_cliente}`} className={buttonVariants({ size:"icon", variant: "outline" })}>
-                     <EyeIcon />
-                  </Link> */}
+        <DialogClient client={client} />
+        <AlertDialogDelete id={client.id_cliente} />
       </TableCell>
     </TableRow>
   );

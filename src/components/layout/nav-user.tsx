@@ -2,7 +2,7 @@ import {
   BellIcon,
   CircleUserIcon,
   CreditCardIcon,
-  FlipVertical2Icon,
+  UnfoldVerticalIcon,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -39,7 +39,7 @@ export function NavUser() {
                   {/** user.email_usuario **/}
                 </span>
               </div>
-              <FlipVertical2Icon className="ml-auto size-4" />
+              <UnfoldVerticalIcon className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent

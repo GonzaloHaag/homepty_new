@@ -8,14 +8,20 @@ import {
   QueryResponse,
 } from "@/types";
 interface PropsGetAllProperties {
-  search: string;
-  type_operation: string;
-  type_property: string;
+  filters: {
+    search: string;
+    type_operation: string;
+    type_property: string;
+    precioMin?: string;
+    precioMax?: string;
+    habitaciones?: string;
+    banios?: string;
+    estacionamientos?: string;
+    page: string;
+  };
 }
 export async function getAllProperties({
-  search = "",
-  type_operation = "",
-  type_property = "",
+  filters,
 }: PropsGetAllProperties): Promise<QueryResponse<PropertyWithImages[]>> {
   const supabase = await createClient();
   let queryBuilder = supabase
@@ -23,15 +29,42 @@ export async function getAllProperties({
     .select("*, imagenes_propiedades(*)")
     .order("created_at", { ascending: false });
 
-  if (search !== "") {
-    queryBuilder = queryBuilder.ilike("nombre", `%${search}%`);
+  if (filters.search !== "") {
+    queryBuilder = queryBuilder.ilike("nombre", `%${filters.search}%`);
   }
 
-  if (type_operation !== "") {
-    queryBuilder = queryBuilder.eq("id_tipo_accion", Number(type_operation));
+  if (filters.type_operation !== "") {
+    queryBuilder = queryBuilder.eq(
+      "id_tipo_accion",
+      Number(filters.type_operation)
+    );
   }
-  if (type_property !== "") {
-    queryBuilder = queryBuilder.eq("tipo", type_property as PropertyType);
+  if (filters.type_property !== "") {
+    queryBuilder = queryBuilder.eq(
+      "tipo",
+      filters.type_property as PropertyType
+    );
+  }
+  if (filters.precioMin) {
+    queryBuilder = queryBuilder.gte("precio", Number(filters.precioMin));
+  }
+  if (filters.precioMax) {
+    queryBuilder = queryBuilder.lte("precio", Number(filters.precioMax));
+  }
+  if (filters.habitaciones) {
+    queryBuilder = queryBuilder.eq(
+      "habitaciones",
+      Number(filters.habitaciones)
+    );
+  }
+  if (filters.banios) {
+    queryBuilder = queryBuilder.eq("banios", Number(filters.banios));
+  }
+  if (filters.estacionamientos) {
+    queryBuilder = queryBuilder.eq(
+      "estacionamientos",
+      Number(filters.estacionamientos)
+    );
   }
   const { error, data } = await queryBuilder;
 
@@ -50,7 +83,7 @@ export async function getAllProperties({
   };
 }
 
-export async function getPropertiesByCurrentUser(): Promise<
+export async function getAllPropertiesByCurrentUser(): Promise<
   QueryResponse<PropertyWithImages[]>
 > {
   const { userId } = await verifySession();

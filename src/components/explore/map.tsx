@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
 
 export function Map() {
   const mapRef = useRef<mapboxgl.Map | null>(null);
@@ -12,12 +13,13 @@ export function Map() {
       container: mapContainerRef.current!,
       center: [-99.1332, 19.4326] /** Coordenadas de ciudad de mexico*/,
       zoom: 10.12,
-      language: "es",
+      language: "es-MX",
       style: "mapbox://styles/mapbox/streets-v11",
     });
     mapRef.current.addControl(new mapboxgl.NavigationControl(), "top-right");
     // Agregar el marcador cuando el mapa esté listo
     mapRef.current.on("load", () => {
+      mapRef.current?.resize();
       if (mapRef.current) {
         markerRef.current = new mapboxgl.Marker({
           color: "#3B82F6", // Color azul similar a la imagen
@@ -33,7 +35,7 @@ export function Map() {
   }, []);
 
   return (
-    <div id="map-container" ref={mapContainerRef} className="w-full h-full">
+    <div id="map-container" ref={mapContainerRef} className="relative w-full h-full">
       {/* Mapa se renderiza aquí */}
     </div>
   );

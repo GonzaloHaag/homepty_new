@@ -5,7 +5,7 @@ import { FormState, User } from "@/types";
 import { revalidatePath } from "next/cache";
 import z from "zod";
 
-export async function editUserAction(
+export async function updateUserAction(
   userId: string,
   state: FormState<User>,
   formData: FormData

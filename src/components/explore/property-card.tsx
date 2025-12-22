@@ -1,23 +1,29 @@
-import { DevelopmentWithImages, UnitWithImages } from "@/types";
-import { CITIES_NAMES_BY_ID, formatMoney, STATES_NAMES_BY_ID } from "@/utils/formatters";
-import { isUnit } from "@/utils/type-guards";
+import { PropertyWithImages } from "@/types";
+import {
+  CITIES_NAMES_BY_ID,
+  formatMoney,
+  STATES_NAMES_BY_ID,
+} from "@/utils/formatters";
 import { BathIcon, BedIcon, MapPinIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 interface Props {
-  property: UnitWithImages | DevelopmentWithImages;
+  property: PropertyWithImages;
 }
 
-
-
 export function PropertyCard({ property }: Props) {
-  const imageUrl = isUnit(property)
-    ? property.imagenes_unidades[0]?.image_url
-    : property.imagenes_desarrollos[0]?.image_url;
+
+  const imageUrl =
+    property.imagenes_propiedades.length > 0
+      ? property.imagenes_propiedades[0].image_url
+      : "/images/placeholder.svg";
 
   return (
-    <Link href={`${isUnit(property) ? `/properties/unit/view/${property.id}` : `/properties/development/view/${property.id}`}`} className="group cursor-pointer transition-colors">
+    <Link
+      href={`${`/properties/${property.is_unit ? "unit" : "development"}/view/${property.id}`}`}
+      className="group cursor-pointer transition-colors"
+    >
       <div className="p-4 flex gap-4">
         {/* Thumbnail */}
         <div className="w-32 h-24 shrink-0 overflow-hidden bg-muted relative">
@@ -38,7 +44,8 @@ export function PropertyCard({ property }: Props) {
             </h3>
             <p className="text-xs text-muted-foreground flex items-center gap-1">
               <MapPinIcon size={12} />
-              {STATES_NAMES_BY_ID[property.id_estado]} - {CITIES_NAMES_BY_ID[property.id_ciudad]}
+              {STATES_NAMES_BY_ID[property.id_estado]} -{" "}
+              {CITIES_NAMES_BY_ID[property.id_ciudad]}
             </p>
           </div>
           <div className="flex items-center justify-between">

@@ -1,3 +1,10 @@
+export const ROUTE_TITLES: Record<string, string> = {
+  explore: "Explorar",
+  requests: "Solicitudes",
+  crm: "CRM",
+  profile: "Perfil"
+};
+
 export const TYPES_OF_OPERATIONS = [
   {
     id: 1,
@@ -91,17 +98,17 @@ export const USER_ACTIVITY = [
 
 export const TYPES_OF_UNITS = [
   { id: 1, label: "Departamento", value: "Departamento" },
-  { id: 5, label: "Casa", value: "Casa" },
-  { id: 2, label: "Local comercial", value: "Local comercial" },
-  { id: 3, label: "Oficina", value: "Oficina" },
-  { id: 4, label: "Lote", value: "Lote" },
+  { id: 2, label: "Casa", value: "Casa" },
+  { id: 3, label: "Local comercial", value: "Local comercial" },
+  { id: 4, label: "Oficina", value: "Oficina" },
 ];
 
 export const TYPES_OF_DEVELOPMENTS = [
-  { id: 1, label: "Preventa", value: "Preventa" },
-  { id: 2, label: "Edificio", value: "Edificio" },
-  { id: 3, label: "Plaza Comercial", value: "Plaza Comercial" },
-  { id: 4, label: "Lote", value: "Lote" },
+  { id: 1, label: "Terreno", value: "Terreno" },
+  { id: 2, label: "Bodega", value: "Bodega" },
+  { id: 3, label: "Lote", value: "Lote" },
+  { id: 4, label: "Loft", value: "Loft" },
+  { id: 5, label: "Nave comercial", value: "Nave comercial" },
 ];
 
 export const TYPES_OF_USES = [

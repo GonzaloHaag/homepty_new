@@ -9,16 +9,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  getDevelopmentsByCurrentUser,
-  getUnitsByCurrentUser,
-} from "@/server/queries";
 import { PlusIcon } from "lucide-react";
 import Link from "next/link";
-
+import { getAllPropertiesByCurrentUser } from "@/server/queries";
 export default function CrmPropertiesPage() {
-  const unitsPromise = getUnitsByCurrentUser();
-  const developmentsPromise = getDevelopmentsByCurrentUser();
+  const propertiesPromise = getAllPropertiesByCurrentUser();
   return (
     <Card>
       <CardHeader>
@@ -40,10 +35,7 @@ export default function CrmPropertiesPage() {
       </CardHeader>
       <CardContent>
         <Suspense fallback={<div>Cargando propiedades...</div>}>
-          <TableCrmProperties
-            unitsPromise={unitsPromise}
-            developmentsPromise={developmentsPromise}
-          />
+          <TableCrmProperties propertiesPromise={propertiesPromise} />
         </Suspense>
       </CardContent>
     </Card>

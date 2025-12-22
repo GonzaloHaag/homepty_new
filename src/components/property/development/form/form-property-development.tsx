@@ -76,7 +76,7 @@ export function FormPropertyDevelopment({ availableUnits }: Props) {
     mode: "onBlur",
     resolver: zodResolver(stepper.current.schema),
     defaultValues: {
-      tipo: "Lote",
+      tipo: "Terreno",
       nombre: "",
       id_tipo_accion: 1,
       id_tipo_uso: 1,

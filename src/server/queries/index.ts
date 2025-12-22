@@ -2,7 +2,7 @@ export { getUserInfo } from "./user/get-user-info";
 export { getRequests, getRequestById } from "./requests";
 export {
   getAllProperties,
-  getPropertiesByCurrentUser,
+  getAllPropertiesByCurrentUser,
   getAllUnitsByCurrentUser,
   getAllDevelopmentsByCurrentUser,
   getPropertyById,

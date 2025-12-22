@@ -21,7 +21,7 @@ export default function CrmClientsPage() {
           Aquí puedes ver y gestionar todos tus clientes
         </CardDescription>
         <CardAction>
-          <DialogClient />
+          <DialogClient client={null} />
         </CardAction>
       </CardHeader>
       <CardContent>

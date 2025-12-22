@@ -122,17 +122,16 @@ export type Database = {
           cantidad_estacionamientos: number | null
           cantidad_habitaciones: number | null
           created_at: string
-          dni_cif_cliente: string | null
+          dni_cif_cliente: string
           email_cliente: string
           id_cliente: number
           id_usuario: string
-          intereses_cliente: string | null
           nombre_cliente: string
           nota_cliente: string | null
           presupuesto_desde_cliente: number | null
           presupuesto_hasta_cliente: number | null
           telefono_cliente: string
-          tipo_propiedad: string | null
+          tipo_propiedad: Database["public"]["Enums"]["tipo_propiedad"] | null
           updated_at: string
         }
         Insert: {
@@ -141,17 +140,16 @@ export type Database = {
           cantidad_estacionamientos?: number | null
           cantidad_habitaciones?: number | null
           created_at?: string
-          dni_cif_cliente?: string | null
+          dni_cif_cliente: string
           email_cliente: string
           id_cliente?: number
           id_usuario?: string
-          intereses_cliente?: string | null
           nombre_cliente: string
           nota_cliente?: string | null
           presupuesto_desde_cliente?: number | null
           presupuesto_hasta_cliente?: number | null
           telefono_cliente: string
-          tipo_propiedad?: string | null
+          tipo_propiedad?: Database["public"]["Enums"]["tipo_propiedad"] | null
           updated_at?: string
         }
         Update: {
@@ -160,17 +158,16 @@ export type Database = {
           cantidad_estacionamientos?: number | null
           cantidad_habitaciones?: number | null
           created_at?: string
-          dni_cif_cliente?: string | null
+          dni_cif_cliente?: string
           email_cliente?: string
           id_cliente?: number
           id_usuario?: string
-          intereses_cliente?: string | null
           nombre_cliente?: string
           nota_cliente?: string | null
           presupuesto_desde_cliente?: number | null
           presupuesto_hasta_cliente?: number | null
           telefono_cliente?: string
-          tipo_propiedad?: string | null
+          tipo_propiedad?: Database["public"]["Enums"]["tipo_propiedad"] | null
           updated_at?: string
         }
         Relationships: [
@@ -1017,4 +1014,4 @@ export const Constants = {
       ],
     },
   },
-} as const
+} as const;

@@ -7,31 +7,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DevelopmentWithImages, QueryResponse, UnitWithImages } from "@/types";
+import { PropertyWithImages, QueryResponse } from "@/types";
 import { TableRowCrmProperty } from "./table-row-crm-property";
 interface Props {
-  unitsPromise: Promise<QueryResponse<UnitWithImages[]>>;
-  developmentsPromise: Promise<QueryResponse<DevelopmentWithImages[]>>;
+  propertiesPromise: Promise<QueryResponse<PropertyWithImages[]>>;
 }
 export async function TableCrmProperties({
-  unitsPromise,
-  developmentsPromise,
+  propertiesPromise,
 }: Props) {
-  const [unitsResponse, developmentsResponse] = await Promise.all([
-    unitsPromise,
-    developmentsPromise,
-  ]);
-  if (
-    !unitsResponse.ok ||
-    !developmentsResponse.ok ||
-    !unitsResponse.data ||
-    !developmentsResponse.data
-  ) {
-    return (
-      <ErrorMessage message="Error al cargar las propiedades. Por favor, intenta de nuevo." />
-    );
+  const response = await propertiesPromise;
+  if(!response.ok || !response.data) {
+    return <ErrorMessage message="Error al cargar las propiedades." />;
   }
-  const properties = [...unitsResponse.data, ...developmentsResponse.data];
+  const properties = response.data;
   return (
     <Table>
       <TableHeader>
@@ -52,9 +40,9 @@ export async function TableCrmProperties({
             </TableCell>
           </TableRow>
         ) : (
-          properties.map((property, i) => (
+          properties.map((property) => (
             <TableRowCrmProperty
-              key={`${property.id}-${i}`}
+              key={property.id}
               property={property}
             />
           ))

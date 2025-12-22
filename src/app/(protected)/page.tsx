@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import {
   DialogOffers,
+  DialogValueEstimator,
   Filters,
   SectionProperties,
   SectionPropertiesSkeleton,
@@ -14,18 +15,27 @@ export default async function HomePage(props: {
     search?: string;
     type_operation?: string;
     type_property?: string;
+    precioMin?: string;
+    precioMax?: string;
+    habitaciones?: string;
+    banios?: string;
+    estacionamientos?: string;
     page?: string;
   }>;
 }) {
   const searchParams = await props.searchParams;
-  const search = searchParams?.search || "";
-  const typeOperation = searchParams?.type_operation || "";
-  const typeProperty = searchParams?.type_property || "";
-  const propertiesPromise = getAllProperties({
-    search,
-    type_operation: typeOperation,
-    type_property: typeProperty,
-  });
+  const filters = {
+    search: searchParams?.search || "",
+    type_operation: searchParams?.type_operation || "",
+    type_property: searchParams?.type_property || "",
+    precioMin: searchParams?.precioMin || "",
+    precioMax: searchParams?.precioMax || "",
+    habitaciones: searchParams?.habitaciones || "",
+    banios: searchParams?.banios || "",
+    estacionamientos: searchParams?.estacionamientos || "",
+    page: searchParams?.page || "1",
+  };
+  const propertiesPromise = getAllProperties({ filters });
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-y-1">
@@ -39,41 +49,16 @@ export default async function HomePage(props: {
         </p>
       </div>
       <Separator />
-      {/* <section className="flex flex-col gap-y-4">
-        <Tabs defaultValue="units_popular" className="w-full">
-          <TabsList>
-            <TabsTrigger value="units_popular" className="min-w-32">
-              <HomeIcon /> Unidades populares
-            </TabsTrigger>
-            <TabsTrigger value="developments_popular" className="min-w-32">
-              <Building2Icon /> Desarrollos populares
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent
-            value="units_popular"
-            className="w-full"
-          >
-            <SectionCarousel unitsPromise={unitsPopularPromise} />
-          </TabsContent>
-          <TabsContent value="developments_popular">
-            <span className="text-gray-400">
-              No hay desarrollos populares disponibles
-            </span>
-          </TabsContent>
-        </Tabs>
-      </section>
-      <Separator /> */}
       <section className="w-full flex flex-col gap-4 bg-muted/50 p-4 rounded">
         <Filters />
         <div className="flex flex-col md:flex-row md:items-center gap-4">
           <SheetProfitabilityAnalysis />
           <DialogOffers />
+          <DialogValueEstimator />
         </div>
       </section>
-      <Suspense key={search} fallback={<SectionPropertiesSkeleton />}>
-        <SectionProperties
-          propertiesPromise={propertiesPromise}
-        />
+      <Suspense key={filters.search} fallback={<SectionPropertiesSkeleton />}>
+        <SectionProperties propertiesPromise={propertiesPromise} />
       </Suspense>
     </div>
   );

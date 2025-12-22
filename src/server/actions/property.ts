@@ -45,7 +45,6 @@ export async function createUnitAction({
     .insert({
       ...unitData,
       id_usuario: userId,
-      id_desarrollo: null,
       is_unit: true,
       parent_id: null,
     })

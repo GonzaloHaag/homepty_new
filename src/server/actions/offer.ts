@@ -46,7 +46,7 @@ export async function createOfferAction({ offer }: { offer: unknown }) {
   };
 }
 
-export async function editOfferAction({
+export async function updateOfferAction({
   offerId,
   offer,
 }: {
