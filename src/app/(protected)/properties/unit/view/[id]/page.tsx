@@ -2,7 +2,6 @@ import { SectionLeft, SectionRight } from "@/components/property/unit";
 import { ErrorMessage } from "@/components/shared";
 import { getPropertyById } from "@/server/queries";
 import Image from "next/image";
-
 export default async function PropertiesUnitViewPage({
   params,
 }: {

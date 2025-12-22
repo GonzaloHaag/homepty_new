@@ -168,13 +168,11 @@ export async function getPropertyById({
 }: {
   id: number;
 }): Promise<QueryResponse<PropertyWithImagesAndAmenities>> {
-  const { userId } = await verifySession();
   const supabase = await createClient();
   const { error, data } = await supabase
     .from("propiedades")
     .select("*, imagenes_propiedades(*), amenidades_propiedades(*)")
     .eq("id", id)
-    .eq("id_usuario", userId)
     .single();
 
   if (error) {
