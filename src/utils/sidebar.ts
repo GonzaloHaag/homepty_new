@@ -1,41 +1,33 @@
 import { SidebarItem } from "@/types";
-import {
-  BriefcaseIcon,
-  ClipboardListIcon,
-  HomeIcon,
-  MapPinIcon,
-  UserIcon,
-} from "lucide-react";
-
 export const SIDEBAR_ITEMS: SidebarItem[] = [
   {
     id: 1,
     title: "Inicio",
     url: "/",
-    Icon: HomeIcon,
+    icon: "home",
   },
   {
     id: 2,
     title: "Explorar",
     url: "/explore",
-    Icon: MapPinIcon,
+    icon: "explore",
   },
   {
     id: 3,
     title: "Solicitudes",
     url: "/requests",
-    Icon: ClipboardListIcon,
+    icon: "requests",
   },
   {
     id: 4,
     title: "CRM",
     url: "/crm",
-    Icon: BriefcaseIcon,
+    icon: "crm",
   },
   {
     id: 5,
     title: "Perfil",
     url: "/profile",
-    Icon: UserIcon,
-  }
+    icon: "profile",
+  },
 ];

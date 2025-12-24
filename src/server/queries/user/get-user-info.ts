@@ -1,3 +1,4 @@
+"use server";
 import { verifySession } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { QueryResponse, User } from "@/types";

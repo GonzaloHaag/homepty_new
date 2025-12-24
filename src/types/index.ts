@@ -1,4 +1,3 @@
-import { type LucideIcon } from "lucide-react";
 import { Database } from "./database";
 
 export * from "./database";
@@ -33,7 +32,7 @@ export type SidebarItem = {
   id: number;
   title: string;
   url: string;
-  Icon: LucideIcon;
+  icon: string;
 };
 export type PropertyType = Database["public"]["Enums"]["tipo_propiedad"];
 export type Request = Database["public"]["Tables"]["solicitudes"]["Row"];

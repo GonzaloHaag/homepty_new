@@ -23,7 +23,7 @@ export async function UserInfo({ userPromise }: Props) {
         <div className="flex flex-col gap-y-0">
           <h4 className="font-medium">{user.nombre_usuario ?? "Sin nombre"}</h4>
           <p>
-            {user.descripcion_usuario === ""
+            {user.descripcion_usuario === null || user.descripcion_usuario === ""
               ? "Sin descripción"
               : user.descripcion_usuario}
           </p>

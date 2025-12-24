@@ -3,11 +3,27 @@ import Link from "next/link";
 import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
 import { type SidebarItem } from "@/types";
 import { usePathname } from "next/navigation";
+import {
+  BriefcaseIcon,
+  ClipboardListIcon,
+  HomeIcon,
+  MapPinIcon,
+  UserIcon,
+} from "lucide-react";
 interface Props {
   item: SidebarItem;
 }
+
+const ICONS = {
+  home: HomeIcon,
+  explore: MapPinIcon,
+  requests: ClipboardListIcon,
+  crm: BriefcaseIcon,
+  profile: UserIcon,
+};
 export function SidebarItem({ item }: Props) {
   const pathname = usePathname();
+  const Icon = ICONS[item.icon as keyof typeof ICONS];
   return (
     <SidebarMenuItem>
       <SidebarMenuButton asChild>
@@ -18,7 +34,7 @@ export function SidebarItem({ item }: Props) {
             item.url === pathname ? "text-primary bg-muted" : ""
           }`}
         >
-          <item.Icon />
+          <Icon size={16} />
           <span>{item.title}</span>
         </Link>
       </SidebarMenuButton>
