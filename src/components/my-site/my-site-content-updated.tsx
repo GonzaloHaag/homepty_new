@@ -1,42 +1,73 @@
+"use client";
+
+import { useState } from "react";
 import { QueryResponse } from "@/types";
 import { UserSiteRow } from "@/types/database-user-sites";
 import { CreateSiteCard } from "./create-site-card";
 import { SiteOverview } from "./site-overview";
 import { SiteConfiguration } from "./site-configuration";
-import { ApiKeySection } from "./api-key-section";
 import { SiteMetricsDashboard } from "./site-metrics-dashboard";
 import { ThemeEditor } from "./theme-editor";
 import { ApiKeyManager } from "./api-key-manager";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart3, Palette, Key, Settings } from "lucide-react";
+import { updateSiteTheme, regenerateApiKey } from "@/server/actions";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface Props {
-  userSitePromise: Promise<QueryResponse<UserSiteRow>>;
+  userSite: UserSiteRow | null;
 }
 
-export async function MySiteContent({ userSitePromise }: Props) {
-  const response = await userSitePromise;
+export function MySiteContentClient({ userSite }: Props) {
+  const router = useRouter();
+  const [isSavingTheme, setIsSavingTheme] = useState(false);
+  const [isRegenerating, setIsRegenerating] = useState(false);
 
   // Si el usuario no tiene un sitio, mostrar el formulario de creación
-  if (!response.data) {
+  if (!userSite) {
     return <CreateSiteCard />;
   }
 
-  const userSite = response.data;
-
-  // Función para guardar el tema (se implementará con server action)
+  // Función para guardar el tema
   const handleSaveTheme = async (theme: any) => {
-    console.log('Guardando tema:', theme);
-    // TODO: Implementar server action para actualizar theme_config
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simular guardado
+    setIsSavingTheme(true);
+    try {
+      const result = await updateSiteTheme(theme);
+      if (result.success) {
+        toast.success("Tema actualizado exitosamente");
+        router.refresh();
+      } else {
+        toast.error(result.error || "Error al actualizar el tema");
+      }
+    } catch (error) {
+      console.error("Error saving theme:", error);
+      toast.error("Error inesperado al guardar el tema");
+    } finally {
+      setIsSavingTheme(false);
+    }
   };
 
-  // Función para regenerar API Key (se implementará con server action)
+  // Función para regenerar API Key
   const handleRegenerateApiKey = async () => {
-    console.log('Regenerando API Key');
-    // TODO: Implementar server action para regenerar cbf_api_key
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simular regeneración
-    return 'cbf_live_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    setIsRegenerating(true);
+    try {
+      const result = await regenerateApiKey();
+      if (result.success && result.data) {
+        toast.success("API Key regenerada exitosamente");
+        router.refresh();
+        return result.data.newApiKey;
+      } else {
+        toast.error(result.error || "Error al regenerar la API Key");
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      console.error("Error regenerating API key:", error);
+      toast.error("Error inesperado al regenerar la API Key");
+      throw error;
+    } finally {
+      setIsRegenerating(false);
+    }
   };
 
   return (
@@ -75,6 +106,7 @@ export async function MySiteContent({ userSitePromise }: Props) {
           <ThemeEditor
             currentTheme={userSite.theme_config as any}
             onSave={handleSaveTheme}
+            isSaving={isSavingTheme}
           />
         </TabsContent>
 
@@ -83,6 +115,7 @@ export async function MySiteContent({ userSitePromise }: Props) {
           <ApiKeyManager
             apiKey={userSite.cbf_api_key}
             onRegenerate={handleRegenerateApiKey}
+            isRegenerating={isRegenerating}
           />
         </TabsContent>
 
