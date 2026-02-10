@@ -18,42 +18,42 @@ export interface UserSiteSeoConfig {
 
 export interface UserSiteRow {
   id: string;
-  user_id: string;
+  user_id_supabase: string;
   site_name: string;
   custom_domain: string | null;
   subdomain: string | null;
   cbf_api_key: string;
   is_active: boolean;
-  theme_config: UserSiteThemeConfig;
-  seo_config: UserSiteSeoConfig;
+  theme_config: any;
+  seo_config: any;
   created_at: string;
   updated_at: string;
 }
 
 export interface UserSiteInsert {
   id?: string;
-  user_id: string;
+  user_id_supabase: string;
   site_name: string;
   custom_domain?: string | null;
   subdomain?: string | null;
   cbf_api_key: string;
   is_active?: boolean;
-  theme_config?: UserSiteThemeConfig;
-  seo_config?: UserSiteSeoConfig;
+  theme_config?: any;
+  seo_config?: any;
   created_at?: string;
   updated_at?: string;
 }
 
 export interface UserSiteUpdate {
   id?: string;
-  user_id?: string;
+  user_id_supabase?: string;
   site_name?: string;
   custom_domain?: string | null;
   subdomain?: string | null;
   cbf_api_key?: string;
   is_active?: boolean;
-  theme_config?: UserSiteThemeConfig;
-  seo_config?: UserSiteSeoConfig;
+  theme_config?: any;
+  seo_config?: any;
   created_at?: string;
   updated_at?: string;
 }

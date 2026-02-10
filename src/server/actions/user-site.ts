@@ -34,7 +34,7 @@ export async function createUserSiteAction({
   const { data: existingSite } = await supabase
     .from("user_sites")
     .select("id")
-    .eq("user_id", userId)
+    .eq("user_id_supabase", userId)
     .maybeSingle();
 
   if (existingSite) {
@@ -65,7 +65,7 @@ export async function createUserSiteAction({
 
   // Crear el sitio
   const { error } = await supabase.from("user_sites").insert({
-    user_id: userId,
+    user_id_supabase: userId,
     site_name: validatedFields.data.site_name,
     subdomain: validatedFields.data.subdomain || null,
     custom_domain: validatedFields.data.custom_domain || null,
@@ -126,11 +126,11 @@ export async function updateUserSiteAction({
   if (validatedFields.data.subdomain) {
     const { data: subdomainExists } = await supabase
       .from("user_sites")
-      .select("id, user_id")
+      .select("id, user_id_supabase")
       .eq("subdomain", validatedFields.data.subdomain)
       .maybeSingle();
 
-    if (subdomainExists && subdomainExists.user_id !== userId) {
+    if (subdomainExists && subdomainExists.user_id_supabase !== userId) {
       return {
         ok: false,
         message: "El subdominio ya está en uso. Por favor, elige otro.",
@@ -142,7 +142,7 @@ export async function updateUserSiteAction({
   const { error } = await supabase
     .from("user_sites")
     .update(validatedFields.data)
-    .eq("user_id", userId);
+    .eq("user_id_supabase", userId);
 
   if (error) {
     console.error("Error al actualizar el sitio:", error);
@@ -174,7 +174,7 @@ export async function regenerateApiKeyAction(): Promise<ActionResponse> {
   const { error } = await supabase
     .from("user_sites")
     .update({ cbf_api_key: newApiKey })
-    .eq("user_id", userId);
+    .eq("user_id_supabase", userId);
 
   if (error) {
     console.error("Error al regenerar la API Key:", error);
@@ -207,7 +207,7 @@ export async function toggleSiteStatusAction({
   const { error } = await supabase
     .from("user_sites")
     .update({ is_active: isActive })
-    .eq("user_id", userId);
+    .eq("user_id_supabase", userId);
 
   if (error) {
     console.error("Error al cambiar el estado del sitio:", error);
