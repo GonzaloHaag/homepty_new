@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   BriefcaseIcon,
   ClipboardListIcon,
+  GlobeIcon,
   HomeIcon,
   MapPinIcon,
   UserIcon,
@@ -19,6 +20,7 @@ const ICONS = {
   explore: MapPinIcon,
   requests: ClipboardListIcon,
   crm: BriefcaseIcon,
+  globe: GlobeIcon,
   profile: UserIcon,
 };
 export function SidebarItem({ item }: Props) {
