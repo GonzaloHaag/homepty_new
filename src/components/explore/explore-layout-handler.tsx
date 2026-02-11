@@ -10,11 +10,14 @@ interface Props {
 
 export function ExploreLayoutHandler({ rightPanel }: Props) {
     const { setOpen } = useSidebar();
-    const { setRightPanelContent } = useAppShell();
+    const { setRightPanelContent, setIsRightCollapsed } = useAppShell();
 
     useEffect(() => {
         // Collapse sidebar on mount
         setOpen(false);
+
+        // Ensure right panel is expanded
+        setIsRightCollapsed(false);
 
         // Set custom right panel content
         setRightPanelContent(rightPanel);
