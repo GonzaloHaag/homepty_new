@@ -41,7 +41,7 @@ export function AppShell({
             {/* Right Panel Column */}
             <div
                 className={cn(
-                    "hidden xl:block h-full transition-all duration-300 overflow-hidden ease-app-shell",
+                    "hidden xl:block h-full transition-all duration-300 overflow-hidden ease-app-shell py-6 pr-6",
                     isRightCollapsed ? "w-0 opacity-0" : "w-[320px] opacity-100"
                 )}
             >
