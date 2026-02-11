@@ -1,15 +1,27 @@
 "use client";
-import { SearchIcon, Settings2Icon, PlusIcon, PanelRightCloseIcon, PanelRightOpenIcon } from "lucide-react";
+
+import {
+    SearchIcon,
+    PlusIcon,
+    PanelRightCloseIcon,
+    PanelRightOpenIcon,
+    SparklesIcon
+} from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 import { useAppShell } from "./app-shell";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 interface ModuleHeaderProps {
     title: string;
     children?: React.ReactNode;
+    leftContent?: React.ReactNode;
+    rightContent?: React.ReactNode;
     searchPlaceholder?: string;
     searchParamName?: string;
+    useAiIcon?: boolean;
+    hideSearch?: boolean;
 }
 
 import { useSidebar, SidebarTrigger } from "../ui/sidebar";
@@ -17,8 +29,12 @@ import { useSidebar, SidebarTrigger } from "../ui/sidebar";
 export function ModuleHeader({
     title,
     children,
+    leftContent,
+    rightContent,
     searchPlaceholder = "Buscar...",
-    searchParamName = "search"
+    searchParamName = "search",
+    useAiIcon = false,
+    hideSearch = false
 }: ModuleHeaderProps) {
     const searchParams = useSearchParams();
     const { replace } = useRouter();
@@ -37,46 +53,65 @@ export function ModuleHeader({
     }, 300);
 
     return (
-        <header className="sticky top-0 z-40 px-6 py-3 glass-panel flex items-center justify-between gap-6 shrink-0 border-b border-white/50">
-            <div className="flex items-center gap-3 shrink-0">
-                {state === "collapsed" && (
-                    <SidebarTrigger className="text-slate-500 hover:text-slate-800 transition-colors" />
-                )}
-                <h1 className="text-lg font-bold tracking-tight text-slate-800">
-                    {title}
-                </h1>
-            </div>
-
-            <div className="flex-1 max-w-2xl flex items-center bg-slate-50 border border-slate-200 rounded-full px-2 py-1.5 transition-all focus-within:bg-white focus-within:shadow-md focus-within:border-blue-300/30 group">
-                <div className="pl-3 pr-2 text-slate-400 group-focus-within:text-blue-600 transition-colors">
-                    <SearchIcon size={20} />
+        <header className="sticky top-0 z-40 px-6 py-4 glass-panel flex items-center justify-between gap-4 shrink-0 border-b border-slate-200/50 bg-white/80 backdrop-blur-md">
+            <div className="flex items-center gap-6 shrink-0">
+                <div className="flex items-center gap-3">
+                    {state === "collapsed" && (
+                        <SidebarTrigger className="text-slate-500 hover:text-slate-800 transition-colors" />
+                    )}
+                    <h1 className="text-xl font-extrabold tracking-tight text-slate-800 whitespace-nowrap">
+                        {title}
+                    </h1>
                 </div>
-                <input
-                    className="w-full bg-transparent border-none focus:ring-0 focus:outline-none text-slate-700 placeholder:text-slate-400 text-sm font-medium h-8"
-                    placeholder={searchPlaceholder}
-                    type="text"
-                    onChange={(e) => handleSearch(e.target.value)}
-                    defaultValue={searchParams.get(searchParamName)?.toString()}
-                />
-                <div className="h-5 w-px bg-slate-200 mx-2" />
-                <button className="bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 px-3 py-1 rounded-full text-xs font-semibold shadow-sm transition-colors whitespace-nowrap">
-                    Filtros
-                </button>
+                {leftContent && (
+                    <div className="ml-2">
+                        {leftContent}
+                    </div>
+                )}
             </div>
 
-            <div className="flex items-center gap-2 shrink-0">
-                <Link
-                    href="/requests/create"
-                    className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg hover:shadow-xl transition-all"
-                >
-                    <PlusIcon size={18} />
-                    <span>Crear</span>
-                </Link>
+            {!hideSearch && (
+                <div className="flex-1 max-w-md flex items-center bg-slate-50 border border-slate-200 rounded-full px-2 py-1 transition-all focus-within:bg-white focus-within:shadow-md focus-within:border-blue-300/30 group">
+                    <div className="pl-3 pr-2 text-slate-400 group-focus-within:text-blue-600 transition-colors">
+                        <SearchIcon size={18} />
+                    </div>
+                    <input
+                        className="w-full bg-transparent border-none focus:ring-0 focus:outline-none text-slate-700 placeholder:text-slate-400 text-sm font-medium h-8"
+                        placeholder={searchPlaceholder}
+                        type="text"
+                        onChange={(e) => handleSearch(e.target.value)}
+                        defaultValue={searchParams.get(searchParamName)?.toString()}
+                    />
+                </div>
+            )}
+
+            <div className="flex items-center gap-4 shrink-0">
+                {rightContent}
+                {children}
                 <button
-                    className="p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors"
+                    className={cn(
+                        "p-2.5 rounded-full transition-all duration-500 hover:scale-105 active:scale-95 group relative",
+                        !isRightCollapsed
+                            ? "bg-blue-600 text-white shadow-xl shadow-blue-200/50"
+                            : "bg-slate-50 text-slate-400 border border-slate-200 hover:border-blue-200 hover:text-blue-600 hover:bg-white"
+                    )}
                     onClick={() => setIsRightCollapsed(!isRightCollapsed)}
+                    title={useAiIcon ? "Toggle AI Copilot" : "Toggle Sidebar"}
                 >
-                    {isRightCollapsed ? <PanelRightOpenIcon size={20} /> : <PanelRightCloseIcon size={20} />}
+                    {useAiIcon ? (
+                        <SparklesIcon size={20} className={cn(
+                            "transition-transform duration-500",
+                            !isRightCollapsed ? "rotate-12 scale-110" : ""
+                        )} />
+                    ) : (
+                        isRightCollapsed ? <PanelRightOpenIcon size={20} /> : <PanelRightCloseIcon size={20} />
+                    )}
+                    {!isRightCollapsed && (
+                        <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
+                        </span>
+                    )}
                 </button>
             </div>
         </header>

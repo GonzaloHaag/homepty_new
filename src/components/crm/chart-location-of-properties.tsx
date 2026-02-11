@@ -45,26 +45,34 @@ const locationData = [
 ];
 export function ChartLocationOfProperties() {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Localización de inmuebles</CardTitle>
-        <CardDescription>Porcentaje de propiedades por ciudad</CardDescription>
+    <Card className="rounded-2xl border-none shadow-sm hover:shadow-md transition-all duration-300 h-full">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-sm font-bold text-gray-800">Localización de inmuebles</CardTitle>
+        <CardDescription>Distribución geográfica de propiedades</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col gap-y-4">
+        <div className="space-y-5">
           {locationData.map((location) => (
-            <div key={location.city} className="flex flex-col gap-y-2">
-                <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium">{location.city}</span>
-                    <span className="font-semibold text-muted-foreground">{location.percentage}%</span>
+            <div key={location.city} className="group">
+              <div className="flex justify-between items-center text-xs mb-1.5">
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-gray-700">{location.city}</span>
+                  <span className="text-[10px] text-emerald-600 font-bold px-1.5 py-0.5 rounded bg-emerald-50 border border-emerald-100/50 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {location.trend}
+                  </span>
                 </div>
-                <Progress 
-                value={location.percentage}
+                <span className="font-mono text-gray-500 font-medium">{location.percentage}%</span>
+              </div>
+              <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-blue-600 to-blue-400 rounded-full transition-all duration-700 ease-out"
+                  style={{ width: `${location.percentage}%` }}
                 />
+              </div>
             </div>
           ))}
         </div>
       </CardContent>
     </Card>
   );
-};
+}
