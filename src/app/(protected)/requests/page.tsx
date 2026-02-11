@@ -26,6 +26,12 @@ export default async function RequestsPage(props: {
           <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-bold uppercase tracking-wider border border-blue-100 shadow-sm">
             AI Sync Active
           </span>
+          <Button asChild variant="outline" size="sm" className="h-9 gap-2 ml-2">
+            <Link href="/requests/create">
+              <PlusIcon size={16} />
+              <span className="hidden sm:inline">Crear Solicitud</span>
+            </Link>
+          </Button>
         </div>
       </ModuleHeader>
 
