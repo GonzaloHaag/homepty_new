@@ -36,7 +36,7 @@ export default async function HomePage(props: {
   return (
     <div className="flex flex-col h-full">
       {/* Level 3: Module Header */}
-      <ModuleHeader title="Marketplace">
+      <ModuleHeader title="Marketplace" searchPlaceholder="Buscar propiedades...">
         {/* We can add Tabs or extra filters here if needed */}
       </ModuleHeader>
 

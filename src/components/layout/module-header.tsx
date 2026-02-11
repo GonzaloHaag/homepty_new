@@ -8,11 +8,18 @@ import Link from "next/link";
 interface ModuleHeaderProps {
     title: string;
     children?: React.ReactNode;
+    searchPlaceholder?: string;
+    searchParamName?: string;
 }
 
 import { useSidebar, SidebarTrigger } from "../ui/sidebar";
 
-export function ModuleHeader({ title, children }: ModuleHeaderProps) {
+export function ModuleHeader({
+    title,
+    children,
+    searchPlaceholder = "Buscar...",
+    searchParamName = "search"
+}: ModuleHeaderProps) {
     const searchParams = useSearchParams();
     const { replace } = useRouter();
     const pathname = usePathname();
@@ -22,9 +29,9 @@ export function ModuleHeader({ title, children }: ModuleHeaderProps) {
     const handleSearch = useDebouncedCallback((term: string) => {
         const params = new URLSearchParams(searchParams);
         if (term) {
-            params.set("search", term);
+            params.set(searchParamName, term);
         } else {
-            params.delete("search");
+            params.delete(searchParamName);
         }
         replace(`${pathname}?${params.toString()}`);
     }, 300);
@@ -46,10 +53,10 @@ export function ModuleHeader({ title, children }: ModuleHeaderProps) {
                 </div>
                 <input
                     className="w-full bg-transparent border-none focus:ring-0 focus:outline-none text-slate-700 placeholder:text-slate-400 text-sm font-medium h-8"
-                    placeholder="Buscar propiedades..."
+                    placeholder={searchPlaceholder}
                     type="text"
                     onChange={(e) => handleSearch(e.target.value)}
-                    defaultValue={searchParams.get("search")?.toString()}
+                    defaultValue={searchParams.get(searchParamName)?.toString()}
                 />
                 <div className="h-5 w-px bg-slate-200 mx-2" />
                 <button className="bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 px-3 py-1 rounded-full text-xs font-semibold shadow-sm transition-colors whitespace-nowrap">
@@ -59,7 +66,7 @@ export function ModuleHeader({ title, children }: ModuleHeaderProps) {
 
             <div className="flex items-center gap-2 shrink-0">
                 <Link
-                    href="/properties/create"
+                    href="/requests/create"
                     className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg hover:shadow-xl transition-all"
                 >
                     <PlusIcon size={18} />
