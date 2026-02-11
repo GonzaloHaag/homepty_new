@@ -12,13 +12,13 @@ export function AppShell({
     leftSidebar: React.ReactNode;
 }) {
     const [isRightCollapsed, setIsRightCollapsed] = useState(false);
-    // Note: We'll use the sidebar state from the provider to manage the left column width
+    const [rightPanelContent, setRightPanelContent] = useState<React.ReactNode | null>(null);
 
     return (
         <div
             className="grid h-screen w-full overflow-hidden bg-[var(--background-light)] transition-all duration-300 ease-app-shell"
             style={{
-                gridTemplateColumns: `auto 1fr ${isRightCollapsed ? "0px" : "280px"}`,
+                gridTemplateColumns: `auto 1fr ${isRightCollapsed ? "0px" : "320px"}`,
             }}
         >
             {/* Left Sidebar Column */}
@@ -31,7 +31,7 @@ export function AppShell({
                 {/* Surface Container (Header is inside children -> ModuleHeader) */}
                 <main className="@container surface-container flex-1 flex flex-col overflow-hidden relative mx-6 rounded-[24px] shadow-float border border-white/40 z-10 transition-all duration-300 ease-app-shell">
                     <div className="flex-1 flex flex-col overflow-hidden w-full max-w-[1600px] mx-auto">
-                        <AppShellContext.Provider value={{ isRightCollapsed, setIsRightCollapsed }}>
+                        <AppShellContext.Provider value={{ isRightCollapsed, setIsRightCollapsed, setRightPanelContent }}>
                             {children}
                         </AppShellContext.Provider>
                     </div>
@@ -42,10 +42,10 @@ export function AppShell({
             <div
                 className={cn(
                     "hidden xl:block h-full transition-all duration-300 overflow-hidden ease-app-shell",
-                    isRightCollapsed ? "w-0 opacity-0" : "w-[280px] opacity-100"
+                    isRightCollapsed ? "w-0 opacity-0" : "w-[320px] opacity-100"
                 )}
             >
-                <RightPanel />
+                {rightPanelContent || <RightPanel />}
             </div>
         </div>
     );
@@ -56,6 +56,7 @@ import { createContext, useContext } from "react";
 interface AppShellContextType {
     isRightCollapsed: boolean;
     setIsRightCollapsed: (v: boolean) => void;
+    setRightPanelContent: (v: React.ReactNode | null) => void;
 }
 
 const AppShellContext = createContext<AppShellContextType | undefined>(undefined);
