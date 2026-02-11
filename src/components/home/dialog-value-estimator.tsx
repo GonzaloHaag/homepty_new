@@ -12,7 +12,11 @@ import { Button } from "../ui/button";
 import { DollarSignIcon } from "lucide-react";
 import { FormValueEstimator } from "./form-value-estimator";
 
-export function DialogValueEstimator() {
+interface DialogValueEstimatorProps {
+  trigger?: React.ReactNode;
+}
+
+export function DialogValueEstimator({ trigger }: DialogValueEstimatorProps) {
   const [open, setOpen] = useState(false);
 
   const closeDialog = useCallback(() => {
@@ -21,14 +25,18 @@ export function DialogValueEstimator() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          type="button"
-          title="estimar valor"
-          size={"lg"}
-          variant={"outline"}
-        >
-          <DollarSignIcon className="text-primary" /> Estimar valor
-        </Button>
+        {trigger ? (
+          trigger
+        ) : (
+          <Button
+            type="button"
+            title="estimar valor"
+            size={"lg"}
+            variant={"secondary"}
+          >
+            <DollarSignIcon className="text-orange-600" /> Estimar valor
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="w-full md:max-w-3xl max-h-[95dvh] overflow-y-auto">
         <DialogHeader>

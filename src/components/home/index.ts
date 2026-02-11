@@ -8,3 +8,4 @@ export { FormOffer } from "./form-offer";
 export { SectionMoreFilters } from "./section-more-filters";
 export { DialogValueEstimator } from "./dialog-value-estimator";
 export { FormValueEstimator } from "./form-value-estimator";
+export { QuickActionCards } from "./quick-action-cards";

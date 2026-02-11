@@ -68,7 +68,11 @@ const testData = {
   lastUpdated: new Date("2025-08-15T10:00:00"),
 };
 
-export function SheetProfitabilityAnalysis() {
+interface SheetProfitabilityAnalysisProps {
+  trigger?: React.ReactNode;
+}
+
+export function SheetProfitabilityAnalysis({ trigger }: SheetProfitabilityAnalysisProps) {
   const [selectedMarkets, setSelectedMarkets] = useState<string[]>(
     testData.selectedMarkets
   );
@@ -93,9 +97,13 @@ export function SheetProfitabilityAnalysis() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button type="button" variant="default" size="lg" title="Rentabilidad">
-          <TargetIcon /> Análisis de rentabilidad
-        </Button>
+        {trigger ? (
+          trigger
+        ) : (
+          <Button type="button" variant="default" size="lg" title="Rentabilidad">
+            <TargetIcon /> Análisis de rentabilidad
+          </Button>
+        )}
       </SheetTrigger>
 
       <SheetContent side="right" className="w-full max-w-md overflow-y-auto sm:max-w-xl">

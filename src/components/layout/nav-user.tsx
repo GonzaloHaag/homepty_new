@@ -35,15 +35,17 @@ export async function NavUser() {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg grayscale">
-                <AvatarImage src={""} alt={""} />
-                <AvatarFallback className="rounded-lg">{user.nombre_usuario?.charAt(0)}</AvatarFallback>
-              </Avatar>
+              <div className="w-9 h-9 shrink-0 rounded-full p-[2px] bg-gradient-to-tr from-blue-400 to-purple-400">
+                <Avatar className="h-full w-full rounded-full border-2 border-white">
+                  <AvatarImage src={""} alt={""} />
+                  <AvatarFallback className="rounded-full text-xs font-bold">{user.nombre_usuario?.charAt(0)}</AvatarFallback>
+                </Avatar>
+              </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">
+                <span className="truncate font-semibold text-slate-700">
                   {user.nombre_usuario}
                 </span>
-                <span className="text-muted-foreground truncate text-xs">
+                <span className="text-slate-500 truncate text-xs">
                   {user.email_usuario}
                 </span>
               </div>

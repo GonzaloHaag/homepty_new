@@ -1,13 +1,10 @@
 import { Suspense } from "react";
 import {
-  DialogOffers,
-  DialogValueEstimator,
-  Filters,
+  QuickActionCards,
   SectionProperties,
   SectionPropertiesSkeleton,
-  SheetProfitabilityAnalysis,
 } from "@/components/home";
-import { Separator } from "@/components/ui/separator";
+import { ModuleHeader } from "@/components/layout/module-header";
 import { getAllProperties } from "@/server/queries";
 
 export default async function HomePage(props: {
@@ -37,29 +34,22 @@ export default async function HomePage(props: {
   };
   const propertiesPromise = getAllProperties({ filters });
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-y-1">
-        <h1 className="text-xl font-semibold">
-          Encontrá las mejores propiedades
-        </h1>
-        <p className="text-muted-foreground text-sm max-w-4xl text-pretty">
-          Explora nuestras propiedades populares y recomendadas, cuidadosamente
-          seleccionadas para ti. Además, descubre una amplia variedad de
-          opciones subidas por nuestra comunidad de usuarios.
-        </p>
+    <div className="flex flex-col h-full">
+      {/* Level 3: Module Header */}
+      <ModuleHeader title="Marketplace">
+        {/* We can add Tabs or extra filters here if needed */}
+      </ModuleHeader>
+
+      {/* Level 4: Content */}
+      <div className="flex flex-col gap-6 px-6 pb-6">
+        {/* Quick Action Cards */}
+        <QuickActionCards />
+
+        {/* Properties Grid */}
+        <Suspense key={filters.search} fallback={<SectionPropertiesSkeleton />}>
+          <SectionProperties propertiesPromise={propertiesPromise} />
+        </Suspense>
       </div>
-      <Separator />
-      <section className="w-full flex flex-col gap-4 bg-muted/50 p-4 rounded">
-        <Filters />
-        <div className="flex flex-col md:flex-row md:items-center gap-4">
-          <SheetProfitabilityAnalysis />
-          <DialogOffers />
-          <DialogValueEstimator />
-        </div>
-      </section>
-      <Suspense key={filters.search} fallback={<SectionPropertiesSkeleton />}>
-        <SectionProperties propertiesPromise={propertiesPromise} />
-      </Suspense>
     </div>
   );
 }
