@@ -17,18 +17,13 @@ import {
   ChevronDownIcon,
   BellIcon
 } from "lucide-react";
-import { useSidebar } from "@/components/ui/sidebar";
 import { useAppShell } from "@/components/layout/app-shell";
 import { CopilotAI } from "@/components/layout/copilot-ai";
 
 export default function CrmPage() {
-  const { setOpen } = useSidebar();
   const { setRightPanelContent, setIsRightCollapsed } = useAppShell();
 
   useEffect(() => {
-    // Collapse left sidebar when entering CRM
-    setOpen(false);
-
     // Set right panel to Copilot AI and keep it collapsed by default
     setRightPanelContent(<CopilotAI />);
     setIsRightCollapsed(true);
@@ -37,7 +32,7 @@ export default function CrmPage() {
       // Optional: reset right panel content when leaving
       setRightPanelContent(null);
     };
-  }, [setOpen, setRightPanelContent, setIsRightCollapsed]);
+  }, [setRightPanelContent, setIsRightCollapsed]);
 
   return (
     <div className="flex flex-col gap-16 py-4">
