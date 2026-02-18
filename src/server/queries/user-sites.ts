@@ -11,7 +11,7 @@ import { UserSiteRow } from "@/types/database-user-sites";
 export async function getUserSite(): Promise<QueryResponse<UserSiteRow>> {
   const { userId } = await verifySession();
   const supabase = await createClient();
-  
+
   const { data, error } = await supabase
     .from("user_sites")
     .select("*")
@@ -27,7 +27,7 @@ export async function getUserSite(): Promise<QueryResponse<UserSiteRow>> {
         data: undefined,
       };
     }
-    
+
     console.error("Error al obtener el sitio del usuario:", error);
     return {
       ok: false,
@@ -51,7 +51,7 @@ export async function checkSubdomainAvailability(
   subdomain: string
 ): Promise<QueryResponse<boolean>> {
   const supabase = await createClient();
-  
+
   const { data, error } = await supabase
     .from("user_sites")
     .select("id")
