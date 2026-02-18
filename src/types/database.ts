@@ -850,6 +850,56 @@ export type Database = {
           },
         ]
       }
+      user_sites: {
+        Row: {
+          id: string
+          user_id_supabase: string
+          site_name: string
+          custom_domain: string | null
+          subdomain: string | null
+          cbf_api_key: string
+          is_active: boolean
+          theme_config: Json | null
+          seo_config: Json | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id_supabase: string
+          site_name: string
+          custom_domain?: string | null
+          subdomain?: string | null
+          cbf_api_key: string
+          is_active?: boolean
+          theme_config?: Json | null
+          seo_config?: Json | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id_supabase?: string
+          site_name?: string
+          custom_domain?: string | null
+          subdomain?: string | null
+          cbf_api_key?: string
+          is_active?: boolean
+          theme_config?: Json | null
+          seo_config?: Json | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_sites_user_id_supabase_fkey"
+            columns: ["user_id_supabase"]
+            isOneToOne: true
+            referencedRelation: "usuarios"
+            referencedColumns: ["id_usuario_supabase"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
