@@ -10,6 +10,7 @@ import { UserSiteRow } from "@/types/database-user-sites";
  */
 export async function getUserSite(): Promise<QueryResponse<UserSiteRow>> {
   const { userId } = await verifySession();
+  console.log("[getUserSite] userId from verifySession():", userId);
   const supabase = await createClient();
 
   const { data, error } = await supabase
@@ -17,6 +18,8 @@ export async function getUserSite(): Promise<QueryResponse<UserSiteRow>> {
     .select("*")
     .eq("user_id_supabase", userId)
     .single();
+  
+  console.log("[getUserSite] Query result:", { data, error });
 
   if (error) {
     // Si el error es que no existe el sitio, no es un error crítico
