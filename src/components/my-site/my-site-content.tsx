@@ -1,6 +1,7 @@
 import { QueryResponse } from "@/types";
 import { UserSiteRow } from "@/types/database-user-sites";
 import { SiteOverview } from "./site-overview";
+import { CustomDomainManager } from "./custom-domain-manager";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Globe, Info } from "lucide-react";
@@ -85,6 +86,13 @@ export async function MySiteContent({ userSitePromise }: Props) {
     <div className="space-y-6">
       {/* Vista general del sitio */}
       <SiteOverview userSite={userSite} />
+
+      {/* Gestión de dominio personalizado */}
+      <CustomDomainManager
+        userId={userSite.user_id_supabase}
+        currentDomain={userSite.custom_domain}
+        verified={userSite.domain_verified}
+      />
 
       {/* Información adicional */}
       <Alert>
