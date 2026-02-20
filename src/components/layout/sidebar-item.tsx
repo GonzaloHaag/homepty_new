@@ -11,6 +11,7 @@ import {
   UserIcon,
   BrainCircuitIcon,
   ImagePlusIcon,
+  GlobeIcon,
 } from "lucide-react";
 
 interface Props {
@@ -25,6 +26,7 @@ const ICONS: Record<string, React.ComponentType<{ size?: number }>> = {
   profile: UserIcon,
   "ai-predictor": BrainCircuitIcon,
   "ai-renders": ImagePlusIcon,
+  globe: GlobeIcon,
 };
 
 export function SidebarItem({ item }: Props) {
