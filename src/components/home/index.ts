@@ -2,7 +2,7 @@ export { Filters } from "./filters";
 export { SectionProperties } from "./section-properties";
 export { SectionPropertiesSkeleton } from "./section-properties-skeleton";
 export { SectionCarousel } from "./section-carousel";
-export { SheetProfitabilityAnalysis } from "./sheet-profitability-analysis";
+export { ProfitabilityAnalysisPanel } from "./panel-profitability-analysis";
 export { DialogOffers } from "./dialog-offers";
 export { FormOffer } from "./form-offer";
 export { SectionMoreFilters } from "./section-more-filters";

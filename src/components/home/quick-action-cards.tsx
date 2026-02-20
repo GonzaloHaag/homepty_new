@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
-import { SheetProfitabilityAnalysis } from "./sheet-profitability-analysis";
+import { ProfitabilityAnalysisPanel } from "./panel-profitability-analysis";
+import { useAppShell } from "../layout/app-shell";
 import { DialogOffers } from "./dialog-offers";
 import { DialogValueEstimator } from "./dialog-value-estimator";
 import {
@@ -11,23 +12,24 @@ import {
 } from "lucide-react";
 
 export function QuickActionCards() {
+    const { setRightPanelContent } = useAppShell();
+
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <SheetProfitabilityAnalysis
-                trigger={
-                    <button className="group relative overflow-hidden p-5 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-blue-50/50 hover:border-blue-200 transition-all duration-300 text-left w-full h-full">
-                        <div className="flex items-start justify-between">
-                            <div>
-                                <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                                    <BarChart3Icon size={20} />
-                                </div>
-                                <h3 className="font-bold text-slate-800 text-base">Análisis de Rentabilidad</h3>
-                            </div>
-                            <ArrowUpRightIcon className="text-slate-300 group-hover:text-blue-500 transition-colors" size={20} />
+            <button
+                onClick={() => setRightPanelContent(<ProfitabilityAnalysisPanel onClose={() => setRightPanelContent(null)} />)}
+                className="group relative overflow-hidden p-5 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-blue-50/50 hover:border-blue-200 transition-all duration-300 text-left w-full h-full"
+            >
+                <div className="flex items-start justify-between">
+                    <div>
+                        <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                            <BarChart3Icon size={20} />
                         </div>
-                    </button>
-                }
-            />
+                        <h3 className="font-bold text-slate-800 text-base">Análisis de Rentabilidad</h3>
+                    </div>
+                    <ArrowUpRightIcon className="text-slate-300 group-hover:text-blue-500 transition-colors" size={20} />
+                </div>
+            </button>
 
             <DialogOffers
                 trigger={
