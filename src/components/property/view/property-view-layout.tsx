@@ -1,10 +1,10 @@
 "use client";
 
-import { useAppShell } from "@/components/layout/app-shell";
-import { PropertyWithImages } from "@/types";
 import { useEffect } from "react";
+import { PropertyWithImages } from "@/types";
 import { PropertyContent } from "./property-content";
 import { PropertySidebar } from "./property-sidebar";
+import { useAppShell } from "@/hooks";
 
 interface Props {
     property: PropertyWithImages;

@@ -1,3 +1,4 @@
+"use server";
 import { getUserInfo } from "@/server/queries";
 import { ErrorMessage } from "../shared";
 import { NavUserClient } from "./nav-user-client";

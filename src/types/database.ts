@@ -743,6 +743,56 @@ export type Database = {
         }
         Relationships: []
       }
+      user_sites: {
+        Row: {
+          cbf_api_key: string
+          created_at: string | null
+          custom_domain: string | null
+          id: string
+          is_active: boolean | null
+          seo_config: Json | null
+          site_name: string
+          subdomain: string | null
+          theme_config: Json | null
+          updated_at: string | null
+          user_id_supabase: string
+        }
+        Insert: {
+          cbf_api_key: string
+          created_at?: string | null
+          custom_domain?: string | null
+          id?: string
+          is_active?: boolean | null
+          seo_config?: Json | null
+          site_name: string
+          subdomain?: string | null
+          theme_config?: Json | null
+          updated_at?: string | null
+          user_id_supabase: string
+        }
+        Update: {
+          cbf_api_key?: string
+          created_at?: string | null
+          custom_domain?: string | null
+          id?: string
+          is_active?: boolean | null
+          seo_config?: Json | null
+          site_name?: string
+          subdomain?: string | null
+          theme_config?: Json | null
+          updated_at?: string | null
+          user_id_supabase?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_sites_user_id_supabase_fkey"
+            columns: ["user_id_supabase"]
+            isOneToOne: false
+            referencedRelation: "usuarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       usospropiedades: {
         Row: {
           created_at: string

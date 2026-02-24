@@ -14,8 +14,9 @@ import {
   HouseIcon,
   LayersIcon,
 } from "lucide-react";
-import { useAppShell } from "@/components/layout/app-shell";
+import { useAppShell } from "@/hooks";
 import { CopilotAI } from "@/components/layout/copilot-ai";
+
 
 export default function CrmPage() {
   const { setRightPanelContent, setIsRightCollapsed } = useAppShell();

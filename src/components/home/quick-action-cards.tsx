@@ -1,7 +1,6 @@
 "use client";
-import React from "react";
 import { ProfitabilityAnalysisPanel } from "./panel-profitability-analysis";
-import { useAppShell } from "../layout/app-shell";
+import { useAppShell } from "@/hooks";
 import { DialogOffers } from "./dialog-offers";
 import { DialogValueEstimator } from "./dialog-value-estimator";
 import {
@@ -11,9 +10,9 @@ import {
     ArrowUpRightIcon
 } from "lucide-react";
 
+
 export function QuickActionCards() {
     const { setRightPanelContent } = useAppShell();
-
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <button

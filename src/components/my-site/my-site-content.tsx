@@ -2,7 +2,7 @@ import { QueryResponse } from "@/types";
 import { UserSiteRow } from "@/types/database-user-sites";
 import { SiteOverview } from "./site-overview";
 import { CustomDomainManager } from "./custom-domain-manager";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Globe, Info } from "lucide-react";
 

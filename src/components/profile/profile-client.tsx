@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import { useAppShell } from "../layout/app-shell";
+
 import { ProfileStats } from "./profile-stats";
+import { useAppShell } from "@/hooks";
 
 export function ProfileClient({ children }: { children: React.ReactNode }) {
     const { setRightPanelContent, setIsRightCollapsed } = useAppShell();

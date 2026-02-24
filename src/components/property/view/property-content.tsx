@@ -5,8 +5,9 @@ import { formatMoney } from "@/utils/formatters";
 import { ArrowLeftIcon, BedIcon, BathIcon, CalendarIcon, DockIcon, MapPinIcon, PhoneIcon, ScalingIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useAppShell } from "@/components/layout/app-shell";
+import { useAppShell } from "@/hooks";
 import { MapLocation } from "../map-location";
+
 
 interface Props {
     property: PropertyWithImages;
@@ -38,7 +39,7 @@ export function PropertyContent({ property }: Props) {
                 <div className="flex items-center gap-3">
                     <button
                         onClick={() => setIsRightCollapsed(!isRightCollapsed)}
-                        className={`p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-50 transition-colors ${!isRightCollapsed ? 'text-primary bg-blue-50' : ''}`}
+                        className={`p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-50 transition-colors ${!isRightCollapsed ? "text-primary bg-blue-50" : ""}`}
                         title="Toggle Sidebar"
                     >
                         <DockIcon size={20} className="rotate-90" />

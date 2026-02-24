@@ -5,7 +5,6 @@ import { generateCBFApiKey } from "@/lib/crypto/generate-api-key";
 import { CreateUserSiteSchema, UpdateUserSiteSchema } from "@/schemas";
 import { ActionResponse } from "@/types";
 import { revalidatePath } from "next/cache";
-import z from "zod";
 
 /**
  * Crea un nuevo sitio web para el usuario actual
@@ -18,7 +17,7 @@ export async function createUserSiteAction({
   userSite: unknown;
 }): Promise<ActionResponse> {
   const { userId } = await verifySession();
-  const supabase = (await createClient()) as any;
+  const supabase = await createClient();
 
   // Validar datos de entrada
   const validatedFields = CreateUserSiteSchema.safeParse(userSite);
@@ -32,7 +31,7 @@ export async function createUserSiteAction({
 
   // Verificar que el usuario no tenga ya un sitio
   const { data: existingSite } = await supabase
-    .from("user_sites" as any)
+    .from("user_sites")
     .select("id")
     .eq("user_id_supabase", userId)
     .maybeSingle();
@@ -47,7 +46,7 @@ export async function createUserSiteAction({
   // Verificar disponibilidad del subdominio si se proporciona
   if (validatedFields.data.subdomain) {
     const { data: subdomainExists } = await supabase
-      .from("user_sites" as any)
+      .from("user_sites")
       .select("id")
       .eq("subdomain", validatedFields.data.subdomain)
       .maybeSingle();
@@ -64,7 +63,7 @@ export async function createUserSiteAction({
   const cbfApiKey = generateCBFApiKey();
 
   // Crear el sitio
-  const { error } = await (supabase as any).from("user_sites").insert({
+  const { error } = await supabase.from("user_sites").insert({
     user_id_supabase: userId,
     site_name: validatedFields.data.site_name,
     subdomain: validatedFields.data.subdomain || null,
@@ -110,7 +109,7 @@ export async function updateUserSiteAction({
   userSite: unknown;
 }): Promise<ActionResponse> {
   const { userId } = await verifySession();
-  const supabase = (await createClient()) as any;
+  const supabase = await createClient();
 
   // Validar datos de entrada
   const validatedFields = UpdateUserSiteSchema.safeParse(userSite);
@@ -125,7 +124,7 @@ export async function updateUserSiteAction({
   // Verificar disponibilidad del subdominio si se está actualizando
   if (validatedFields.data.subdomain) {
     const { data: subdomainExists } = await supabase
-      .from("user_sites" as any)
+      .from("user_sites")
       .select("id, user_id_supabase")
       .eq("subdomain", validatedFields.data.subdomain)
       .maybeSingle();
@@ -140,7 +139,7 @@ export async function updateUserSiteAction({
 
   // Actualizar el sitio
   const { error } = await supabase
-    .from("user_sites" as any)
+    .from("user_sites")
     .update(validatedFields.data)
     .eq("user_id_supabase", userId);
 
@@ -165,14 +164,14 @@ export async function updateUserSiteAction({
  */
 export async function regenerateApiKeyAction(): Promise<ActionResponse> {
   const { userId } = await verifySession();
-  const supabase = (await createClient()) as any;
+  const supabase = await createClient();
 
   // Generar nueva CBF API Key
   const newApiKey = generateCBFApiKey();
 
   // Actualizar la API Key
   const { error } = await supabase
-    .from("user_sites" as any)
+    .from("user_sites")
     .update({ cbf_api_key: newApiKey })
     .eq("user_id_supabase", userId);
 
@@ -202,10 +201,10 @@ export async function toggleSiteStatusAction({
   isActive: boolean;
 }): Promise<ActionResponse> {
   const { userId } = await verifySession();
-  const supabase = (await createClient()) as any;
+  const supabase = await createClient();
 
   const { error } = await supabase
-    .from("user_sites" as any)
+    .from("user_sites")
     .update({ is_active: isActive })
     .eq("user_id_supabase", userId);
 

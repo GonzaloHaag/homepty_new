@@ -1,5 +1,5 @@
 "use client";
-
+import { useState } from "react";
 import {
     SearchIcon,
     PanelRightCloseIcon,
@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
-import { useAppShell } from "./app-shell";
+
 import { cn } from "@/lib/utils";
 
 interface ModuleHeaderProps {
@@ -21,8 +21,10 @@ interface ModuleHeaderProps {
     useAiIcon?: boolean;
     hideSearch?: boolean;
 }
-
+import { useAppShell } from "@/hooks";
 import { useSidebar, SidebarTrigger } from "../ui/sidebar";
+
+
 
 export function ModuleHeader({
     title,
@@ -37,7 +39,8 @@ export function ModuleHeader({
     const searchParams = useSearchParams();
     const { replace } = useRouter();
     const pathname = usePathname();
-    const { isRightCollapsed, setIsRightCollapsed } = useAppShell();
+    const [mounted, setMounted] = useState(false);
+    const { isRightCollapsed, toggleSidebarRight } = useAppShell();
     const { state } = useSidebar();
 
     const handleSearch = useDebouncedCallback((term: string) => {
@@ -89,17 +92,17 @@ export function ModuleHeader({
                 <button
                     className={cn(
                         "p-2.5 rounded-full transition-all duration-500 hover:scale-105 active:scale-95 group relative",
-                        !isRightCollapsed
+                        mounted && !isRightCollapsed
                             ? "bg-blue-600 text-white shadow-xl shadow-blue-200/50"
                             : "bg-slate-50 text-slate-400 border border-slate-200 hover:border-blue-200 hover:text-blue-600 hover:bg-white"
                     )}
-                    onClick={() => setIsRightCollapsed(!isRightCollapsed)}
+                    onClick={toggleSidebarRight}
                     title={useAiIcon ? "Toggle AI Copilot" : "Toggle Sidebar"}
                 >
                     {useAiIcon ? (
                         <SparklesIcon size={20} className={cn(
                             "transition-transform duration-500",
-                            !isRightCollapsed ? "rotate-12 scale-110" : ""
+                            mounted && !isRightCollapsed ? "rotate-12 scale-110" : ""
                         )} />
                     ) : (
                         isRightCollapsed ? <PanelRightOpenIcon size={20} /> : <PanelRightCloseIcon size={20} />

@@ -11,10 +11,10 @@ import { UserSiteRow } from "@/types/database-user-sites";
 export async function getUserSite(): Promise<QueryResponse<UserSiteRow>> {
   const { userId } = await verifySession();
   console.log("[getUserSite] userId from verifySession():", userId);
-  const supabase = (await createClient()) as any;
+  const supabase = await createClient();
 
   const { data, error } = await supabase
-    .from("user_sites" as any)
+    .from("user_sites")
     .select("*")
     .eq("user_id_supabase", userId)
     .single();
@@ -53,10 +53,10 @@ export async function getUserSite(): Promise<QueryResponse<UserSiteRow>> {
 export async function checkSubdomainAvailability(
   subdomain: string
 ): Promise<QueryResponse<boolean>> {
-  const supabase = (await createClient()) as any;
+  const supabase = await createClient();
 
   const { data, error } = await supabase
-    .from("user_sites" as any)
+    .from("user_sites")
     .select("id")
     .eq("subdomain", subdomain)
     .maybeSingle();
