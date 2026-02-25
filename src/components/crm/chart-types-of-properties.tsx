@@ -53,22 +53,52 @@ const chartConfig = {
 
 export function ChartTypesOfProperties() {
   return (
-    <Card className="flex flex-col">
-      <CardHeader className="items-center pb-0">
-        <CardTitle>Tipos de inmuebles</CardTitle>
-        <CardDescription>Mostrando cantidad de cada tipo de propiedad</CardDescription>
+    <Card className="flex flex-col h-full rounded-2xl border-none shadow-sm transition-all duration-300">
+      <CardHeader className="flex flex-row justify-between items-start pb-2">
+        <div>
+          <CardTitle className="text-lg font-bold text-gray-800">Tipos de inmuebles</CardTitle>
+          <CardDescription>Distribución de cartera</CardDescription>
+        </div>
       </CardHeader>
-      <CardContent className="flex-1 pb-0">
-        <ChartContainer
-          config={chartConfig}
-          className="[&_.recharts-pie-label-text]:fill-foreground mx-auto aspect-square h-full max-h-[400px] pb-0"
-        >
-          <PieChart>
-            <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-            <Pie data={chartData} dataKey="quantity" label nameKey="type" />
-          </PieChart>
-        </ChartContainer>
+      <CardContent className="flex-1 flex flex-col items-center justify-center relative pt-4">
+        <div className="relative w-full aspect-square max-w-[260px] mx-auto">
+          <ChartContainer
+            config={chartConfig}
+            className="w-full h-full pb-0"
+          >
+            <PieChart>
+              <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+              <Pie
+                data={chartData}
+                dataKey="quantity"
+                nameKey="type"
+                innerRadius={60}
+                outerRadius={80}
+                paddingAngle={5}
+                stroke="none"
+              />
+            </PieChart>
+          </ChartContainer>
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+            <span className="text-3xl font-bold text-gray-800">24</span>
+            <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">Inmuebles</span>
+          </div>
+        </div>
+
+        {/* Legend */}
+        <div className="mt-8 grid grid-cols-2 gap-2 w-full">
+          {chartData.map((item) => (
+            <div key={item.type} className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg bg-gray-50 border border-gray-100/50">
+              <span
+                className="w-2.5 h-2.5 rounded-full shrink-0"
+                style={{ backgroundColor: item.fill }}
+              ></span>
+              <span className="text-[10px] text-gray-600 font-medium truncate">{item.type}</span>
+              <span className="text-[10px] text-gray-400 ml-auto font-mono">{item.quantity}</span>
+            </div>
+          ))}
+        </div>
       </CardContent>
     </Card>
   );
-};
+}

@@ -24,10 +24,11 @@ export interface UserSiteRow {
   subdomain: string | null;
   cbf_api_key: string;
   is_active: boolean;
-  theme_config: any;
-  seo_config: any;
+  theme_config: unknown;
+  seo_config: unknown;
   created_at: string;
   updated_at: string;
+  domain_verified: boolean;
 }
 
 export interface UserSiteInsert {
@@ -38,8 +39,8 @@ export interface UserSiteInsert {
   subdomain?: string | null;
   cbf_api_key: string;
   is_active?: boolean;
-  theme_config?: any;
-  seo_config?: any;
+  theme_config?: unknown;
+  seo_config?: unknown;
   created_at?: string;
   updated_at?: string;
 }
@@ -52,8 +53,8 @@ export interface UserSiteUpdate {
   subdomain?: string | null;
   cbf_api_key?: string;
   is_active?: boolean;
-  theme_config?: any;
-  seo_config?: any;
+  theme_config?: unknown;
+  seo_config?: unknown;
   created_at?: string;
   updated_at?: string;
 }
