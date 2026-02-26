@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { RightPanel } from "./right-panel";
 import { cn } from "@/lib/utils";
+import { AppShellContext } from "@/context";
 
 export function AppShell({
     children,
@@ -49,22 +50,4 @@ export function AppShell({
             </div>
         </div>
     );
-}
-
-import { createContext, useContext } from "react";
-
-interface AppShellContextType {
-    isRightCollapsed: boolean;
-    setIsRightCollapsed: (v: boolean) => void;
-    setRightPanelContent: (v: React.ReactNode | null) => void;
-}
-
-const AppShellContext = createContext<AppShellContextType | undefined>(undefined);
-
-export function useAppShell() {
-    const context = useContext(AppShellContext);
-    if (!context) {
-        throw new Error("useAppShell must be used within an AppShell");
-    }
-    return context;
 }

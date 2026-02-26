@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useAppShell } from "@/components/layout/app-shell";
+import { useAppShell } from "@/hooks";
 import { ProfitabilityAnalysisPanel } from "./panel-profitability-analysis";
 
 export function HomeLayoutHandler() {

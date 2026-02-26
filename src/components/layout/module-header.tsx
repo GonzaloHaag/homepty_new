@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
-import { useAppShell } from "./app-shell";
+import { useAppShell } from "@/hooks";
 import { cn } from "@/lib/utils";
 
 interface ModuleHeaderProps {

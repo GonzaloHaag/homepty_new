@@ -5,7 +5,7 @@ import { formatMoney } from "@/utils/formatters";
 import { ArrowLeftIcon, BedIcon, BathIcon, CalendarIcon, DockIcon, MapPinIcon, PhoneIcon, ScalingIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useAppShell } from "@/components/layout/app-shell";
+import { useAppShell } from "@/hooks";
 import { MapLocation } from "../map-location";
 
 interface Props {

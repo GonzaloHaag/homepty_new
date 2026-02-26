@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useAppShell } from "../layout/app-shell";
+import { useAppShell } from "@/hooks";
 import { ProfileStats } from "./profile-stats";
 
 export function ProfileClient({ children }: { children: React.ReactNode }) {

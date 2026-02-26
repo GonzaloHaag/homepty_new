@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { ProfitabilityAnalysisPanel } from "./panel-profitability-analysis";
-import { useAppShell } from "../layout/app-shell";
+import { useAppShell } from "@/hooks";
 import { DialogOffers } from "./dialog-offers";
 import { DialogValueEstimator } from "./dialog-value-estimator";
 import {

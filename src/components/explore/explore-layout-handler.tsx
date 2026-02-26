@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useAppShell } from "@/components/layout/app-shell";
+import { useAppShell } from "@/hooks";
 
 interface Props {
     rightPanel: React.ReactNode;
