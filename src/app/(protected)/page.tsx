@@ -5,7 +5,6 @@ import {
   SectionPropertiesSkeleton,
 } from "@/components/home";
 import { HeaderFilters } from "@/components/home/header-filters";
-import { HomeLayoutHandler } from "@/components/home/home-layout-handler";
 import { ModuleHeader } from "@/components/layout/module-header";
 import { getAllProperties } from "@/server/queries";
 
@@ -37,7 +36,6 @@ export default async function HomePage(props: {
   const propertiesPromise = getAllProperties({ filters });
   return (
     <div className="flex flex-col h-full">
-      <HomeLayoutHandler />
       {/* Level 3: Module Header */}
       <ModuleHeader title="Marketplace" searchPlaceholder="Buscar propiedades...">
         <HeaderFilters />
