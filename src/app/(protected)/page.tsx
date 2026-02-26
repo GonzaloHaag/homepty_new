@@ -41,15 +41,17 @@ export default async function HomePage(props: {
         <HeaderFilters />
       </ModuleHeader>
 
-      {/* Level 4: Content */}
-      <div className="flex flex-col gap-6 px-6 pb-6">
-        {/* Quick Action Cards */}
-        <QuickActionCards />
+      {/* Level 4: Content — scrollable */}
+      <div className="flex-1 overflow-y-auto scrollbar-hide min-h-0">
+        <div className="flex flex-col gap-6 px-6 pb-6 pt-4">
+          {/* Quick Action Cards */}
+          <QuickActionCards />
 
-        {/* Properties Grid */}
-        <Suspense key={filters.search} fallback={<SectionPropertiesSkeleton />}>
-          <SectionProperties propertiesPromise={propertiesPromise} />
-        </Suspense>
+          {/* Properties Grid */}
+          <Suspense key={filters.search} fallback={<SectionPropertiesSkeleton />}>
+            <SectionProperties propertiesPromise={propertiesPromise} />
+          </Suspense>
+        </div>
       </div>
     </div>
   );
