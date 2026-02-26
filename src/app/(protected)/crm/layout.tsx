@@ -1,4 +1,5 @@
 import { SectionTabsCrm } from "@/components/crm";
+import { CrmLayoutHandler } from "@/components/crm/crm-layout-handler";
 import { ModuleHeader } from "@/components/layout/module-header";
 import { FilterIcon, ChevronDownIcon, BellIcon } from "lucide-react";
 import { Suspense } from "react";
@@ -8,6 +9,7 @@ export default function CrmLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <div className="flex flex-col h-full w-full overflow-hidden bg-slate-50/50">
+      <CrmLayoutHandler />
       <Suspense fallback={<div className="h-16 w-full bg-white/80 border-b border-slate-200/50" />}>
         <ModuleHeader
           title="CRM Dashboard"
