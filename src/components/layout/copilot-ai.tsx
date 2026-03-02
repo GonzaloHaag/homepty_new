@@ -1,180 +1,211 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useCopilotAI } from "@/hooks/use-copilot-ai";
+import { usePathname } from "next/navigation";
 import {
-    SparklesIcon,
-    XIcon,
-    BotIcon,
-    MicIcon,
-    ArrowUpIcon
+    SendHorizontal,
+    Bot,
+    User,
+    Loader2,
+    Sparkles,
+    Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface Message {
-    id: string;
-    role: "user" | "assistant";
-    content: string;
-    timestamp: string;
-}
-
+/**
+ * AI Copilot — Connected to Brain LLM (Manus Forge / Gemini)
+ * Uses /api/copilot route as server-side proxy to ai.* tRPC endpoints.
+ */
 export function CopilotAI() {
-    const [input, setInput] = useState("");
+    const pathname = usePathname();
+    const currentModule = pathname.startsWith("/crm")
+        ? "crm"
+        : pathname.startsWith("/explore")
+            ? "explore"
+            : pathname.startsWith("/profile")
+                ? "profile"
+                : "dashboard";
 
-    // Dummy messages for initial layout as per the HTML fragment
-    const messages: Message[] = [
-        {
-            id: "1",
-            role: "assistant",
-            content: "Hola Eduardo. He analizado el mercado y detecté 3 propiedades subvaluadas en Zona Sur que coinciden con los criterios de Mariana Rodríguez. ¿Te gustaría ver el reporte?",
-            timestamp: "Hoy"
-        },
-        {
-            id: "2",
-            role: "user",
-            content: "Sí, muéstrame el ROI estimado para cada una.",
-            timestamp: "Hoy"
-        },
-        {
-            id: "3",
-            role: "assistant",
-            content: "Aquí tienes el desglose de rentabilidad proyectada a 5 años:",
-            timestamp: "Hoy"
+    const { messages, sendMessage, clearMessages, isLoading, error } =
+        useCopilotAI({ currentModule });
+
+    const [input, setInput] = useState("");
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    // Auto-scroll to bottom on new messages
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
+
+    const handleSend = () => {
+        if (!input.trim() || isLoading) return;
+        sendMessage(input);
+        setInput("");
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            handleSend();
         }
+    };
+
+    const suggestedQuestions = [
+        "¿Cuál es el valor promedio de mi portafolio?",
+        "¿Qué oportunidades hay en el mercado?",
+        "Genera un reporte de mi actividad",
+        "¿Cómo puedo mejorar mi ROI?",
     ];
 
     return (
-        <aside className="h-full w-full bg-transparent border-none overflow-hidden flex flex-col relative z-0 shrink-0">
+        <div className="flex flex-col h-full bg-gradient-to-b from-background to-muted/20">
             {/* Header */}
-            <div className="h-16 px-4 border-b border-gray-100 bg-white/80 backdrop-blur-md flex items-center justify-between shrink-0">
-                <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-violet-600 to-indigo-600 flex items-center justify-center shadow-md shadow-violet-200">
-                        <SparklesIcon className="text-white w-4 h-4" />
+            <div className="flex items-center justify-between px-4 py-3 border-b bg-background/80 backdrop-blur-sm">
+                <div className="flex items-center gap-2">
+                    <div className="relative">
+                        <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center">
+                            <Sparkles className="h-4 w-4 text-white" />
+                        </div>
+                        <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 border-2 border-background" />
                     </div>
                     <div>
-                        <h3 className="font-bold text-slate-800 text-sm">AI Copilot</h3>
-                        <div className="flex items-center gap-1.5">
-                            <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                            </span>
-                            <span className="text-[10px] text-gray-500 font-medium">Online • v4.2</span>
-                        </div>
+                        <h3 className="text-sm font-semibold">AI Copilot</h3>
+                        <p className="text-[10px] text-muted-foreground">
+                            Manus · Brain v1
+                        </p>
                     </div>
                 </div>
-                <button className="text-gray-400 hover:text-gray-600 rounded-lg p-1 hover:bg-gray-100/50 transition-colors">
-                    <XIcon size={20} />
-                </button>
+                {messages.length > 0 && (
+                    <button
+                        onClick={clearMessages}
+                        className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                        title="Limpiar conversación"
+                    >
+                        <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                )}
             </div>
 
-            {/* Chat Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide bg-slate-50/30">
-                <div className="flex items-center justify-center my-4">
-                    <span className="text-[10px] bg-white/50 text-gray-400 px-2 py-0.5 rounded-full border border-slate-100">Hoy</span>
-                </div>
-
-                {messages.map((msg) => (
-                    <div
-                        key={msg.id}
-                        className={cn(
-                            "flex gap-3",
-                            msg.role === "user" ? "flex-row-reverse" : ""
-                        )}
-                    >
-                        <div className={cn(
-                            "w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm mt-1 overflow-hidden",
-                            msg.role === "assistant" ? "bg-white border border-gray-200" : "bg-slate-200 border border-white"
-                        )}>
-                            {msg.role === "assistant" ? (
-                                <BotIcon className="text-violet-600 w-4 h-4" />
-                            ) : (
-                                <div className="bg-slate-300 w-full h-full flex items-center justify-center text-xs font-bold text-slate-500">
-                                    E
+            {/* Messages Area */}
+            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4 min-h-0">
+                {messages.length === 0 ? (
+                    // Empty state with suggested questions
+                    <div className="flex flex-col items-center justify-center h-full gap-4 text-center">
+                        <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-violet-500/10 to-blue-500/10 flex items-center justify-center">
+                            <Bot className="h-6 w-6 text-violet-500" />
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium">
+                                Hola, soy tu copiloto inmobiliario
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                                Pregúntame sobre tu portafolio, mercado, o valuaciones
+                            </p>
+                        </div>
+                        <div className="grid gap-2 w-full max-w-[280px]">
+                            {suggestedQuestions.map((q) => (
+                                <button
+                                    key={q}
+                                    onClick={() => sendMessage(q)}
+                                    disabled={isLoading}
+                                    className="text-left text-xs px-3 py-2 rounded-lg border border-muted-foreground/10 hover:bg-muted/50 hover:border-violet-500/20 transition-all text-muted-foreground hover:text-foreground"
+                                >
+                                    {q}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                ) : (
+                    // Message list
+                    messages.map((msg) => (
+                        <div
+                            key={msg.id}
+                            className={cn(
+                                "flex gap-2",
+                                msg.role === "user" ? "justify-end" : "justify-start"
+                            )}
+                        >
+                            {msg.role === "assistant" && (
+                                <div className="h-6 w-6 rounded-md bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <Bot className="h-3.5 w-3.5 text-white" />
+                                </div>
+                            )}
+                            <div
+                                className={cn(
+                                    "max-w-[85%] rounded-xl px-3 py-2 text-sm",
+                                    msg.role === "user"
+                                        ? "bg-primary text-primary-foreground"
+                                        : "bg-muted/60 border border-border/50"
+                                )}
+                            >
+                                {msg.role === "assistant" && !msg.isComplete ? (
+                                    <div className="flex items-center gap-2 text-muted-foreground">
+                                        <Loader2 className="h-3 w-3 animate-spin" />
+                                        <span className="text-xs">Procesando...</span>
+                                    </div>
+                                ) : (
+                                    <p className="whitespace-pre-wrap leading-relaxed">
+                                        {msg.content}
+                                    </p>
+                                )}
+                            </div>
+                            {msg.role === "user" && (
+                                <div className="h-6 w-6 rounded-md bg-foreground/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <User className="h-3.5 w-3.5 text-foreground/60" />
                                 </div>
                             )}
                         </div>
-                        <div className={cn(
-                            "max-w-[85%] p-3 rounded-2xl text-sm shadow-sm border transition-all",
-                            msg.role === "assistant"
-                                ? "bg-white rounded-tl-none border-gray-100 text-slate-700"
-                                : "bg-violet-600 rounded-tr-none border-violet-500 text-white shadow-violet-100"
-                        )}>
-                            {msg.content}
-                        </div>
-                    </div>
-                ))}
+                    ))
+                )}
 
-                {/* Example Property Card in Chat */}
-                <div className="flex gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center flex-shrink-0 shadow-sm mt-1">
-                        <BotIcon className="text-violet-600 w-4 h-4" />
+                {/* Error indicator */}
+                {error && (
+                    <div className="text-center">
+                        <p className="text-[10px] text-destructive bg-destructive/10 px-3 py-1 rounded-full inline-block">
+                            {error}
+                        </p>
                     </div>
-                    <div className="flex flex-col gap-2 max-w-[85%]">
-                        <div className="bg-white border border-gray-200 p-3 rounded-xl shadow-sm">
-                            <div className="flex items-center gap-3 mb-3">
-                                <div className="w-12 h-12 rounded-lg bg-slate-100 relative overflow-hidden">
-                                    <div className="w-full h-full bg-gradient-to-br from-slate-200 to-slate-300 animate-pulse" />
-                                </div>
-                                <div>
-                                    <div className="text-xs font-bold text-gray-800">Casa Moderna Sur</div>
-                                    <div className="flex gap-1 mt-0.5">
-                                        <div className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">
-                                            ROI: 14.2%
-                                        </div>
-                                        <div className="text-[10px] text-gray-500 font-medium bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100">
-                                            5Y
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="space-y-1 mb-3">
-                                <div className="flex justify-between text-[10px] text-gray-500">
-                                    <span>Valor actual</span>
-                                    <span className="font-medium text-gray-700">$240,000</span>
-                                </div>
-                                <div className="flex justify-between text-[10px] text-gray-500">
-                                    <span>Proyección 2029</span>
-                                    <span className="font-medium text-gray-700">$315,000</span>
-                                </div>
-                            </div>
-                            <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden mb-3">
-                                <div className="bg-gradient-to-r from-violet-600 to-indigo-600 h-full w-[85%]"></div>
-                            </div>
-                            <div className="flex gap-2">
-                                <button className="flex-1 text-[10px] py-1.5 bg-gray-50 border border-gray-200 rounded hover:bg-gray-100 transition-colors font-medium text-gray-600">Detalles</button>
-                                <button className="flex-1 text-[10px] py-1.5 bg-violet-600/10 text-violet-600 border border-violet-100 rounded hover:bg-violet-600/20 transition-colors font-medium">Agendar</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                )}
+
+                <div ref={messagesEndRef} />
             </div>
 
             {/* Input Area */}
-            <div className="p-4 bg-white border-t border-gray-100">
-                <div className="relative group">
-                    <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-xl opacity-0 group-focus-within:opacity-20 transition duration-500 blur-sm"></div>
-                    <div className="relative flex items-center bg-gray-50 rounded-xl shadow-inner overflow-hidden border border-gray-200 focus-within:bg-white focus-within:ring-0 transition-colors">
-                        <div className="pl-3 text-violet-600">
-                            <SparklesIcon size={18} />
-                        </div>
-                        <input
-                            type="text"
-                            value={input}
-                            onChange={(e) => setInput(e.target.value)}
-                            placeholder="Escribe a Copilot..."
-                            className="w-full py-3 px-3 text-sm text-gray-700 placeholder-gray-400 border-none focus:ring-0 bg-transparent"
-                        />
-                        <button className="p-2 mr-1 rounded-lg text-gray-400 hover:text-violet-600 transition-colors">
-                            <MicIcon size={18} />
-                        </button>
-                        <button className="p-2 mr-1 bg-white text-violet-600 border border-gray-100 rounded-lg hover:bg-violet-600 hover:text-white transition-all shadow-sm">
-                            <ArrowUpIcon size={18} />
-                        </button>
-                    </div>
+            <div className="px-4 py-3 border-t bg-background/80 backdrop-blur-sm">
+                <div className="flex items-center gap-2 bg-muted/50 rounded-xl px-3 py-2 border border-border/50 focus-within:border-violet-500/30 focus-within:ring-1 focus-within:ring-violet-500/20 transition-all">
+                    <input
+                        ref={inputRef}
+                        type="text"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        placeholder="Pregunta algo..."
+                        disabled={isLoading}
+                        className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground/60 disabled:opacity-50"
+                    />
+                    <button
+                        onClick={handleSend}
+                        disabled={!input.trim() || isLoading}
+                        className={cn(
+                            "p-1.5 rounded-lg transition-all",
+                            input.trim() && !isLoading
+                                ? "bg-violet-500 text-white hover:bg-violet-600"
+                                : "text-muted-foreground/40"
+                        )}
+                    >
+                        {isLoading ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                            <SendHorizontal className="h-4 w-4" />
+                        )}
+                    </button>
                 </div>
-                <p className="text-[10px] text-center text-gray-400 mt-2">
-                    AI Neural puede cometer errores. Verifica la info.
+                <p className="text-[9px] text-muted-foreground/50 text-center mt-1.5">
+                    Powered by Homepty Brain · Manus Forge · Gemini
                 </p>
             </div>
-        </aside>
+        </div>
     );
 }
