@@ -42,12 +42,12 @@ export function TaxonomySelector({
     selectSegment,
     selectSubsegment,
     isLoading,
-  } = useTaxonomy(initialSelection);
+  } = useTaxonomy(initialSelection ?? {});
 
   const handleVerticalChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value ? Number(e.target.value) : null;
     selectVertical(value);
-    onSelectionChange?.({ verticalId: value, segmentId: null, subsegmentId: null });
+    onSelectionChange?.({ verticalId: value, tipologiaId: null, segmentId: null, subsegmentId: null });
   };
 
   const handleSegmentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

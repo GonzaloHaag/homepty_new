@@ -1,16 +1,18 @@
 "use client";
 /**
- * TaxonomyStep
- * Paso de clasificación taxonómica en el formulario multi-step de creación de propiedad.
+ * TaxonomyStep v2.0 — Paso de Clasificación Taxonómica
  *
- * Flujo: Vertical → Segmento → Subsegmento → Atributos especializados (EAV)
+ * ARQUITECTURA CORREGIDA (SHF / CONAVI / CANADEVI / AMPIP / SECTUR):
  *
- * Props:
- *   tipoUso?: number — id_tipo_uso (1=Residencial, 2=Comercial, 3=Industrial, 4=Mixto).
- *              Cuando se provee, filtra las verticales disponibles para garantizar
- *              coherencia semántica: si el uso es Industrial, no aparece "Casa".
- *              En el formulario de unidades individuales es opcional (sin filtro).
- *              En el formulario de desarrollos es obligatorio (viene del paso 1).
+ *   Vertical (¿qué tipo de mercado inmobiliario?)
+ *     ├── Tipología (¿qué forma física tiene el inmueble?)   ← TRANSVERSAL al NSE
+ *     │     Ejemplo: "Departamento" puede ser Económico o Lujo
+ *     │
+ *     └── Segmento (¿a qué nivel socioeconómico/mercado pertenece?)
+ *           └── Subsegmento (especialización dentro del segmento)
+ *
+ * La Tipología responde a la pregunta estructural: ¿Qué es físicamente el inmueble?
+ * El Segmento responde a la pregunta de mercado: ¿A qué NSE/mercado pertenece?
  *
  * Integración con react-hook-form via useFormContext.
  * Fallback estático completo — no requiere Brain API.
@@ -30,6 +32,7 @@ import type { TaxAttribute } from "@/lib/brain-client";
 // ============================================================
 export interface TaxonomyFormData {
   taxonomy_vertical_id?: number | null;
+  taxonomy_tipologia_id?: number | null;   // v2.0: Forma físico-estructural (transversal al NSE)
   taxonomy_segment_id?: number | null;
   taxonomy_subsegment_id?: number | null;
   taxonomy_attributes?: Record<string, string>;
@@ -52,24 +55,29 @@ export function TaxonomyStep({ tipoUso }: TaxonomyStepProps = {}) {
   const [attrValues, setAttrValues] = useState<Record<string, string>>({});
 
   const watchedVertical = watch("taxonomy_vertical_id");
+  const watchedTipologia = watch("taxonomy_tipologia_id");
   const watchedSegment = watch("taxonomy_segment_id");
   const watchedSubsegment = watch("taxonomy_subsegment_id");
 
   const {
     availableVerticals,
+    availableTipologias,
     availableSegments,
     availableSubsegments,
     selection,
     selectVertical,
+    selectTipologia,
     selectSegment,
     selectSubsegment,
     dynamicAttributes,
     selectedVertical,
+    selectedTipologia,
     selectedSegment,
     selectedSubsegment,
     isLoading,
   } = useTaxonomy({
     verticalId: watchedVertical ?? null,
+    tipologiaId: watchedTipologia ?? null,
     segmentId: watchedSegment ?? null,
     subsegmentId: watchedSubsegment ?? null,
     tipoUso: tipoUso ?? null,
@@ -80,10 +88,17 @@ export function TaxonomyStep({ tipoUso }: TaxonomyStepProps = {}) {
     const value = e.target.value ? Number(e.target.value) : null;
     selectVertical(value);
     setValue("taxonomy_vertical_id", value);
+    setValue("taxonomy_tipologia_id", null);
     setValue("taxonomy_segment_id", null);
     setValue("taxonomy_subsegment_id", null);
     setValue("taxonomy_attributes", {});
     setAttrValues({});
+  };
+
+  const handleTipologiaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value ? Number(e.target.value) : null;
+    selectTipologia(value);
+    setValue("taxonomy_tipologia_id", value);
   };
 
   const handleSegmentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -232,12 +247,20 @@ export function TaxonomyStep({ tipoUso }: TaxonomyStepProps = {}) {
       </div>
 
       {/* ---- Breadcrumb de selección ---- */}
-      {(selectedVertical || selectedSegment || selectedSubsegment) && (
+      {(selectedVertical || selectedTipologia || selectedSegment || selectedSubsegment) && (
         <div className="flex items-center gap-2 flex-wrap">
           {selectedVertical && (
             <Badge variant="secondary" className="text-xs">
               {selectedVertical.nombre}
             </Badge>
+          )}
+          {selectedTipologia && (
+            <>
+              <span className="text-muted-foreground text-xs">›</span>
+              <Badge variant="secondary" className="text-xs bg-emerald-100 text-emerald-700 border-emerald-200">
+                {selectedTipologia.nombre}
+              </Badge>
+            </>
           )}
           {selectedSegment && (
             <>
@@ -259,7 +282,7 @@ export function TaxonomyStep({ tipoUso }: TaxonomyStepProps = {}) {
       )}
 
       {/* ---- Selectores en cascada ---- */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
         {/* Vertical */}
         <div className="flex flex-col gap-y-2">
@@ -287,10 +310,35 @@ export function TaxonomyStep({ tipoUso }: TaxonomyStepProps = {}) {
           <p className="text-xs text-muted-foreground">Categoría principal del activo</p>
         </div>
 
-        {/* Segmento */}
+        {/* Tipología — Forma físico-estructural (v2.0) */}
+        <div className="flex flex-col gap-y-2">
+          <Label htmlFor="tax_tipologia">
+            Tipología del inmueble
+          </Label>
+          <NativeSelect
+            id="tax_tipologia"
+            value={selection.tipologiaId?.toString() ?? ""}
+            onChange={handleTipologiaChange}
+            disabled={!selection.verticalId || availableTipologias.length === 0}
+          >
+            <NativeSelectOption value="">
+              {!selection.verticalId
+                ? "Primero selecciona vertical"
+                : "Seleccionar tipología (opcional)"}
+            </NativeSelectOption>
+            {availableTipologias.map((t) => (
+              <NativeSelectOption key={t.id} value={t.id.toString()}>
+                {t.nombre}
+              </NativeSelectOption>
+            ))}
+          </NativeSelect>
+          <p className="text-xs text-muted-foreground">Forma física del inmueble</p>
+        </div>
+
+        {/* Segmento — NSE / Clasificación de Mercado */}
         <div className="flex flex-col gap-y-2">
           <Label htmlFor="tax_segment">
-            Segmento <span className="text-destructive">*</span>
+            Segmento de mercado <span className="text-destructive">*</span>
           </Label>
           <NativeSelect
             id="tax_segment"
@@ -309,7 +357,7 @@ export function TaxonomyStep({ tipoUso }: TaxonomyStepProps = {}) {
               </NativeSelectOption>
             ))}
           </NativeSelect>
-          <p className="text-xs text-muted-foreground">Subcategoría dentro de la vertical</p>
+          <p className="text-xs text-muted-foreground">Nivel socioeconómico del activo</p>
         </div>
 
         {/* Subsegmento */}
