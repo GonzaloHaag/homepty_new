@@ -971,15 +971,53 @@ export type Database = {
       offer_status: "Activa" | "Pausada"
       tipo_operacion: "Comprar" | "Rentar"
       tipo_propiedad:
-      | "Casa"
+      // --- Residencial ---
+      | "Casa sola"
+      | "Casa en condominio"
+      | "Villa / Residencia"
       | "Departamento"
-      | "Terreno"
-      | "Oficina"
-      | "Local comercial"
-      | "Bodega"
-      | "Lote"
       | "Loft"
-      | "Nave comercial"
+      | "Penthouse"
+      | "Studio"
+      | "Casa de playa"
+      | "Cabaña / Glamping"
+      // --- Comercial ---
+      | "Local comercial"
+      | "Plaza comercial"
+      | "Centro comercial"
+      | "Restaurante"
+      | "Dark kitchen"
+      // --- Oficinas ---
+      | "Oficina corporativa"
+      | "Coworking / Flex"
+      | "Consultorio"
+      // --- Industrial ---
+      | "Bodega logística"
+      | "Centro de distribución"
+      | "Nave industrial"
+      | "Parque industrial"
+      // --- Hospitalidad ---
+      | "Hotel"
+      | "Boutique hotel"
+      | "Airbnb / Vacation rental"
+      // --- Salud ---
+      | "Clínica / Consultorio"
+      | "Hospital"
+      // --- Terrenos ---
+      | "Terreno urbano"
+      | "Lote residencial"
+      | "Terreno industrial"
+      | "Terreno agropecuario"
+      // --- Desarrollos (categorías de proyecto) ---
+      | "Vertical"
+      | "Horizontal"
+      | "Uso Mixto"
+      | "Parque Industrial"
+      | "Master Plan"
+      | "Comercial / Retail"
+      | "Hotelero / Turístico"
+      | "Oficinas Corporativas"
+      | "Reconversión / Retrofit"
     }
     CompositeTypes: {
       [_ in never]: never

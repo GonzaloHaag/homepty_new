@@ -5,9 +5,15 @@
  *
  * Flujo: Vertical → Segmento → Subsegmento → Atributos especializados (EAV)
  *
- * - Usa el hook useTaxonomy con fallback estático completo (no requiere Brain API).
- * - Integrado con react-hook-form via useFormContext.
- * - Los campos taxonomy_* se persisten en el formulario padre.
+ * Props:
+ *   tipoUso?: number — id_tipo_uso (1=Residencial, 2=Comercial, 3=Industrial, 4=Mixto).
+ *              Cuando se provee, filtra las verticales disponibles para garantizar
+ *              coherencia semántica: si el uso es Industrial, no aparece "Casa".
+ *              En el formulario de unidades individuales es opcional (sin filtro).
+ *              En el formulario de desarrollos es obligatorio (viene del paso 1).
+ *
+ * Integración con react-hook-form via useFormContext.
+ * Fallback estático completo — no requiere Brain API.
  */
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
@@ -29,10 +35,19 @@ export interface TaxonomyFormData {
   taxonomy_attributes?: Record<string, string>;
 }
 
+interface TaxonomyStepProps {
+  /**
+   * id_tipo_uso de la BD. Cuando se provee, filtra las verticales disponibles.
+   * 1 = Residencial, 2 = Comercial, 3 = Industrial, 4 = Mixto (sin filtro).
+   * Si no se provee, se muestran todas las verticales.
+   */
+  tipoUso?: number | null;
+}
+
 // ============================================================
 // COMPONENTE PRINCIPAL
 // ============================================================
-export function TaxonomyStep() {
+export function TaxonomyStep({ tipoUso }: TaxonomyStepProps = {}) {
   const { setValue, watch } = useFormContext<TaxonomyFormData>();
   const [attrValues, setAttrValues] = useState<Record<string, string>>({});
 
@@ -57,6 +72,7 @@ export function TaxonomyStep() {
     verticalId: watchedVertical ?? null,
     segmentId: watchedSegment ?? null,
     subsegmentId: watchedSubsegment ?? null,
+    tipoUso: tipoUso ?? null,
   });
 
   // ---- Handlers de selección ----
@@ -185,6 +201,15 @@ export function TaxonomyStep() {
   const globalAttrs = dynamicAttributes.filter((a) => a.esGlobal);
   const specializedAttrs = dynamicAttributes.filter((a) => !a.esGlobal);
 
+  // Etiqueta contextual según el filtro de uso
+  const usoLabels: Record<number, string> = {
+    1: "Residencial",
+    2: "Comercial",
+    3: "Industrial",
+    4: "Mixto",
+  };
+  const usoLabel = tipoUso ? usoLabels[tipoUso] : null;
+
   // ============================================================
   // RENDER
   // ============================================================
@@ -195,11 +220,14 @@ export function TaxonomyStep() {
       <div className="rounded-lg bg-blue-50 border border-blue-100 p-4">
         <h3 className="text-sm font-semibold text-blue-900 mb-1">
           Clasificación taxonómica
+          {usoLabel && (
+            <Badge className="ml-2 text-xs bg-blue-600 text-white">{usoLabel}</Badge>
+          )}
         </h3>
         <p className="text-xs text-blue-700 leading-relaxed">
-          Clasifica tu propiedad para mejorar su visibilidad en el marketplace y
-          activar los atributos especializados correctos. Esta clasificación también
-          potencia los modelos de valuación y recomendación del Brain.
+          {usoLabel
+            ? `Las verticales disponibles están filtradas por el tipo de uso "${usoLabel}" seleccionado en el paso anterior. Esto garantiza coherencia en la clasificación.`
+            : "Clasifica tu propiedad para mejorar su visibilidad en el marketplace y activar los atributos especializados correctos."}
         </p>
       </div>
 
@@ -327,7 +355,7 @@ export function TaxonomyStep() {
             </div>
           )}
 
-          {/* Separador entre globales y especializados */}
+          {/* Separador */}
           {globalAttrs.length > 0 && specializedAttrs.length > 0 && (
             <div className="flex items-center gap-2 my-4">
               <div className="flex-1 h-px bg-slate-200" />
@@ -357,7 +385,6 @@ export function TaxonomyStep() {
         </div>
       )}
 
-      {/* ---- Indicador de paso opcional ---- */}
       <p className="text-xs text-muted-foreground text-center">
         La clasificación es opcional pero mejora significativamente la precisión
         de valuación y la visibilidad en el marketplace.

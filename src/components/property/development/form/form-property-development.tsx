@@ -6,7 +6,10 @@ import { defineStepper } from "@/components/ui/stepper";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 import z from "zod";
-import { BasicInfoPropertySchema, LocationCharacteristicsPropertySchema } from "@/schemas";
+import {
+  BasicInfoDevelopmentSchema,
+  LocationCharacteristicsPropertySchema,
+} from "@/schemas";
 import { BasicInformationStep } from "./basic-information-step";
 import { Confirm } from "./confirm";
 import { toast } from "sonner";
@@ -29,8 +32,8 @@ const TaxonomyStepSchema = z.object({
 const { useStepper, steps, utils } = defineStepper(
   {
     id: "basic-info",
-    label: "Información básica",
-    schema: BasicInfoPropertySchema,
+    label: "Categoría",
+    schema: BasicInfoDevelopmentSchema,
   },
   {
     id: "taxonomy",
@@ -90,7 +93,7 @@ export function FormPropertyDevelopment({ availableUnits }: Props) {
     mode: "onBlur",
     resolver: zodResolver(stepper.current.schema),
     defaultValues: {
-      tipo: "Terreno",
+      tipo: "Vertical" as const,
       nombre: "",
       id_tipo_accion: 1,
       id_tipo_uso: 1,
@@ -121,9 +124,13 @@ export function FormPropertyDevelopment({ availableUnits }: Props) {
     handleSubmit,
     trigger,
     getValues,
+    watch,
     formState: { errors, isSubmitting },
     reset,
   } = methods;
+
+  // El tipo de uso seleccionado en paso 1 se pasa al TaxonomyStep
+  const selectedUso = watch("id_tipo_uso");
 
   const onSubmit = handleSubmit(
     async (values: z.infer<typeof stepper.current.schema>) => {
@@ -224,7 +231,7 @@ export function FormPropertyDevelopment({ availableUnits }: Props) {
                   developmentImageUrls={developmentImageUrls}
                 />
               ),
-              taxonomy: () => <TaxonomyStep />,
+              taxonomy: () => <TaxonomyStep tipoUso={selectedUso} />,
               "location-characteristics": () => <LocationCharacteristicsStep />,
               units: () => (
                 <UnitsStep

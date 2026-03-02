@@ -247,14 +247,38 @@ export interface UseTaxonomyReturn {
   selectedSubsegment: TaxSubsegment | null;
 }
 
-export function useTaxonomy(initialSelection?: Partial<TaxonomySelection>): UseTaxonomyReturn {
+/**
+ * Mapa: id_tipo_uso (BD) → IDs de verticales permitidas en la taxonomía.
+ * Garantiza coherencia: si el uso es Industrial, solo se muestran verticales industriales.
+ *
+ * id_tipo_uso:
+ *   1 = Residencial  → Vertical 1 (Residencial) + 7 (Terrenos) + 5 (Hospitalidad)
+ *   2 = Comercial    → Vertical 2 (Comercial) + 3 (Oficinas) + 6 (Salud)
+ *   3 = Industrial   → Vertical 4 (Industrial) + 7 (Terrenos)
+ *   4 = Mixto        → Todas las verticales (sin filtro)
+ */
+const VERTICAL_IDS_BY_USO: Record<number, number[]> = {
+  1: [1, 5, 7],    // Residencial: Residencial + Hospitalidad + Terrenos
+  2: [2, 3, 6, 8], // Comercial: Comercial + Oficinas + Salud + Proyectos Especializados
+  3: [4, 7],       // Industrial: Industrial + Terrenos
+  4: [],           // Mixto: sin restricción (array vacío = mostrar todas)
+};
+
+export interface UseTaxonomyOptions extends Partial<TaxonomySelection> {
+  /** id_tipo_uso de la BD (1=Residencial, 2=Comercial, 3=Industrial, 4=Mixto).
+   *  Cuando se provee, filtra las verticales disponibles para garantizar coherencia. */
+  tipoUso?: number | null;
+}
+
+export function useTaxonomy(options?: UseTaxonomyOptions): UseTaxonomyReturn {
   const [tree, setTree] = useState<TaxonomyTree>(TAXONOMY_FALLBACK);
   const [isLoading, setIsLoading] = useState(false);
   const [selection, setSelection] = useState<TaxonomySelection>({
-    verticalId: initialSelection?.verticalId ?? null,
-    segmentId: initialSelection?.segmentId ?? null,
-    subsegmentId: initialSelection?.subsegmentId ?? null,
+    verticalId: options?.verticalId ?? null,
+    segmentId: options?.segmentId ?? null,
+    subsegmentId: options?.subsegmentId ?? null,
   });
+  const tipoUso = options?.tipoUso ?? null;
   const [dynamicAttributes, setDynamicAttributes] = useState<TaxAttribute[]>([]);
 
   // Cargar árbol desde el Brain (con fallback al estático)
@@ -304,7 +328,14 @@ export function useTaxonomy(initialSelection?: Partial<TaxonomySelection>): UseT
   }, [selection.subsegmentId]);
 
   // Derivar opciones disponibles en cascada
-  const availableVerticals = tree.verticals.filter(v => v.activo !== false);
+  // Si tipoUso está definido y tiene restricciones, filtrar las verticales permitidas
+  const allowedVerticalIds = tipoUso !== null && tipoUso !== undefined
+    ? (VERTICAL_IDS_BY_USO[tipoUso] ?? [])
+    : [];
+  const availableVerticals = tree.verticals.filter(v =>
+    v.activo !== false &&
+    (allowedVerticalIds.length === 0 || allowedVerticalIds.includes(v.id))
+  );
 
   const availableSegments = selection.verticalId
     ? (tree.verticals.find(v => v.id === selection.verticalId)?.segments ?? []).filter(s => s.activo !== false)
