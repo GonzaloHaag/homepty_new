@@ -12,16 +12,30 @@ import { Confirm } from "./confirm";
 import { toast } from "sonner";
 import { LocationCharacteristicsStep } from "./location-characteristics-step";
 import { UnitsStep } from "./units-step";
+import { TaxonomyStep } from "./taxonomy-step";
 import { ButtonBack } from "@/components/shared";
 import { Card } from "@/components/ui/card";
 import { createDevelopmentAction } from "@/server/actions";
 import { PropertyWithImages } from "@/types";
+
+// Schema para el paso de taxonomía (campos opcionales)
+const TaxonomyStepSchema = z.object({
+  taxonomy_vertical_id: z.number().int().positive().nullable().optional(),
+  taxonomy_segment_id: z.number().int().positive().nullable().optional(),
+  taxonomy_subsegment_id: z.number().int().positive().nullable().optional(),
+  taxonomy_attributes: z.record(z.string(), z.string()).optional(),
+});
 
 const { useStepper, steps, utils } = defineStepper(
   {
     id: "basic-info",
     label: "Información básica",
     schema: BasicInfoPropertySchema,
+  },
+  {
+    id: "taxonomy",
+    label: "Clasificación",
+    schema: TaxonomyStepSchema,
   },
   {
     id: "location-characteristics",
@@ -44,9 +58,9 @@ export function FormPropertyDevelopment({ availableUnits }: Props) {
   const [developmentImageUrls, setDevelopmentImageUrls] = useState<string[]>([]);
   const [developmentFileUrls, setDevelopmentFileUrls] = useState<File[]>([]);
   const [selectedUnits, setSelectedUnits] = useState<PropertyWithImages[]>([]);
-  
+
   const inputRef = useRef<HTMLInputElement | null>(null);
-  
+
   const handleClick = () => {
     inputRef.current?.click();
   };
@@ -61,13 +75,13 @@ export function FormPropertyDevelopment({ availableUnits }: Props) {
   };
 
   const handleSelectUnit = (unit: PropertyWithImages) => {
-    if (!selectedUnits.some(u => u.id === unit.id)) {
+    if (!selectedUnits.some((u) => u.id === unit.id)) {
       setSelectedUnits([...selectedUnits, unit]);
     }
   };
 
   const handleRemoveUnit = (unitId: number) => {
-    setSelectedUnits(selectedUnits.filter(u => u.id !== unitId));
+    setSelectedUnits(selectedUnits.filter((u) => u.id !== unitId));
   };
 
   const stepper = useStepper();
@@ -95,6 +109,11 @@ export function FormPropertyDevelopment({ availableUnits }: Props) {
       banios: undefined,
       estacionamientos: undefined,
       caracteristicas: undefined,
+      // Taxonomía Inmobiliaria
+      taxonomy_vertical_id: null,
+      taxonomy_segment_id: null,
+      taxonomy_subsegment_id: null,
+      taxonomy_attributes: {},
     },
   });
 
@@ -116,14 +135,14 @@ export function FormPropertyDevelopment({ availableUnits }: Props) {
         const response = await createDevelopmentAction({
           development: allFormValues,
           developmentFiles: developmentFileUrls,
-          unitIds: selectedUnits.map(u => u.id),
+          unitIds: selectedUnits.map((u) => u.id),
         });
-        
+
         if (!response.ok) {
           toast.error(response.message);
           return;
         }
-        
+
         toast.success("Desarrollo creado con éxito!");
         setDevelopmentImageUrls([]);
         setDevelopmentFileUrls([]);
@@ -205,6 +224,7 @@ export function FormPropertyDevelopment({ availableUnits }: Props) {
                   developmentImageUrls={developmentImageUrls}
                 />
               ),
+              taxonomy: () => <TaxonomyStep />,
               "location-characteristics": () => <LocationCharacteristicsStep />,
               units: () => (
                 <UnitsStep
