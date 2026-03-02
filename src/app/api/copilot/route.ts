@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifySession } from "@/lib/auth";
 import { brainAI } from "@/lib/brain-client";
-import { contextToPrompt } from "@/lib/copilot-context";
+import { buildCopilotContext, contextToPrompt } from "@/lib/copilot-context";
+import { getCrmDashboardStats } from "@/server/queries/crm-stats";
 import type { CopilotContext } from "@/lib/brain-types";
 
 /**
@@ -33,11 +34,21 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // 3. Build enriched query with context
-        const contextPrompt = context ? contextToPrompt(context) : "";
-        const enrichedQuery = contextPrompt
-            ? `Contexto del usuario:\n${contextPrompt}\n\nPregunta: ${message}`
-            : message;
+        // 3. Fetch real CRM stats from Supabase (server-side, user-specific)
+        let crmStats;
+        try {
+            crmStats = await getCrmDashboardStats();
+        } catch {
+            // Non-blocking: if stats fail, continue without them
+        }
+
+        // 4. Merge real CRM data with client-provided context (module, active property, etc.)
+        const enrichedContext = buildCopilotContext({
+            currentModule: context?.currentModule ?? "dashboard",
+            crmStats,
+        });
+        const contextPrompt = contextToPrompt(enrichedContext);
+        const enrichedQuery = `Contexto del usuario:\n${contextPrompt}\n\nPregunta: ${message}`;
 
         // 4. Route to the appropriate Brain AI endpoint
         let response: string;

@@ -150,7 +150,8 @@ async function brainFetch<T>(path: string): Promise<T> {
   }
 
   const data = await response.json();
-  return data.result?.data ?? data;
+  // tRPC + SuperJSON wraps actual payload inside result.data.json
+  return data.result?.data?.json ?? data.result?.data ?? data;
 }
 
 /**
@@ -180,7 +181,8 @@ async function brainFetchAuthed<T>(path: string): Promise<T> {
   }
 
   const data = await response.json();
-  return data.result?.data ?? data;
+  // tRPC + SuperJSON wraps actual payload inside result.data.json
+  return data.result?.data?.json ?? data.result?.data ?? data;
 }
 
 /**
@@ -211,7 +213,8 @@ async function brainMutation<T>(
   }
 
   const data = await response.json();
-  return data.result?.data ?? data;
+  // tRPC + SuperJSON wraps actual payload inside result.data.json
+  return data.result?.data?.json ?? data.result?.data ?? data;
 }
 
 /**
@@ -245,7 +248,8 @@ async function brainMutationAuthed<T>(
   }
 
   const data = await response.json();
-  return data.result?.data ?? data;
+  // tRPC + SuperJSON wraps actual payload inside result.data.json
+  return data.result?.data?.json ?? data.result?.data ?? data;
 }
 
 /**

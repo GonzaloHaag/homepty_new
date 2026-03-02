@@ -87,19 +87,26 @@ export async function getCrmDashboardStats(): Promise<CrmDashboardData> {
             .eq("user_id", userId),
     ]);
 
-    // Monthly visits from actividad_usuario (separate query — table not in generated types yet)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const activityRes = await (supabase as any)
-        .from("actividad_usuario")
-        .select("id", { count: "exact", head: true })
-        .eq("usuario_id", userId)
-        .eq("tipo_actividad", "vista_propiedad")
-        .gte("created_at", new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString());
 
     const properties = propertiesRes.data ?? [];
     const offers = offersRes.data ?? [];
     const totalClientes = clientsRes.count ?? 0;
-    const visitasMensuales = activityRes.count ?? 0;
+
+    // Monthly visits: count views received on THIS user's properties
+    // Filter by entidad_id IN (user's property IDs) — any visitor counts
+    const propertyIds = properties.map((p) => String(p.id));
+    let visitasMensuales = 0;
+    if (propertyIds.length > 0) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const activityRes = await (supabase as any)
+            .from("actividad_usuario")
+            .select("id", { count: "exact", head: true })
+            .eq("tipo_actividad", "vista_propiedad")
+            .in("entidad_id", propertyIds)
+            .gte("created_at", new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString());
+        visitasMensuales = activityRes.count ?? 0;
+    }
+
 
     // --- Card Stats ---
     const propiedadesVenta = properties.filter((p) => p.id_tipo_accion === 1).length;
