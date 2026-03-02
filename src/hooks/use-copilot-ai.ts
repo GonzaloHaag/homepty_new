@@ -1,14 +1,17 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import type { CopilotMessage, CopilotContext } from "@/lib/brain-types";
+import { getCopilotSessions, saveCopilotSession, deleteCopilotSession, updateCopilotSessionTitle } from "@/server/actions/copilot/history";
+import type { CopilotMessage, CopilotContext, CopilotSession } from "@/lib/brain-types";
 
 /**
  * Hook for the AI Copilot connected to Brain LLM via tRPC (HTTP).
  * Communicates through /api/copilot API route (server-side proxy).
  */
 export function useCopilotAI(context?: CopilotContext) {
+    const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
     const [messages, setMessages] = useState<CopilotMessage[]>([]);
+    const [historySessions, setHistorySessions] = useState<CopilotSession[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const abortControllerRef = useRef<AbortController | null>(null);
@@ -18,6 +21,20 @@ export function useCopilotAI(context?: CopilotContext) {
     useEffect(() => {
         contextRef.current = context;
     }, [context]);
+
+    const fetchHistory = useCallback(async () => {
+        try {
+            const history = await getCopilotSessions();
+            setHistorySessions(history);
+        } catch (err) {
+            console.warn("[useCopilotAI] Failed to load history:", err);
+        }
+    }, []);
+
+    // Load history on mount
+    useEffect(() => {
+        fetchHistory();
+    }, [fetchHistory]);
 
     const sendMessage = useCallback(async (content: string) => {
         if (!content.trim() || isLoading) return;
@@ -45,7 +62,14 @@ export function useCopilotAI(context?: CopilotContext) {
             isComplete: false,
         };
 
-        setMessages((prev) => [...prev, userMessage, assistantMessage]);
+        let activeSessionId = currentSessionId;
+        if (!activeSessionId) {
+            activeSessionId = crypto.randomUUID();
+            setCurrentSessionId(activeSessionId);
+        }
+
+        const initialMessages = [...messages, userMessage, assistantMessage];
+        setMessages(initialMessages);
         setIsLoading(true);
         setError(null);
 
@@ -67,8 +91,8 @@ export function useCopilotAI(context?: CopilotContext) {
             }
 
             // Update assistant message with response
-            setMessages((prev) =>
-                prev.map((msg) =>
+            setMessages((prev) => {
+                const updated = prev.map((msg) =>
                     msg.id === assistantMessage.id
                         ? {
                             ...msg,
@@ -76,8 +100,17 @@ export function useCopilotAI(context?: CopilotContext) {
                             isComplete: true,
                         }
                         : msg
-                )
-            );
+                );
+
+                // Refrescar el historial para que recoja esta nueva pregunta-respuesta
+                // Save full session
+                if (activeSessionId) {
+                    const title = updated.find((m) => m.role === "user")?.content || "Nueva conversación";
+                    saveCopilotSession(activeSessionId, title, updated).then(() => fetchHistory());
+                }
+
+                return updated;
+            });
         } catch (err) {
             if (err instanceof Error && err.name === "AbortError") return;
 
@@ -99,17 +132,46 @@ export function useCopilotAI(context?: CopilotContext) {
         } finally {
             setIsLoading(false);
         }
-    }, [isLoading]);
+    }, [isLoading, fetchHistory, context]);
 
     const clearMessages = useCallback(() => {
         setMessages([]);
+        setCurrentSessionId(null);
         setError(null);
     }, []);
 
+    const restoreSession = useCallback((session: CopilotSession) => {
+        setMessages(session.messages || []);
+        setCurrentSessionId(session.sessionId);
+        setError(null);
+    }, []);
+
+    const removeHistoryItem = useCallback(async (id: string) => {
+        const success = await deleteCopilotSession(id);
+        if (success) {
+            await fetchHistory();
+            setMessages([]);
+            setCurrentSessionId(null);
+        }
+        return success;
+    }, [fetchHistory]);
+
+    const renameHistoryItem = useCallback(async (id: string, title: string) => {
+        const success = await updateCopilotSessionTitle(id, title);
+        if (success) {
+            await fetchHistory();
+        }
+        return success;
+    }, [fetchHistory]);
+
     return {
         messages,
+        historySessions,
         sendMessage,
         clearMessages,
+        restoreSession,
+        removeHistoryItem,
+        renameHistoryItem,
         isLoading,
         error,
     };

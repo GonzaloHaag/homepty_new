@@ -473,6 +473,15 @@ export interface CopilotMessage {
     content: string;
     timestamp: string;
     isComplete: boolean;
+    title?: string;
+}
+
+export interface CopilotSession {
+    id: string;
+    sessionId: string;
+    title: string;
+    messages: CopilotMessage[];
+    updatedAt: string;
 }
 
 // ============================================================

@@ -3,6 +3,7 @@ import { verifySession } from "@/lib/auth";
 import { brainAI } from "@/lib/brain-client";
 import { buildCopilotContext, contextToPrompt } from "@/lib/copilot-context";
 import { getCrmDashboardStats } from "@/server/queries/crm-stats";
+import { trackActivity } from "@/server/actions/activity-tracker";
 import type { CopilotContext } from "@/lib/brain-types";
 
 /**
@@ -115,6 +116,18 @@ export async function POST(req: NextRequest) {
                 response = await fallbackResponse(enrichedQuery, userId);
             }
         }
+
+        // 5. Track this activity for ML & User History
+        // run asynchronously so we don't block the UI
+        trackActivity({
+            tipo_actividad: "copilot_query",
+            modulo: context?.currentModule ?? "unknown",
+            metadata: {
+                query: message,
+                response: response,
+                intent: intent
+            }
+        }).catch(err => console.warn("[CopilotAPI] Track err:", err));
 
         return NextResponse.json({
             response,
