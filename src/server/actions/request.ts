@@ -5,6 +5,7 @@ import { RequestSchema } from "@/schemas";
 import { Request } from "@/types";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { trackActivity } from "./activity-tracker";
 import z from "zod";
 
 export async function createRequestAction({ request }: { request: unknown }) {
@@ -33,6 +34,7 @@ export async function createRequestAction({ request }: { request: unknown }) {
     };
   }
   revalidatePath("/requests");
+  trackActivity({ tipo_actividad: "solicitud_creada", modulo: "requests", entidad_tipo: "solicitud", metadata: { tipo_operacion: validatedFields.data.tipo_operacion } }).catch(() => { });
   redirect("/requests");
 }
 
