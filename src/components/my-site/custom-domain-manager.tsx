@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, Globe, Loader2, AlertCircle, Info } from "lucide-react";
 
 interface CustomDomainManagerProps {
@@ -55,8 +54,8 @@ export function CustomDomainManager({
       setSuccess(
         "¡Dominio agregado exitosamente! Por favor configura tu DNS."
       );
-    } catch (err: any) {
-      setError(err.message || "Error al agregar el dominio. Intenta de nuevo.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Error al agregar el dominio. Intenta de nuevo.");
     } finally {
       setLoading(false);
     }
@@ -95,8 +94,8 @@ export function CustomDomainManager({
           "El dominio aún no está verificado. Por favor verifica tu configuración DNS."
         );
       }
-    } catch (err: any) {
-      setError(err.message || "Error al verificar el dominio. Intenta de nuevo.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Error al verificar el dominio. Intenta de nuevo.");
     } finally {
       setLoading(false);
     }

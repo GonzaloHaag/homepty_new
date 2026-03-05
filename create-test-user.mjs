@@ -1,6 +1,7 @@
 /**
  * Script para crear un usuario de prueba en Supabase
  * Ejecutar con: node create-test-user.mjs
+ * Todo: Eliminar esto
  */
 
 import { createClient } from "@supabase/supabase-js";

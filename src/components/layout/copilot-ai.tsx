@@ -71,13 +71,10 @@ export function CopilotAI() {
     return (
         <div className="flex flex-col h-full bg-gradient-to-b from-background to-muted/20">
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b bg-background/80 backdrop-blur-sm">
-                <div className="flex items-center gap-2">
-                    <div className="relative">
-                        <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center">
-                            <Sparkles className="h-4 w-4 text-white" />
-                        </div>
-                        <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 border-2 border-background" />
+            <div className="h-16 px-4 border-b border-gray-100 bg-white/80 backdrop-blur-md flex items-center justify-between shrink-0">
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-linear-to-tr from-violet-600 to-indigo-600 flex items-center justify-center shadow-md shadow-violet-200">
+                        <SparklesIcon className="text-white w-4 h-4" />
                     </div>
                     <div>
                         <h3 className="text-sm font-semibold">AI Copilot</h3>
@@ -233,12 +230,18 @@ export function CopilotAI() {
                                 );
                             })
                         )}
-                    </div>
-                ) : messages.length === 0 ? (
-                    // Empty state with suggested questions
-                    <div className="flex flex-col items-center justify-center h-full gap-4 text-center">
-                        <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-violet-500/10 to-blue-500/10 flex items-center justify-center">
-                            <Bot className="h-6 w-6 text-violet-500" />
+                    >
+                        <div className={cn(
+                            "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 shadow-sm mt-1 overflow-hidden",
+                            msg.role === "assistant" ? "bg-white border border-gray-200" : "bg-slate-200 border border-white"
+                        )}>
+                            {msg.role === "assistant" ? (
+                                <BotIcon className="text-violet-600 w-4 h-4" />
+                            ) : (
+                                <div className="bg-slate-300 w-full h-full flex items-center justify-center text-xs font-bold text-slate-500">
+                                    E
+                                </div>
+                            )}
                         </div>
                         <div>
                             <p className="text-sm font-medium">
@@ -261,19 +264,18 @@ export function CopilotAI() {
                             ))}
                         </div>
                     </div>
-                ) : (
-                    // Message list
-                    messages.map((msg) => (
-                        <div
-                            key={msg.id}
-                            className={cn(
-                                "flex gap-2",
-                                msg.role === "user" ? "justify-end" : "justify-start"
-                            )}
-                        >
-                            {msg.role === "assistant" && (
-                                <div className="h-6 w-6 rounded-md bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                    <Bot className="h-3.5 w-3.5 text-white" />
+                ))}
+
+                {/* Example Property Card in Chat */}
+                <div className="flex gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center shrink-0 shadow-sm mt-1">
+                        <BotIcon className="text-violet-600 w-4 h-4" />
+                    </div>
+                    <div className="flex flex-col gap-2 max-w-[85%]">
+                        <div className="bg-white border border-gray-200 p-3 rounded-xl shadow-sm">
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className="w-12 h-12 rounded-lg bg-slate-100 relative overflow-hidden">
+                                    <div className="w-full h-full bg-linear-to-br from-slate-200 to-slate-300 animate-pulse" />
                                 </div>
                             )}
                             <div
@@ -299,7 +301,14 @@ export function CopilotAI() {
                                 <div className="h-6 w-6 rounded-md bg-foreground/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                                     <User className="h-3.5 w-3.5 text-foreground/60" />
                                 </div>
-                            )}
+                            </div>
+                            <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden mb-3">
+                                <div className="bg-linear-to-r from-violet-600 to-indigo-600 h-full w-[85%]"></div>
+                            </div>
+                            <div className="flex gap-2">
+                                <button className="flex-1 text-[10px] py-1.5 bg-gray-50 border border-gray-200 rounded hover:bg-gray-100 transition-colors font-medium text-gray-600">Detalles</button>
+                                <button className="flex-1 text-[10px] py-1.5 bg-violet-600/10 text-violet-600 border border-violet-100 rounded hover:bg-violet-600/20 transition-colors font-medium">Agendar</button>
+                            </div>
                         </div>
                     ))
                 )}
@@ -316,10 +325,14 @@ export function CopilotAI() {
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* Input Area (only visible in chat view) */}
-            {view === "chat" && (
-                <div className="px-4 py-3 border-t bg-background/80 backdrop-blur-sm">
-                    <div className="flex items-center gap-2 bg-muted/50 rounded-xl px-3 py-2 border border-border/50 focus-within:border-violet-500/30 focus-within:ring-1 focus-within:ring-violet-500/20 transition-all">
+            {/* Input Area */}
+            <div className="p-4 bg-white border-t border-gray-100">
+                <div className="relative group">
+                    <div className="absolute -inset-0.5 bg-linear-to-r from-violet-600 to-indigo-600 rounded-xl opacity-0 group-focus-within:opacity-20 transition duration-500 blur-sm"></div>
+                    <div className="relative flex items-center bg-gray-50 rounded-xl shadow-inner overflow-hidden border border-gray-200 focus-within:bg-white focus-within:ring-0 transition-colors">
+                        <div className="pl-3 text-violet-600">
+                            <SparklesIcon size={18} />
+                        </div>
                         <input
                             ref={inputRef}
                             type="text"
