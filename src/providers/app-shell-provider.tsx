@@ -14,11 +14,12 @@ export function AppShellProvider({ children }: PropsWithChildren) {
   const value = useMemo(
     () => ({
       isRightCollapsed,
+      rightPanelContent,
       toggleSidebarRight,
       setIsRightCollapsed,
       setRightPanelContent,
     }),
-    [isRightCollapsed, toggleSidebarRight],
+    [isRightCollapsed, rightPanelContent, toggleSidebarRight],
   );
 
   return (

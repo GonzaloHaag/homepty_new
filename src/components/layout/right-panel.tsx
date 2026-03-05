@@ -4,8 +4,19 @@ import {
     BellIcon,
     SparklesIcon,
 } from "lucide-react";
+import { useAppShell } from "@/hooks";
 
 export function RightPanel() {
+    const { rightPanelContent } = useAppShell();
+
+    if (rightPanelContent) {
+        return (
+            <aside className="h-full w-full overflow-hidden flex flex-col relative z-0 shrink-0">
+                {rightPanelContent}
+            </aside>
+        );
+    }
+
     return (
         <aside className="h-full w-full bg-transparent border-none overflow-hidden flex flex-col relative z-0 shrink-0">
             <div className="p-5 border-none flex items-center justify-between">
@@ -31,7 +42,7 @@ export function RightPanel() {
                     </div>
                     <div className="space-y-3">
                         <div className="flex gap-3 items-start group">
-                            <div className="flex flex-col items-center min-w-[36px]">
+                            <div className="flex flex-col items-center min-w-9">
                                 <span className="text-[10px] font-bold text-slate-400">
                                     10:00
                                 </span>
@@ -45,7 +56,7 @@ export function RightPanel() {
                             </div>
                         </div>
                         <div className="flex gap-3 items-start group">
-                            <div className="flex flex-col items-center min-w-[36px]">
+                            <div className="flex flex-col items-center min-w-9">
                                 <span className="text-[10px] font-bold text-slate-400">
                                     14:30
                                 </span>
@@ -67,7 +78,7 @@ export function RightPanel() {
                             AI Insights
                         </span>
                     </div>
-                    <div className="bg-gradient-to-br from-indigo-600 to-violet-600 rounded-xl p-4 text-white shadow-lg shadow-indigo-200 relative overflow-hidden">
+                    <div className="bg-linear-to-br from-indigo-600 to-violet-600 rounded-xl p-4 text-white shadow-lg shadow-indigo-200 relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full blur-xl -mr-8 -mt-8"></div>
                         <h4 className="font-bold text-sm mb-1 relative z-10">
                             Oportunidad Detectada

@@ -1354,15 +1354,36 @@ export type Database = {
       offer_status: "Activa" | "Pausada"
       tipo_operacion: "Comprar" | "Rentar"
       tipo_propiedad:
-        | "Casa"
+        | "Casa sola"
+        | "Casa en condominio"
+        | "Villa / Residencia"
         | "Departamento"
-        | "Terreno"
-        | "Oficina"
-        | "Local comercial"
-        | "Bodega"
-        | "Lote"
         | "Loft"
-        | "Nave comercial"
+        | "Penthouse"
+        | "Studio"
+        | "Casa de playa"
+        | "Cabaña / Glamping"
+        | "Local comercial"
+        | "Plaza comercial"
+        | "Centro comercial"
+        | "Restaurante"
+        | "Dark kitchen"
+        | "Oficina corporativa"
+        | "Coworking / Flex"
+        | "Consultorio"
+        | "Bodega logística"
+        | "Centro de distribución"
+        | "Nave industrial"
+        | "Parque industrial"
+        | "Hotel"
+        | "Boutique hotel"
+        | "Airbnb / Vacation rental"
+        | "Clínica / Consultorio"
+        | "Hospital"
+        | "Terreno urbano"
+        | "Lote residencial"
+        | "Terreno industrial"
+        | "Terreno agropecuario"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1494,15 +1515,36 @@ export const Constants = {
       offer_status: ["Activa", "Pausada"],
       tipo_operacion: ["Comprar", "Rentar"],
       tipo_propiedad: [
-        "Casa",
+        "Casa sola",
+        "Casa en condominio",
+        "Villa / Residencia",
         "Departamento",
-        "Terreno",
-        "Oficina",
-        "Local comercial",
-        "Bodega",
-        "Lote",
         "Loft",
-        "Nave comercial",
+        "Penthouse",
+        "Studio",
+        "Casa de playa",
+        "Cabaña / Glamping",
+        "Local comercial",
+        "Plaza comercial",
+        "Centro comercial",
+        "Restaurante",
+        "Dark kitchen",
+        "Oficina corporativa",
+        "Coworking / Flex",
+        "Consultorio",
+        "Bodega logística",
+        "Centro de distribución",
+        "Nave industrial",
+        "Parque industrial",
+        "Hotel",
+        "Boutique hotel",
+        "Airbnb / Vacation rental",
+        "Clínica / Consultorio",
+        "Hospital",
+        "Terreno urbano",
+        "Lote residencial",
+        "Terreno industrial",
+        "Terreno agropecuario",
       ],
     },
   },

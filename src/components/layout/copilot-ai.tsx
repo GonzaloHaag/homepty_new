@@ -69,12 +69,12 @@ export function CopilotAI() {
     ];
 
     return (
-        <div className="flex flex-col h-full bg-gradient-to-b from-background to-muted/20">
+        <div className="flex flex-col h-full bg-linear-to-b from-background to-muted/20">
             {/* Header */}
             <div className="h-16 px-4 border-b border-gray-100 bg-white/80 backdrop-blur-md flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-linear-to-tr from-violet-600 to-indigo-600 flex items-center justify-center shadow-md shadow-violet-200">
-                        <SparklesIcon className="text-white w-4 h-4" />
+                        <Sparkles className="text-white w-4 h-4" />
                     </div>
                     <div>
                         <h3 className="text-sm font-semibold">AI Copilot</h3>
@@ -127,7 +127,6 @@ export function CopilotAI() {
                                 if (msgs.length === 0) return null;
 
                                 // Mostrar la primera pregunta del usuario y la respuesta a esa pregunta (o la última)
-                                const firstUserMsg = msgs.find(m => m.role === "user");
                                 const firstAsstMsg = msgs.find(m => m.role === "assistant");
 
                                 return (
@@ -144,7 +143,7 @@ export function CopilotAI() {
                                         {/* User Query / Title Row */}
                                         <div className="flex items-start justify-between gap-2">
                                             <div className="flex gap-2 flex-1 min-w-0">
-                                                <div className="h-6 w-6 rounded-md bg-foreground/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                <div className="h-6 w-6 rounded-md bg-foreground/10 flex items-center justify-center shrink-0 mt-0.5">
                                                     <User className="h-3.5 w-3.5 text-foreground/60" />
                                                 </div>
                                                 {editingId === session.id ? (
@@ -182,7 +181,7 @@ export function CopilotAI() {
 
                                             {/* Action Buttons */}
                                             {editingId !== session.id && (
-                                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
                                                     <button
                                                         onClick={(e) => {
                                                             e.stopPropagation();
@@ -213,7 +212,7 @@ export function CopilotAI() {
                                         {/* Assistant Answer Preview */}
                                         {firstAsstMsg && (
                                             <div className="flex gap-2 pt-2 border-t border-border/50 mt-2">
-                                                <div className="h-6 w-6 rounded-md bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                <div className="h-6 w-6 rounded-md bg-linear-to-br from-violet-500 to-blue-500 flex items-center justify-center shrink-0 mt-0.5">
                                                     <Bot className="h-3.5 w-3.5 text-white" />
                                                 </div>
                                                 <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed line-clamp-4">
@@ -230,20 +229,14 @@ export function CopilotAI() {
                                 );
                             })
                         )}
-                    >
-                        <div className={cn(
-                            "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 shadow-sm mt-1 overflow-hidden",
-                            msg.role === "assistant" ? "bg-white border border-gray-200" : "bg-slate-200 border border-white"
-                        )}>
-                            {msg.role === "assistant" ? (
-                                <BotIcon className="text-violet-600 w-4 h-4" />
-                            ) : (
-                                <div className="bg-slate-300 w-full h-full flex items-center justify-center text-xs font-bold text-slate-500">
-                                    E
-                                </div>
-                            )}
+                    </div>
+                ) : messages.length === 0 ? (
+                    /* Welcome / empty state */
+                    <div className="flex flex-col items-center gap-4 py-8">
+                        <div className="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center shrink-0 shadow-sm">
+                            <Bot className="text-violet-600 w-4 h-4" />
                         </div>
-                        <div>
+                        <div className="text-center">
                             <p className="text-sm font-medium">
                                 Hola, soy tu copiloto inmobiliario
                             </p>
@@ -264,53 +257,51 @@ export function CopilotAI() {
                             ))}
                         </div>
                     </div>
-                ))}
-
-                {/* Example Property Card in Chat */}
-                <div className="flex gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center shrink-0 shadow-sm mt-1">
-                        <BotIcon className="text-violet-600 w-4 h-4" />
-                    </div>
-                    <div className="flex flex-col gap-2 max-w-[85%]">
-                        <div className="bg-white border border-gray-200 p-3 rounded-xl shadow-sm">
-                            <div className="flex items-center gap-3 mb-3">
-                                <div className="w-12 h-12 rounded-lg bg-slate-100 relative overflow-hidden">
-                                    <div className="w-full h-full bg-linear-to-br from-slate-200 to-slate-300 animate-pulse" />
-                                </div>
-                            )}
+                ) : (
+                    /* Messages list */
+                    <>
+                        {messages.map((msg) => (
                             <div
+                                key={msg.id}
                                 className={cn(
+                                    "flex gap-3",
+                                    msg.role === "user" && "flex-row-reverse"
+                                )}
+                            >
+                                <div className={cn(
+                                    "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 shadow-sm mt-1 overflow-hidden",
+                                    msg.role === "assistant"
+                                        ? "bg-white border border-gray-200"
+                                        : "bg-slate-200 border border-white"
+                                )}>
+                                    {msg.role === "assistant" ? (
+                                        <Bot className="text-violet-600 w-4 h-4" />
+                                    ) : (
+                                        <div className="bg-slate-300 w-full h-full flex items-center justify-center text-xs font-bold text-slate-500">
+                                            E
+                                        </div>
+                                    )}
+                                </div>
+                                <div className={cn(
                                     "max-w-[85%] rounded-xl px-3 py-2 text-sm",
                                     msg.role === "user"
                                         ? "bg-primary text-primary-foreground"
                                         : "bg-muted/60 border border-border/50"
-                                )}
-                            >
-                                {msg.role === "assistant" && !msg.isComplete ? (
-                                    <div className="flex items-center gap-2 text-muted-foreground">
-                                        <Loader2 className="h-3 w-3 animate-spin" />
-                                        <span className="text-xs">Procesando...</span>
-                                    </div>
-                                ) : (
-                                    <p className="whitespace-pre-wrap leading-relaxed">
-                                        {msg.content}
-                                    </p>
-                                )}
-                            </div>
-                            {msg.role === "user" && (
-                                <div className="h-6 w-6 rounded-md bg-foreground/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                    <User className="h-3.5 w-3.5 text-foreground/60" />
+                                )}>
+                                    {msg.role === "assistant" && !msg.isComplete ? (
+                                        <div className="flex items-center gap-2 text-muted-foreground">
+                                            <Loader2 className="h-3 w-3 animate-spin" />
+                                            <span className="text-xs">Procesando...</span>
+                                        </div>
+                                    ) : (
+                                        <p className="whitespace-pre-wrap leading-relaxed">
+                                            {msg.content}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
-                            <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden mb-3">
-                                <div className="bg-linear-to-r from-violet-600 to-indigo-600 h-full w-[85%]"></div>
-                            </div>
-                            <div className="flex gap-2">
-                                <button className="flex-1 text-[10px] py-1.5 bg-gray-50 border border-gray-200 rounded hover:bg-gray-100 transition-colors font-medium text-gray-600">Detalles</button>
-                                <button className="flex-1 text-[10px] py-1.5 bg-violet-600/10 text-violet-600 border border-violet-100 rounded hover:bg-violet-600/20 transition-colors font-medium">Agendar</button>
-                            </div>
-                        </div>
-                    ))
+                        ))}
+                    </>
                 )}
 
                 {/* Error indicator */}
@@ -331,7 +322,7 @@ export function CopilotAI() {
                     <div className="absolute -inset-0.5 bg-linear-to-r from-violet-600 to-indigo-600 rounded-xl opacity-0 group-focus-within:opacity-20 transition duration-500 blur-sm"></div>
                     <div className="relative flex items-center bg-gray-50 rounded-xl shadow-inner overflow-hidden border border-gray-200 focus-within:bg-white focus-within:ring-0 transition-colors">
                         <div className="pl-3 text-violet-600">
-                            <SparklesIcon size={18} />
+                            <Sparkles size={18} />
                         </div>
                         <input
                             ref={inputRef}
@@ -364,7 +355,7 @@ export function CopilotAI() {
                         Powered by Homepty Brain · Manus Forge · Gemini
                     </p>
                 </div>
-            )}
+            </div>
         </div>
     );
 }
