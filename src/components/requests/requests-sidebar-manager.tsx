@@ -2,7 +2,6 @@
 import { useEffect } from "react";
 import { useAppShell } from "@/hooks";
 
-
 export function RequestsSidebarManager() {
     const { setIsRightCollapsed } = useAppShell();
 

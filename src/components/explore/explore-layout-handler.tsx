@@ -2,7 +2,7 @@
 
 import { useAppShell } from "@/hooks";
 import { useEffect } from "react";
-
+import { useAppShell } from "@/hooks";
 
 interface Props {
     rightPanel: React.ReactNode;

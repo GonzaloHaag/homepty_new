@@ -1,5 +1,7 @@
 "use client";
 
+import { useAppShell } from "@/hooks";
+import { PropertyWithImages } from "@/types";
 import { useEffect } from "react";
 import { PropertyWithImages } from "@/types";
 import { PropertyContent } from "./property-content";

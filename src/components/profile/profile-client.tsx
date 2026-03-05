@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-
+import { useAppShell } from "@/hooks";
 import { ProfileStats } from "./profile-stats";
 import { useAppShell } from "@/hooks";
 

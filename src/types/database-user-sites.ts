@@ -21,6 +21,7 @@ export interface UserSiteRow {
   user_id_supabase: string;
   site_name: string;
   custom_domain: string | null;
+  domain_verified: boolean;
   subdomain: string | null;
   cbf_api_key: string;
   is_active: boolean;
@@ -36,6 +37,7 @@ export interface UserSiteInsert {
   user_id_supabase: string;
   site_name: string;
   custom_domain?: string | null;
+  domain_verified?: boolean;
   subdomain?: string | null;
   cbf_api_key: string;
   is_active?: boolean;
@@ -50,6 +52,7 @@ export interface UserSiteUpdate {
   user_id_supabase?: string;
   site_name?: string;
   custom_domain?: string | null;
+  domain_verified?: boolean;
   subdomain?: string | null;
   cbf_api_key?: string;
   is_active?: boolean;
