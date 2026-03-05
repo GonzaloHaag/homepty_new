@@ -21,10 +21,8 @@ interface ModuleHeaderProps {
     useAiIcon?: boolean;
     hideSearch?: boolean;
 }
-import { useAppShell } from "@/hooks";
+
 import { useSidebar, SidebarTrigger } from "../ui/sidebar";
-
-
 
 export function ModuleHeader({
     title,

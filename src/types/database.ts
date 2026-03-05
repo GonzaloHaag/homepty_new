@@ -32,6 +32,39 @@ export type Database = {
         }
         Relationships: []
       }
+      actividad_usuario: {
+        Row: {
+          created_at: string | null
+          entidad_id: string | null
+          entidad_tipo: string | null
+          id: number
+          metadata: Json | null
+          modulo: string
+          tipo_actividad: string
+          usuario_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          entidad_id?: string | null
+          entidad_tipo?: string | null
+          id?: number
+          metadata?: Json | null
+          modulo: string
+          tipo_actividad: string
+          usuario_id: string
+        }
+        Update: {
+          created_at?: string | null
+          entidad_id?: string | null
+          entidad_tipo?: string | null
+          id?: number
+          metadata?: Json | null
+          modulo?: string
+          tipo_actividad?: string
+          usuario_id?: string
+        }
+        Relationships: []
+      }
       amenidades: {
         Row: {
           created_at: string
@@ -328,6 +361,103 @@ export type Database = {
           },
         ]
       }
+      easybroker_integrations: {
+        Row: {
+          api_key: string
+          created_at: string
+          error_message: string | null
+          id: string
+          id_usuario: string
+          is_active: boolean
+          last_sync_at: string | null
+          last_sync_status: string | null
+          properties_synced_count: number | null
+          sync_frequency_hours: number | null
+          updated_at: string
+        }
+        Insert: {
+          api_key: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          id_usuario: string
+          is_active?: boolean
+          last_sync_at?: string | null
+          last_sync_status?: string | null
+          properties_synced_count?: number | null
+          sync_frequency_hours?: number | null
+          updated_at?: string
+        }
+        Update: {
+          api_key?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          id_usuario?: string
+          is_active?: boolean
+          last_sync_at?: string | null
+          last_sync_status?: string | null
+          properties_synced_count?: number | null
+          sync_frequency_hours?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "easybroker_integrations_id_usuario_fkey"
+            columns: ["id_usuario"]
+            isOneToOne: true
+            referencedRelation: "usuarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      easybroker_sync_logs: {
+        Row: {
+          created_at: string
+          error_details: Json | null
+          id: string
+          integration_id: string
+          properties_added: number | null
+          properties_failed: number | null
+          properties_updated: number | null
+          status: string | null
+          sync_completed_at: string | null
+          sync_started_at: string
+        }
+        Insert: {
+          created_at?: string
+          error_details?: Json | null
+          id?: string
+          integration_id: string
+          properties_added?: number | null
+          properties_failed?: number | null
+          properties_updated?: number | null
+          status?: string | null
+          sync_completed_at?: string | null
+          sync_started_at?: string
+        }
+        Update: {
+          created_at?: string
+          error_details?: Json | null
+          id?: string
+          integration_id?: string
+          properties_added?: number | null
+          properties_failed?: number | null
+          properties_updated?: number | null
+          status?: string | null
+          sync_completed_at?: string | null
+          sync_started_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "easybroker_sync_logs_integration_id_fkey"
+            columns: ["integration_id"]
+            isOneToOne: false
+            referencedRelation: "easybroker_integrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       estados: {
         Row: {
           created_at: string
@@ -506,6 +636,109 @@ export type Database = {
           nombre_pais?: string
         }
         Relationships: []
+      }
+      property_attribute_values: {
+        Row: {
+          attribute_id: number
+          created_at: string
+          id: number
+          property_id: string
+          updated_at: string
+          valor_booleano: boolean | null
+          valor_numerico: number | null
+          valor_texto: string | null
+        }
+        Insert: {
+          attribute_id: number
+          created_at?: string
+          id?: number
+          property_id: string
+          updated_at?: string
+          valor_booleano?: boolean | null
+          valor_numerico?: number | null
+          valor_texto?: string | null
+        }
+        Update: {
+          attribute_id?: number
+          created_at?: string
+          id?: number
+          property_id?: string
+          updated_at?: string
+          valor_booleano?: boolean | null
+          valor_numerico?: number | null
+          valor_texto?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_attribute_values_attribute_id_fkey"
+            columns: ["attribute_id"]
+            isOneToOne: false
+            referencedRelation: "tax_attributes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      property_taxonomy: {
+        Row: {
+          created_at: string
+          id: number
+          property_id: string
+          segment_id: number | null
+          subsegment_id: number | null
+          tipologia_id: number | null
+          updated_at: string
+          vertical_id: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          property_id: string
+          segment_id?: number | null
+          subsegment_id?: number | null
+          tipologia_id?: number | null
+          updated_at?: string
+          vertical_id?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          property_id?: string
+          segment_id?: number | null
+          subsegment_id?: number | null
+          tipologia_id?: number | null
+          updated_at?: string
+          vertical_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_taxonomy_segment_id_fkey"
+            columns: ["segment_id"]
+            isOneToOne: false
+            referencedRelation: "tax_segments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "property_taxonomy_subsegment_id_fkey"
+            columns: ["subsegment_id"]
+            isOneToOne: false
+            referencedRelation: "tax_subsegments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "property_taxonomy_tipologia_id_fkey"
+            columns: ["tipologia_id"]
+            isOneToOne: false
+            referencedRelation: "tax_tipologias"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "property_taxonomy_vertical_id_fkey"
+            columns: ["vertical_id"]
+            isOneToOne: false
+            referencedRelation: "tax_verticals"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       propiedades: {
         Row: {
@@ -737,6 +970,203 @@ export type Database = {
         }
         Relationships: []
       }
+      tax_attributes: {
+        Row: {
+          clave: string
+          created_at: string
+          es_global: boolean
+          id: number
+          nombre: string
+          opciones_enum: string[] | null
+          orden: number
+          requerido: boolean
+          subsegment_id: number | null
+          tipo_dato: string
+          unidad: string | null
+        }
+        Insert: {
+          clave: string
+          created_at?: string
+          es_global?: boolean
+          id?: number
+          nombre: string
+          opciones_enum?: string[] | null
+          orden?: number
+          requerido?: boolean
+          subsegment_id?: number | null
+          tipo_dato: string
+          unidad?: string | null
+        }
+        Update: {
+          clave?: string
+          created_at?: string
+          es_global?: boolean
+          id?: number
+          nombre?: string
+          opciones_enum?: string[] | null
+          orden?: number
+          requerido?: boolean
+          subsegment_id?: number | null
+          tipo_dato?: string
+          unidad?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tax_attributes_subsegment_id_fkey"
+            columns: ["subsegment_id"]
+            isOneToOne: false
+            referencedRelation: "tax_subsegments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tax_segments: {
+        Row: {
+          activo: boolean
+          created_at: string
+          descripcion: string | null
+          id: number
+          nombre: string
+          orden: number
+          vertical_id: number
+        }
+        Insert: {
+          activo?: boolean
+          created_at?: string
+          descripcion?: string | null
+          id?: number
+          nombre: string
+          orden?: number
+          vertical_id: number
+        }
+        Update: {
+          activo?: boolean
+          created_at?: string
+          descripcion?: string | null
+          id?: number
+          nombre?: string
+          orden?: number
+          vertical_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tax_segments_vertical_id_fkey"
+            columns: ["vertical_id"]
+            isOneToOne: false
+            referencedRelation: "tax_verticals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tax_subsegments: {
+        Row: {
+          activo: boolean
+          created_at: string
+          descripcion: string | null
+          id: number
+          nombre: string
+          orden: number
+          segment_id: number
+        }
+        Insert: {
+          activo?: boolean
+          created_at?: string
+          descripcion?: string | null
+          id?: number
+          nombre: string
+          orden?: number
+          segment_id: number
+        }
+        Update: {
+          activo?: boolean
+          created_at?: string
+          descripcion?: string | null
+          id?: number
+          nombre?: string
+          orden?: number
+          segment_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tax_subsegments_segment_id_fkey"
+            columns: ["segment_id"]
+            isOneToOne: false
+            referencedRelation: "tax_segments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tax_tipologias: {
+        Row: {
+          activo: boolean
+          codigo_oficial: string | null
+          created_at: string
+          descripcion: string | null
+          id: number
+          nombre: string
+          orden: number
+          vertical_id: number
+        }
+        Insert: {
+          activo?: boolean
+          codigo_oficial?: string | null
+          created_at?: string
+          descripcion?: string | null
+          id?: number
+          nombre: string
+          orden?: number
+          vertical_id: number
+        }
+        Update: {
+          activo?: boolean
+          codigo_oficial?: string | null
+          created_at?: string
+          descripcion?: string | null
+          id?: number
+          nombre?: string
+          orden?: number
+          vertical_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tax_tipologias_vertical_id_fkey"
+            columns: ["vertical_id"]
+            isOneToOne: false
+            referencedRelation: "tax_verticals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tax_verticals: {
+        Row: {
+          activo: boolean
+          created_at: string
+          descripcion: string | null
+          icono: string | null
+          id: number
+          nombre: string
+          orden: number
+        }
+        Insert: {
+          activo?: boolean
+          created_at?: string
+          descripcion?: string | null
+          icono?: string | null
+          id?: number
+          nombre: string
+          orden?: number
+        }
+        Update: {
+          activo?: boolean
+          created_at?: string
+          descripcion?: string | null
+          icono?: string | null
+          id?: number
+          nombre?: string
+          orden?: number
+        }
+        Relationships: []
+      }
       tipospropiedades: {
         Row: {
           created_at: string
@@ -754,6 +1184,56 @@ export type Database = {
           nombre_tipo_propiedad?: string
         }
         Relationships: []
+      }
+      user_sites: {
+        Row: {
+          cbf_api_key: string
+          created_at: string | null
+          custom_domain: string | null
+          id: string
+          is_active: boolean | null
+          seo_config: Json | null
+          site_name: string
+          subdomain: string | null
+          theme_config: Json | null
+          updated_at: string | null
+          user_id_supabase: string
+        }
+        Insert: {
+          cbf_api_key: string
+          created_at?: string | null
+          custom_domain?: string | null
+          id?: string
+          is_active?: boolean | null
+          seo_config?: Json | null
+          site_name: string
+          subdomain?: string | null
+          theme_config?: Json | null
+          updated_at?: string | null
+          user_id_supabase: string
+        }
+        Update: {
+          cbf_api_key?: string
+          created_at?: string | null
+          custom_domain?: string | null
+          id?: string
+          is_active?: boolean | null
+          seo_config?: Json | null
+          site_name?: string
+          subdomain?: string | null
+          theme_config?: Json | null
+          updated_at?: string | null
+          user_id_supabase?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_sites_user_id_supabase_fkey"
+            columns: ["user_id_supabase"]
+            isOneToOne: false
+            referencedRelation: "usuarios"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       usospropiedades: {
         Row: {
@@ -862,114 +1342,6 @@ export type Database = {
           },
         ]
       }
-      easybroker_integrations: {
-        Row: {
-          id: string
-          id_usuario: string
-          api_key: string
-          is_active: boolean
-          last_sync_at: string | null
-          last_sync_status: string
-          sync_frequency_hours: number
-          properties_synced_count: number
-          error_message: string | null
-      user_sites: {
-        Row: {
-          id: string
-          user_id_supabase: string
-          site_name: string
-          custom_domain: string | null
-          subdomain: string | null
-          cbf_api_key: string
-          is_active: boolean
-          theme_config: Json | null
-          seo_config: Json | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          id_usuario: string
-          api_key: string
-          is_active?: boolean
-          last_sync_at?: string | null
-          last_sync_status?: string
-          sync_frequency_hours?: number
-          properties_synced_count?: number
-          error_message?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          id_usuario?: string
-          api_key?: string
-          is_active?: boolean
-          last_sync_at?: string | null
-          last_sync_status?: string
-          sync_frequency_hours?: number
-          properties_synced_count?: number
-          error_message?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "easybroker_integrations_id_usuario_fkey"
-            columns: ["id_usuario"]
-            isOneToOne: true
-            referencedRelation: "usuarios"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      easybroker_sync_logs: {
-        Row: {
-          id: string
-          integration_id: string
-          sync_started_at: string
-          sync_completed_at: string | null
-          status: string
-          properties_added: number
-          properties_updated: number
-          properties_failed: number
-          error_details: Json | null
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          integration_id: string
-          sync_started_at?: string
-          sync_completed_at?: string | null
-          status?: string
-          properties_added?: number
-          properties_updated?: number
-          properties_failed?: number
-          error_details?: Json | null
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          integration_id?: string
-          sync_started_at?: string
-          sync_completed_at?: string | null
-          status?: string
-          properties_added?: number
-          properties_updated?: number
-          properties_failed?: number
-          error_details?: Json | null
-          created_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "easybroker_sync_logs_integration_id_fkey"
-            columns: ["integration_id"]
-            isOneToOne: false
-            referencedRelation: "easybroker_integrations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
     }
     Views: {
       [_ in never]: never
@@ -982,15 +1354,15 @@ export type Database = {
       offer_status: "Activa" | "Pausada"
       tipo_operacion: "Comprar" | "Rentar"
       tipo_propiedad:
-      | "Casa"
-      | "Departamento"
-      | "Terreno"
-      | "Oficina"
-      | "Local comercial"
-      | "Bodega"
-      | "Lote"
-      | "Loft"
-      | "Nave comercial"
+        | "Casa"
+        | "Departamento"
+        | "Terreno"
+        | "Oficina"
+        | "Local comercial"
+        | "Bodega"
+        | "Lote"
+        | "Loft"
+        | "Nave comercial"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1004,116 +1376,116 @@ type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
-  | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-  | { schema: keyof DatabaseWithoutInternals },
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-    DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-  : never = never,
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-    DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
-  ? R
-  : never
+    ? R
+    : never
   : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
-    DefaultSchema["Views"])
-  ? (DefaultSchema["Tables"] &
-    DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-      Row: infer R
-    }
-  ? R
-  : never
-  : never
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-  | keyof DefaultSchema["Tables"]
-  | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-  : never = never,
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-    Insert: infer I
-  }
-  ? I
-  : never
+      Insert: infer I
+    }
+    ? I
+    : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-    Insert: infer I
-  }
-  ? I
-  : never
-  : never
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-  | keyof DefaultSchema["Tables"]
-  | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-  : never = never,
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-    Update: infer U
-  }
-  ? U
-  : never
+      Update: infer U
+    }
+    ? U
+    : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-    Update: infer U
-  }
-  ? U
-  : never
-  : never
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-  | keyof DefaultSchema["Enums"]
-  | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-  : never = never,
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
-  ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
-  : never
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-  | keyof DefaultSchema["CompositeTypes"]
-  | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-  : never = never,
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
-  ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-  : never
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
 
 export const Constants = {
   public: {
