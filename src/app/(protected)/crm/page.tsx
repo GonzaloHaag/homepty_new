@@ -1,111 +1,80 @@
-import { CrmLayoutHandler } from "@/components/crm/crm-layout-handler";
 import {
   CardCrm,
   ChartAnnualSalesStatistics,
-  ChartTypesOfProperties,
   ChartLocationOfProperties,
   ChartProgressClosedProperties,
+  ChartTypesOfProperties,
 } from "@/components/crm";
-import { getCrmDashboardStats } from "@/server/queries";
-import { Suspense } from "react";
-import { Building, Users, Eye, BarChart3 } from "lucide-react";
+import {
+  Building2Icon,
+  EyeIcon,
+  HouseIcon,
+  LayersIcon,
+} from "lucide-react";
+import { CrmLayoutHandler } from "@/components/crm/crm-layout-handler";
 
-export default async function CrmPage() {
-  const statsPromise = getCrmDashboardStats();
 
+export default function CrmPage() {
   return (
     <>
       <CrmLayoutHandler />
-      <Suspense fallback={<CrmDashboardSkeleton />}>
-        <CrmDashboardContent statsPromise={statsPromise} />
-      </Suspense>
+      <div className="flex flex-col gap-16 py-4">
+        {/* Stats Cards Grid - More generous gaps */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <CardCrm
+            title="Inmuebles en venta"
+            Icon={Building2Icon}
+            quantity={20}
+            description="Total propiedades"
+            variant="blue"
+            tag="Venta"
+            progress={75}
+          />
+          <CardCrm
+            title="Inmuebles en alquiler"
+            Icon={HouseIcon}
+            quantity={4}
+            description="En alquiler"
+            variant="green"
+            tag="Alquiler"
+            progress={25}
+          />
+          <CardCrm
+            title="Visitas mensuales"
+            Icon={EyeIcon}
+            quantity={128}
+            description="Este mes"
+            variant="orange"
+            tag="Visitas"
+            progress={50}
+          />
+          <CardCrm
+            title="Total inmuebles"
+            Icon={LayersIcon}
+            quantity={24}
+            description="Inmuebles"
+            variant="purple"
+            tag="Total"
+            progress={100}
+          />
+        </div>
+
+        {/* Main Charts Row - Ratios matching image 1 */}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-10 items-stretch">
+          <div className="xl:col-span-8">
+            <ChartAnnualSalesStatistics />
+          </div>
+          <div className="xl:col-span-4 self-stretch">
+            <ChartTypesOfProperties />
+          </div>
+        </div>
+
+        {/* Secondary Info Row - Bottom section for location and progress */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 pb-12">
+          <ChartLocationOfProperties />
+          <ChartProgressClosedProperties />
+        </div>
+      </div>
     </>
-  );
-}
-
-async function CrmDashboardContent({
-  statsPromise,
-}: {
-  statsPromise: ReturnType<typeof getCrmDashboardStats>;
-}) {
-  const stats = await statsPromise;
-
-  return (
-    <div className="px-6 pt-4 pb-6 flex flex-col gap-6">
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        <CardCrm
-          title="Propiedades en venta"
-          Icon={Building}
-          quantity={stats.propiedadesVenta}
-          description="cartera activa"
-          progress={stats.totalPropiedades > 0 ? Math.round((stats.propiedadesVenta / stats.totalPropiedades) * 100) : 0}
-          variant="blue"
-        />
-        <CardCrm
-          title="Clientes activos"
-          Icon={Users}
-          quantity={stats.totalClientes}
-          description="registrados en CRM"
-          tag={stats.totalClientes > 0 ? "activos" : undefined}
-          variant="orange"
-        />
-        <CardCrm
-          title="Visitas mensuales"
-          Icon={Eye}
-          quantity={stats.visitasMensuales}
-          description="vista de propiedades"
-          variant="green"
-        />
-        <CardCrm
-          title="Total inmuebles"
-          Icon={BarChart3}
-          quantity={stats.totalPropiedades}
-          description={`${stats.propiedadesVenta} venta · ${stats.propiedadesRenta} renta`}
-          variant="purple"
-        />
-      </div>
-
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2">
-          <ChartAnnualSalesStatistics chartData={stats.ventasPorMes} />
-        </div>
-        <div>
-          <ChartTypesOfProperties
-            chartData={stats.tiposPropiedades}
-            totalCount={stats.totalPropiedades}
-          />
-        </div>
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2">
-          <ChartLocationOfProperties locationData={stats.localizacion} />
-        </div>
-        <div>
-          <ChartProgressClosedProperties
-            completados={stats.cierres.completados}
-            total={stats.cierres.total}
-            porcentaje={stats.cierres.porcentaje}
-          />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function CrmDashboardSkeleton() {
-  return (
-    <div className="px-6 pt-4 pb-6 flex flex-col gap-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-32 rounded-2xl bg-muted/50 animate-pulse" />
-        ))}
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 h-72 rounded-2xl bg-muted/50 animate-pulse" />
-        <div className="h-72 rounded-2xl bg-muted/50 animate-pulse" />
-      </div>
-    </div>
   );
 }

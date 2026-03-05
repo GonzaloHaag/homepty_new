@@ -1,5 +1,4 @@
 import { SectionLeft, SectionRight } from "@/components/property/development";
-import { PropertyViewTracker } from "@/components/property/view/property-view-tracker";
 import { ErrorMessage } from "@/components/shared";
 import { getPropertyById } from "@/server/queries";
 import Image from "next/image";
@@ -24,11 +23,6 @@ export default async function PropertiesDevelopmentViewPage({
 
   return (
     <div className="flex flex-col h-full">
-      <PropertyViewTracker
-        propertyId={id}
-        propertyType="development"
-        propertyName={development.nombre}
-      />
       <div className="flex-1 overflow-y-auto scrollbar-hide min-h-0 p-6">
         <section className="flex flex-col gap-y-6">
           {/** Seccion de imagenes */}

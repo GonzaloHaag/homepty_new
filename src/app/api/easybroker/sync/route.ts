@@ -70,21 +70,21 @@ const PROPERTY_TYPE_MAP: Record<
     string,
     Database["public"]["Enums"]["tipo_propiedad"]
 > = {
-    house: "Casa sola",
+    house: "Casa",
     apartment: "Departamento",
-    land: "Terreno urbano",
-    lote: "Lote residencial",
-    office: "Oficina corporativa",
+    land: "Terreno",
+    lote: "Lote",
+    office: "Oficina",
     commercial: "Local comercial",
-    warehouse: "Bodega logística",
-    building: "Nave industrial",
+    warehouse: "Bodega",
+    building: "Nave comercial",
     loft: "Loft",
 };
 
 function mapPropertyType(
     ebType: string
 ): Database["public"]["Enums"]["tipo_propiedad"] {
-    return PROPERTY_TYPE_MAP[ebType.toLowerCase()] ?? "Departamento";
+    return PROPERTY_TYPE_MAP[ebType.toLowerCase()] ?? "Casa";
 }
 
 

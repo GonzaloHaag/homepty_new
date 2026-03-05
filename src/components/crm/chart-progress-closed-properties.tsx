@@ -1,63 +1,30 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
 
-interface ChartProgressClosedPropertiesProps {
-  completados: number;
-  total: number;
-  porcentaje: number;
-}
-
-export function ChartProgressClosedProperties({
-  completados,
-  total,
-  porcentaje,
-}: ChartProgressClosedPropertiesProps) {
+export function ChartProgressClosedProperties() {
   return (
-    <Card>
+    <Card className="rounded-2xl border-none shadow-sm h-full">
       <CardHeader>
-        <CardTitle>Progreso de cierres</CardTitle>
-        <CardDescription>Ofertas cerradas del total</CardDescription>
+        <CardTitle className="text-sm font-bold text-gray-800">Progreso de cierres</CardTitle>
+        <CardDescription>Porcentaje de inmuebles con cierre exitoso</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col items-center gap-4">
-          {/* Circular Progress */}
-          <div className="relative h-32 w-32">
-            <svg className="h-full w-full" viewBox="0 0 36 36">
-              <path
-                d="M18 2.0845
-                  a 15.9155 15.9155 0 0 1 0 31.831
-                  a 15.9155 15.9155 0 0 1 0 -31.831"
-                fill="none"
-                stroke="hsl(var(--muted))"
-                strokeWidth="3"
-              />
-              <path
-                d="M18 2.0845
-                  a 15.9155 15.9155 0 0 1 0 31.831
-                  a 15.9155 15.9155 0 0 1 0 -31.831"
-                fill="none"
-                stroke="hsl(var(--chart-1))"
-                strokeWidth="3"
-                strokeDasharray={`${porcentaje}, 100`}
-                strokeLinecap="round"
-                className="transition-all duration-700"
-              />
-            </svg>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-2xl font-bold">{porcentaje}%</span>
-            </div>
+        <div className="flex flex-col gap-y-3">
+          <div className="flex items-center justify-between text-xs">
+            <span className="font-semibold text-gray-700">Cierres completados</span>
+            <span className="font-mono text-gray-500 font-bold">20%</span>
           </div>
-
-          {/* Stats */}
-          <div className="text-center space-y-1">
-            <p className="text-sm text-muted-foreground">
-              {completados} de {total} ofertas cerradas
-            </p>
-            {total === 0 && (
-              <p className="text-xs text-muted-foreground">
-                Sin ofertas registradas aún
-              </p>
-            )}
+          <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-full bg-blue-600 w-1/5 rounded-full shadow-sm shadow-blue-100" />
           </div>
+          <p className="text-[10px] text-gray-400 mt-2 italic">
+            Meta mensual: 5 cierres (1/5 completado)
+          </p>
         </div>
       </CardContent>
     </Card>

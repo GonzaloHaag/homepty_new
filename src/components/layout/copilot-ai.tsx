@@ -1,75 +1,49 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { useCopilotAI } from "@/hooks/use-copilot-ai";
-import { usePathname } from "next/navigation";
+import { useState } from "react";
 import {
-    SendHorizontal,
-    Bot,
-    User,
-    Loader2,
-    Trash2,
-    History,
-    MessageSquare,
-    Pencil,
-    Check,
-    X,
-    Sparkles,
+    SparklesIcon,
+    XIcon,
+    BotIcon,
+    MicIcon,
+    ArrowUpIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/**
- * AI Copilot — Connected to Brain LLM (Manus Forge / Gemini)
- * Uses /api/copilot route as server-side proxy to ai.* tRPC endpoints.
- */
+interface Message {
+    id: string;
+    role: "user" | "assistant";
+    content: string;
+    timestamp: string;
+}
+
 export function CopilotAI() {
-    const pathname = usePathname();
-    const currentModule = pathname.startsWith("/crm")
-        ? "crm"
-        : pathname.startsWith("/explore")
-            ? "explore"
-            : pathname.startsWith("/profile")
-                ? "profile"
-                : "dashboard";
-
-    const { messages, historySessions, sendMessage, clearMessages, restoreSession, removeHistoryItem, renameHistoryItem, isLoading, error } =
-        useCopilotAI({ currentModule });
-
-    const [view, setView] = useState<"chat" | "history">("chat");
-    const [editingId, setEditingId] = useState<string | null>(null);
-    const [editTitle, setEditTitle] = useState("");
-
     const [input, setInput] = useState("");
-    const messagesEndRef = useRef<HTMLDivElement>(null);
-    const inputRef = useRef<HTMLInputElement>(null);
 
-    // Auto-scroll to bottom on new messages
-    useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [messages]);
-
-    const handleSend = () => {
-        if (!input.trim() || isLoading) return;
-        sendMessage(input);
-        setInput("");
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            handleSend();
+    // Dummy messages for initial layout as per the HTML fragment
+    const messages: Message[] = [
+        {
+            id: "1",
+            role: "assistant",
+            content: "Hola Eduardo. He analizado el mercado y detecté 3 propiedades subvaluadas en Zona Sur que coinciden con los criterios de Mariana Rodríguez. ¿Te gustaría ver el reporte?",
+            timestamp: "Hoy"
+        },
+        {
+            id: "2",
+            role: "user",
+            content: "Sí, muéstrame el ROI estimado para cada una.",
+            timestamp: "Hoy"
+        },
+        {
+            id: "3",
+            role: "assistant",
+            content: "Aquí tienes el desglose de rentabilidad proyectada a 5 años:",
+            timestamp: "Hoy"
         }
-    };
-
-    const suggestedQuestions = [
-        "¿Cuál es el valor promedio de mi portafolio?",
-        "¿Qué oportunidades hay en el mercado?",
-        "Genera un reporte de mi actividad",
-        "¿Cómo puedo mejorar mi ROI?",
     ];
 
     return (
-        <div className="flex flex-col h-full bg-gradient-to-b from-background to-muted/20">
+        <aside className="h-full w-full bg-transparent border-none overflow-hidden flex flex-col relative z-0 shrink-0">
             {/* Header */}
             <div className="h-16 px-4 border-b border-gray-100 bg-white/80 backdrop-blur-md flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-3">
@@ -77,158 +51,33 @@ export function CopilotAI() {
                         <SparklesIcon className="text-white w-4 h-4" />
                     </div>
                     <div>
-                        <h3 className="text-sm font-semibold">AI Copilot</h3>
-                        <p className="text-[10px] text-muted-foreground">
-                            Manus · Brain v1
-                        </p>
+                        <h3 className="font-bold text-slate-800 text-sm">AI Copilot</h3>
+                        <div className="flex items-center gap-1.5">
+                            <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                            </span>
+                            <span className="text-[10px] text-gray-500 font-medium">Online • v4.2</span>
+                        </div>
                     </div>
                 </div>
-                {/* Actions */}
-                <div className="flex items-center gap-1">
-                    {/* View Toggle */}
-                    <button
-                        onClick={() => setView(view === "chat" ? "history" : "chat")}
-                        className={cn(
-                            "p-1.5 rounded-md transition-colors",
-                            view === "history"
-                                ? "bg-violet-500/10 text-violet-500 hover:bg-violet-500/20"
-                                : "hover:bg-muted text-muted-foreground hover:text-foreground"
-                        )}
-                        title={view === "chat" ? "Ver historial" : "Volver al chat"}
-                    >
-                        {view === "chat" ? <History className="h-4 w-4" /> : <MessageSquare className="h-4 w-4" />}
-                    </button>
-
-                    {messages.length > 0 && (
-                        <button
-                            onClick={clearMessages}
-                            className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-                            title="Limpiar conversación activa"
-                        >
-                            <Trash2 className="h-4 w-4" />
-                        </button>
-                    )}
-                </div>
+                <button className="text-gray-400 hover:text-gray-600 rounded-lg p-1 hover:bg-gray-100/50 transition-colors">
+                    <XIcon size={20} />
+                </button>
             </div>
 
-            {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4 min-h-0">
-                {view === "history" ? (
-                    <div className="space-y-4">
-                        <h4 className="text-xs font-semibold uppercase text-muted-foreground tracking-wider mb-2">Historial de Consultas</h4>
-                        {historySessions.length === 0 ? (
-                            <div className="text-center text-sm text-muted-foreground py-10">
-                                Aún no hay historial disponible.
-                            </div>
-                        ) : (
-                            // Historical interactions grouped by session
-                            historySessions.map((session) => {
-                                const msgs = session.messages || [];
-                                if (msgs.length === 0) return null;
+            {/* Chat Messages */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide bg-slate-50/30">
+                <div className="flex items-center justify-center my-4">
+                    <span className="text-[10px] bg-white/50 text-gray-400 px-2 py-0.5 rounded-full border border-slate-100">Hoy</span>
+                </div>
 
-                                // Mostrar la primera pregunta del usuario y la respuesta a esa pregunta (o la última)
-                                const firstUserMsg = msgs.find(m => m.role === "user");
-                                const firstAsstMsg = msgs.find(m => m.role === "assistant");
-
-                                return (
-                                    <div
-                                        key={`hist-${session.id}`}
-                                        className="group space-y-2 border border-border/50 rounded-xl p-4 bg-muted/20 hover:bg-muted/40 transition-colors cursor-pointer relative"
-                                        onClick={() => {
-                                            if (editingId === session.id) return;
-                                            restoreSession(session);
-                                            setView("chat");
-                                        }}
-                                        title={editingId === session.id ? "" : "Haz clic para reanudar esta conversación"}
-                                    >
-                                        {/* User Query / Title Row */}
-                                        <div className="flex items-start justify-between gap-2">
-                                            <div className="flex gap-2 flex-1 min-w-0">
-                                                <div className="h-6 w-6 rounded-md bg-foreground/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                                    <User className="h-3.5 w-3.5 text-foreground/60" />
-                                                </div>
-                                                {editingId === session.id ? (
-                                                    <div className="flex items-center gap-2 flex-1" onClick={e => e.stopPropagation()}>
-                                                        <input
-                                                            autoFocus
-                                                            value={editTitle}
-                                                            onChange={e => setEditTitle(e.target.value)}
-                                                            className="flex-1 bg-background border rounded px-2 py-1 text-sm outline-none focus:border-violet-500 z-10"
-                                                            onKeyDown={(e) => {
-                                                                if (e.key === "Enter") {
-                                                                    renameHistoryItem(session.id, editTitle);
-                                                                    setEditingId(null);
-                                                                } else if (e.key === "Escape") {
-                                                                    setEditingId(null);
-                                                                }
-                                                            }}
-                                                        />
-                                                        <button
-                                                            onClick={async () => {
-                                                                await renameHistoryItem(session.id, editTitle);
-                                                                setEditingId(null);
-                                                            }}
-                                                            className="p-1 text-green-600 hover:bg-green-600/10 rounded"
-                                                        ><Check className="h-4 w-4" /></button>
-                                                        <button
-                                                            onClick={() => setEditingId(null)}
-                                                            className="p-1 text-red-600 hover:bg-red-600/10 rounded"
-                                                        ><X className="h-4 w-4" /></button>
-                                                    </div>
-                                                ) : (
-                                                    <p className="text-sm font-medium text-foreground truncate">{session.title}</p>
-                                                )}
-                                            </div>
-
-                                            {/* Action Buttons */}
-                                            {editingId !== session.id && (
-                                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-                                                    <button
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            setEditingId(session.id);
-                                                            setEditTitle(session.title);
-                                                        }}
-                                                        className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-background rounded-md transition-colors"
-                                                        title="Editar título"
-                                                    >
-                                                        <Pencil className="h-3.5 w-3.5" />
-                                                    </button>
-                                                    <button
-                                                        onClick={async (e) => {
-                                                            e.stopPropagation();
-                                                            if (confirm("¿Estás seguro de eliminar esta conversación del historial?")) {
-                                                                await removeHistoryItem(session.id);
-                                                            }
-                                                        }}
-                                                        className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-md transition-colors"
-                                                        title="Eliminar historial"
-                                                    >
-                                                        <Trash2 className="h-3.5 w-3.5" />
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        {/* Assistant Answer Preview */}
-                                        {firstAsstMsg && (
-                                            <div className="flex gap-2 pt-2 border-t border-border/50 mt-2">
-                                                <div className="h-6 w-6 rounded-md bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                                    <Bot className="h-3.5 w-3.5 text-white" />
-                                                </div>
-                                                <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed line-clamp-4">
-                                                    {firstAsstMsg.content}
-                                                </p>
-                                            </div>
-                                        )}
-                                        <div className="text-[10px] text-muted-foreground/60 text-right mt-2">
-                                            {msgs.length} interacciones • {new Date(session.updatedAt).toLocaleString("es-MX", {
-                                                month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"
-                                            })}
-                                        </div>
-                                    </div>
-                                );
-                            })
+                {messages.map((msg) => (
+                    <div
+                        key={msg.id}
+                        className={cn(
+                            "flex gap-3",
+                            msg.role === "user" ? "flex-row-reverse" : ""
                         )}
                     >
                         <div className={cn(
@@ -243,25 +92,13 @@ export function CopilotAI() {
                                 </div>
                             )}
                         </div>
-                        <div>
-                            <p className="text-sm font-medium">
-                                Hola, soy tu copiloto inmobiliario
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-1">
-                                Pregúntame sobre tu portafolio, mercado, o valuaciones
-                            </p>
-                        </div>
-                        <div className="grid gap-2 w-full max-w-[280px]">
-                            {suggestedQuestions.map((q) => (
-                                <button
-                                    key={q}
-                                    onClick={() => sendMessage(q)}
-                                    disabled={isLoading}
-                                    className="text-left text-xs px-3 py-2 rounded-lg border border-muted-foreground/10 hover:bg-muted/50 hover:border-violet-500/20 transition-all text-muted-foreground hover:text-foreground"
-                                >
-                                    {q}
-                                </button>
-                            ))}
+                        <div className={cn(
+                            "max-w-[85%] p-3 rounded-2xl text-sm shadow-sm border transition-all",
+                            msg.role === "assistant"
+                                ? "bg-white rounded-tl-none border-gray-100 text-slate-700"
+                                : "bg-violet-600 rounded-tr-none border-violet-500 text-white shadow-violet-100"
+                        )}>
+                            {msg.content}
                         </div>
                     </div>
                 ))}
@@ -277,29 +114,26 @@ export function CopilotAI() {
                                 <div className="w-12 h-12 rounded-lg bg-slate-100 relative overflow-hidden">
                                     <div className="w-full h-full bg-linear-to-br from-slate-200 to-slate-300 animate-pulse" />
                                 </div>
-                            )}
-                            <div
-                                className={cn(
-                                    "max-w-[85%] rounded-xl px-3 py-2 text-sm",
-                                    msg.role === "user"
-                                        ? "bg-primary text-primary-foreground"
-                                        : "bg-muted/60 border border-border/50"
-                                )}
-                            >
-                                {msg.role === "assistant" && !msg.isComplete ? (
-                                    <div className="flex items-center gap-2 text-muted-foreground">
-                                        <Loader2 className="h-3 w-3 animate-spin" />
-                                        <span className="text-xs">Procesando...</span>
+                                <div>
+                                    <div className="text-xs font-bold text-gray-800">Casa Moderna Sur</div>
+                                    <div className="flex gap-1 mt-0.5">
+                                        <div className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">
+                                            ROI: 14.2%
+                                        </div>
+                                        <div className="text-[10px] text-gray-500 font-medium bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100">
+                                            5Y
+                                        </div>
                                     </div>
-                                ) : (
-                                    <p className="whitespace-pre-wrap leading-relaxed">
-                                        {msg.content}
-                                    </p>
-                                )}
+                                </div>
                             </div>
-                            {msg.role === "user" && (
-                                <div className="h-6 w-6 rounded-md bg-foreground/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                    <User className="h-3.5 w-3.5 text-foreground/60" />
+                            <div className="space-y-1 mb-3">
+                                <div className="flex justify-between text-[10px] text-gray-500">
+                                    <span>Valor actual</span>
+                                    <span className="font-medium text-gray-700">$240,000</span>
+                                </div>
+                                <div className="flex justify-between text-[10px] text-gray-500">
+                                    <span>Proyección 2029</span>
+                                    <span className="font-medium text-gray-700">$315,000</span>
                                 </div>
                             </div>
                             <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden mb-3">
@@ -310,19 +144,8 @@ export function CopilotAI() {
                                 <button className="flex-1 text-[10px] py-1.5 bg-violet-600/10 text-violet-600 border border-violet-100 rounded hover:bg-violet-600/20 transition-colors font-medium">Agendar</button>
                             </div>
                         </div>
-                    ))
-                )}
-
-                {/* Error indicator */}
-                {error && (
-                    <div className="text-center">
-                        <p className="text-[10px] text-destructive bg-destructive/10 px-3 py-1 rounded-full inline-block">
-                            {error}
-                        </p>
                     </div>
-                )}
-
-                <div ref={messagesEndRef} />
+                </div>
             </div>
 
             {/* Input Area */}
@@ -334,37 +157,24 @@ export function CopilotAI() {
                             <SparklesIcon size={18} />
                         </div>
                         <input
-                            ref={inputRef}
                             type="text"
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                            placeholder="Pregunta algo..."
-                            disabled={isLoading}
-                            className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground/60 disabled:opacity-50"
+                            placeholder="Escribe a Copilot..."
+                            className="w-full py-3 px-3 text-sm text-gray-700 placeholder-gray-400 border-none focus:ring-0 bg-transparent"
                         />
-                        <button
-                            onClick={handleSend}
-                            disabled={!input.trim() || isLoading}
-                            className={cn(
-                                "p-1.5 rounded-lg transition-all",
-                                input.trim() && !isLoading
-                                    ? "bg-violet-500 text-white hover:bg-violet-600"
-                                    : "text-muted-foreground/40"
-                            )}
-                        >
-                            {isLoading ? (
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                                <SendHorizontal className="h-4 w-4" />
-                            )}
+                        <button className="p-2 mr-1 rounded-lg text-gray-400 hover:text-violet-600 transition-colors">
+                            <MicIcon size={18} />
+                        </button>
+                        <button className="p-2 mr-1 bg-white text-violet-600 border border-gray-100 rounded-lg hover:bg-violet-600 hover:text-white transition-all shadow-sm">
+                            <ArrowUpIcon size={18} />
                         </button>
                     </div>
-                    <p className="text-[9px] text-muted-foreground/50 text-center mt-1.5">
-                        Powered by Homepty Brain · Manus Forge · Gemini
-                    </p>
                 </div>
-            )}
-        </div>
+                <p className="text-[10px] text-center text-gray-400 mt-2">
+                    AI Neural puede cometer errores. Verifica la info.
+                </p>
+            </div>
+        </aside>
     );
 }
