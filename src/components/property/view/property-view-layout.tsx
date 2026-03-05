@@ -3,8 +3,10 @@
 import { useAppShell } from "@/hooks";
 import { PropertyWithImages } from "@/types";
 import { useEffect } from "react";
+import { PropertyWithImages } from "@/types";
 import { PropertyContent } from "./property-content";
 import { PropertySidebar } from "./property-sidebar";
+import { useAppShell } from "@/hooks";
 
 interface Props {
     property: PropertyWithImages;

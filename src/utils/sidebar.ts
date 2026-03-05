@@ -31,7 +31,7 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
     url: "/profile",
     icon: "profile",
   },
-  {
+    {
     id: 6,
     title: "Mi Sitio Web",
     url: "/my-site",

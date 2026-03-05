@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useAppShell } from "@/hooks";
 import { ProfileStats } from "./profile-stats";
+import { useAppShell } from "@/hooks";
 
 export function ProfileClient({ children }: { children: React.ReactNode }) {
     const { setRightPanelContent, setIsRightCollapsed } = useAppShell();

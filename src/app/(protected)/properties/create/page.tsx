@@ -73,6 +73,13 @@ export default async function PropertiesCreatePage() {
               </div>
             </Link>
           </section>
+    <div className="flex flex-col gap-y-6 p-4">
+      <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-y-0">
+          <h1 className="text-2xl font-semibold">Crear nueva propiedad</h1>
+          <p className="text-muted-foreground">
+            Selecciona el tipo de propiedad que deseas crear
+          </p>
         </div>
       </div>
     </div>

@@ -29,6 +29,10 @@ export default async function RequestsCreatePage() {
             </CardContent>
           </Card>
         </div>
+    <div className="flex flex-col gap-y-4 p-4">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold">Crear solicitud</h1>
+        <ButtonBack />
       </div>
     </div>
   );

@@ -6,12 +6,12 @@ import { usePathname } from "next/navigation";
 import {
   BriefcaseIcon,
   ClipboardListIcon,
-  LayoutGridIcon,
   MapPinIcon,
   UserIcon,
   BrainCircuitIcon,
   ImagePlusIcon,
   GlobeIcon,
+  LayoutGridIcon,
 } from "lucide-react";
 
 interface Props {
@@ -23,10 +23,10 @@ const ICONS: Record<string, React.ComponentType<{ size?: number }>> = {
   explore: MapPinIcon,
   requests: ClipboardListIcon,
   crm: BriefcaseIcon,
+  globe: GlobeIcon,
   profile: UserIcon,
   "ai-predictor": BrainCircuitIcon,
   "ai-renders": ImagePlusIcon,
-  globe: GlobeIcon,
 };
 
 export function SidebarItem({ item }: Props) {

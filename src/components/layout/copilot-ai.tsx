@@ -47,7 +47,7 @@ export function CopilotAI() {
             {/* Header */}
             <div className="h-16 px-4 border-b border-gray-100 bg-white/80 backdrop-blur-md flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-violet-600 to-indigo-600 flex items-center justify-center shadow-md shadow-violet-200">
+                    <div className="w-8 h-8 rounded-full bg-linear-to-tr from-violet-600 to-indigo-600 flex items-center justify-center shadow-md shadow-violet-200">
                         <SparklesIcon className="text-white w-4 h-4" />
                     </div>
                     <div>
@@ -81,7 +81,7 @@ export function CopilotAI() {
                         )}
                     >
                         <div className={cn(
-                            "w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm mt-1 overflow-hidden",
+                            "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 shadow-sm mt-1 overflow-hidden",
                             msg.role === "assistant" ? "bg-white border border-gray-200" : "bg-slate-200 border border-white"
                         )}>
                             {msg.role === "assistant" ? (
@@ -105,14 +105,14 @@ export function CopilotAI() {
 
                 {/* Example Property Card in Chat */}
                 <div className="flex gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center flex-shrink-0 shadow-sm mt-1">
+                    <div className="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center shrink-0 shadow-sm mt-1">
                         <BotIcon className="text-violet-600 w-4 h-4" />
                     </div>
                     <div className="flex flex-col gap-2 max-w-[85%]">
                         <div className="bg-white border border-gray-200 p-3 rounded-xl shadow-sm">
                             <div className="flex items-center gap-3 mb-3">
                                 <div className="w-12 h-12 rounded-lg bg-slate-100 relative overflow-hidden">
-                                    <div className="w-full h-full bg-gradient-to-br from-slate-200 to-slate-300 animate-pulse" />
+                                    <div className="w-full h-full bg-linear-to-br from-slate-200 to-slate-300 animate-pulse" />
                                 </div>
                                 <div>
                                     <div className="text-xs font-bold text-gray-800">Casa Moderna Sur</div>
@@ -137,7 +137,7 @@ export function CopilotAI() {
                                 </div>
                             </div>
                             <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden mb-3">
-                                <div className="bg-gradient-to-r from-violet-600 to-indigo-600 h-full w-[85%]"></div>
+                                <div className="bg-linear-to-r from-violet-600 to-indigo-600 h-full w-[85%]"></div>
                             </div>
                             <div className="flex gap-2">
                                 <button className="flex-1 text-[10px] py-1.5 bg-gray-50 border border-gray-200 rounded hover:bg-gray-100 transition-colors font-medium text-gray-600">Detalles</button>
@@ -151,7 +151,7 @@ export function CopilotAI() {
             {/* Input Area */}
             <div className="p-4 bg-white border-t border-gray-100">
                 <div className="relative group">
-                    <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-xl opacity-0 group-focus-within:opacity-20 transition duration-500 blur-sm"></div>
+                    <div className="absolute -inset-0.5 bg-linear-to-r from-violet-600 to-indigo-600 rounded-xl opacity-0 group-focus-within:opacity-20 transition duration-500 blur-sm"></div>
                     <div className="relative flex items-center bg-gray-50 rounded-xl shadow-inner overflow-hidden border border-gray-200 focus-within:bg-white focus-within:ring-0 transition-colors">
                         <div className="pl-3 text-violet-600">
                             <SparklesIcon size={18} />

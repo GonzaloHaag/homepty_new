@@ -202,7 +202,7 @@ export function ProfitabilityAnalysisPanel({ onClose }: ProfitabilityAnalysisPan
 
                     <div className="bg-gray-800 rounded-2xl p-4 text-white">
                         <p className="text-[11px] text-gray-300 leading-relaxed mb-4 italic">
-                            "{strategicRecommendations.context} - {strategicRecommendations.forDevelopers.replace("⭐", "").trim()}"
+                             &quot;{strategicRecommendations.context} - {strategicRecommendations.forDevelopers.replace("⭐", "").trim()}&quot;
                         </p>
 
                         <button className="w-full py-2 bg-white/10 hover:bg-white/20 text-white text-[10px] font-bold rounded-xl transition-all border border-white/20">

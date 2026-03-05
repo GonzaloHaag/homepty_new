@@ -873,6 +873,17 @@ export type Database = {
           sync_frequency_hours: number
           properties_synced_count: number
           error_message: string | null
+      user_sites: {
+        Row: {
+          id: string
+          user_id_supabase: string
+          site_name: string
+          custom_domain: string | null
+          subdomain: string | null
+          cbf_api_key: string
+          is_active: boolean
+          theme_config: Json | null
+          seo_config: Json | null
           created_at: string
           updated_at: string
         }

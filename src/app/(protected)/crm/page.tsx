@@ -12,6 +12,9 @@ import {
   LayersIcon,
 } from "lucide-react";
 import { CrmLayoutHandler } from "@/components/crm/crm-layout-handler";
+import { useAppShell } from "@/hooks";
+import { CopilotAI } from "@/components/layout/copilot-ai";
+
 
 export default function CrmPage() {
   return (
