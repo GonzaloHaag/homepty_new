@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifySession } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 import { brainValuacion } from "@/lib/brain-client";
 import { trackActivity } from "@/server/actions/activity-tracker";
 import type { ValuewebEstimateInput } from "@/lib/brain-types";
@@ -18,6 +19,17 @@ export async function POST(req: NextRequest) {
         if (!userId) {
             return NextResponse.json({ error: "No autorizado" }, { status: 401 });
         }
+
+        // Fetch user identity for enrichment
+        const supabase = await createClient();
+        const { data: userRow } = await supabase
+            .from("usuarios")
+            .select("nombre_usuario, email_usuario")
+            .eq("id", userId)
+            .single();
+
+        const userName = userRow?.nombre_usuario ?? "Usuario";
+        const userEmail = userRow?.email_usuario ?? "";
 
         const body = (await req.json()) as ValuewebEstimateInput;
 
@@ -38,6 +50,8 @@ export async function POST(req: NextRequest) {
             modulo: "dashboard",
             entidad_tipo: "valuacion",
             metadata: {
+                nombre_usuario: userName,
+                email_usuario: userEmail,
                 direccion: body.direccion,
                 tipo_inmueble: body.tipo_inmueble,
                 valor_promedio: result.valor_promedio,

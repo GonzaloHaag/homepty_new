@@ -13,10 +13,13 @@ import { Textarea } from "../ui/textarea";
 import { DialogFooter } from "../ui/dialog";
 import { DialogCloseButton } from "../shared";
 import { Button } from "../ui/button";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { updateUserAction } from "@/server/actions";
 import { User } from "@/types";
 import { toast } from "sonner";
+import { createClient } from "@/lib/supabase/client";
+import { Camera, Loader2 } from "lucide-react";
+
 interface Props {
   user: User;
   closeDialog: () => void;
@@ -26,6 +29,49 @@ export function FormUser({ user, closeDialog }: Props) {
     updateUserAction.bind(undefined, user.id),
     undefined
   );
+  const [photoUrl, setPhotoUrl] = useState<string>(user.imagen_perfil_usuario ?? "");
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Solo se permiten archivos de imagen");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("La imagen no puede exceder 5MB");
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const supabase = createClient();
+      const ext = file.name.split(".").pop();
+      const path = `${user.id}/profile.${ext}`;
+
+      const { error: uploadErr } = await supabase.storage
+        .from("profile-photos")
+        .upload(path, file, { upsert: true });
+
+      if (uploadErr) throw uploadErr;
+
+      const { data: urlData } = supabase.storage
+        .from("profile-photos")
+        .getPublicUrl(path);
+
+      setPhotoUrl(urlData.publicUrl);
+      toast.success("Foto subida correctamente");
+    } catch (err) {
+      console.error("[FormUser] Photo upload error:", err);
+      toast.error("Error al subir la foto");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   useEffect(() => {
     if (state === undefined) return;
     if (state && !state?.ok) {
@@ -37,7 +83,46 @@ export function FormUser({ user, closeDialog }: Props) {
   }, [state, closeDialog]);
   return (
     <form action={formAction} className="flex flex-col gap-4">
+      {/* Hidden field for photo URL */}
+      <input type="hidden" name="imagen_perfil_usuario" value={photoUrl} />
+
       <FieldGroup>
+        {/* Photo Upload Section */}
+        <div className="flex items-center gap-4 pb-2">
+          <div className="relative group">
+            <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-100 border-2 border-gray-200">
+              {photoUrl ? (
+                <img src={photoUrl} alt="Foto de perfil" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-gray-400">
+                  <Camera className="w-6 h-6" />
+                </div>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              className="absolute -bottom-1 -right-1 w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center shadow-md hover:bg-primary/90 transition-colors disabled:opacity-50"
+            >
+              {uploading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Camera className="w-3 h-3" />}
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handlePhotoUpload}
+              className="hidden"
+            />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-gray-700">Foto de perfil</p>
+            <p className="text-[10px] text-gray-400">JPG, PNG. Máx 5MB</p>
+          </div>
+        </div>
+
+        <FieldSeparator />
+
         <Field>
           <FieldLabel htmlFor="nombre_usuario">Nombre de usuario</FieldLabel>
           <Input
