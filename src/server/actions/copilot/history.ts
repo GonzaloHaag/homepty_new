@@ -120,17 +120,27 @@ export async function deleteCopilotSession(id: string): Promise<boolean> {
         if (!userId) return false;
 
         const supabase = await createClient();
+        const numericId = Number(id);
+
+        if (isNaN(numericId)) {
+            console.error("[CopilotHistory] Delete: invalid id", id);
+            return false;
+        }
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const { error } = await (supabase as any)
+        const { error, count } = await (supabase as any)
             .from("actividad_usuario")
-            .delete()
-            .eq("id", id)
+            .delete({ count: "exact" })
+            .eq("id", numericId)
             .eq("usuario_id", userId);
 
         if (error) {
-            console.error("[CopilotHistory] Delete error:", error.message);
+            console.error("[CopilotHistory] Delete error:", error.message, error.details);
             return false;
+        }
+
+        if (count === 0) {
+            console.warn("[CopilotHistory] Delete: no rows affected for id", numericId);
         }
 
         return true;
@@ -149,17 +159,23 @@ export async function updateCopilotSessionTitle(id: string, title: string): Prom
         if (!userId) return false;
 
         const supabase = await createClient();
+        const numericId = Number(id);
+
+        if (isNaN(numericId)) {
+            console.error("[CopilotHistory] Update: invalid id", id);
+            return false;
+        }
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const { data: row, error: fetchErr } = await (supabase as any)
             .from("actividad_usuario")
             .select("metadata")
-            .eq("id", id)
+            .eq("id", numericId)
             .eq("usuario_id", userId)
             .single();
 
         if (fetchErr || !row) {
-            console.error("[CopilotHistory] Fetch for update error:", fetchErr?.message);
+            console.error("[CopilotHistory] Fetch for update error:", fetchErr?.message, fetchErr?.details);
             return false;
         }
 
@@ -172,11 +188,11 @@ export async function updateCopilotSessionTitle(id: string, title: string): Prom
         const { error: updateErr } = await (supabase as any)
             .from("actividad_usuario")
             .update({ metadata: newMeta })
-            .eq("id", id)
+            .eq("id", numericId)
             .eq("usuario_id", userId);
 
         if (updateErr) {
-            console.error("[CopilotHistory] Update error:", updateErr.message);
+            console.error("[CopilotHistory] Update error:", updateErr.message, updateErr.details);
             return false;
         }
 

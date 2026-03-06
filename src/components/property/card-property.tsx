@@ -4,11 +4,19 @@ import { BedIcon, BathIcon, ScalingIcon, HeartIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-interface Props {
-  property: PropertyWithImages;
+interface PropertyMetrics {
+  roi?: number;
+  cap?: number;
+  abs?: string;
+  aiScore?: number;
 }
 
-export function CardProperty({ property }: Props) {
+interface Props {
+  property: PropertyWithImages;
+  metrics?: PropertyMetrics;
+}
+
+export function CardProperty({ property, metrics }: Props) {
   // Format price helper
   const formatPrice = (price: number) => {
     if (price >= 1000000) return `$${(price / 1000000).toFixed(1)}M`;
@@ -68,7 +76,7 @@ export function CardProperty({ property }: Props) {
           </div>
           {/* AI Score Badge */}
           <div className={`px-1.5 py-0.5 rounded text-[10px] font-bold border flex items-center gap-1 ${scoreColor}`}>
-            98%
+            {metrics?.aiScore != null ? `${metrics.aiScore}%` : "—"}
           </div>
         </div>
 
@@ -89,15 +97,15 @@ export function CardProperty({ property }: Props) {
         <div className="mt-auto pt-3 border-t border-slate-50 grid grid-cols-3 gap-1">
           <div className="text-center">
             <div className="text-[10px] text-slate-400 uppercase font-semibold">ROI</div>
-            <div className="text-sm font-bold text-blue-600">14%</div>
+            <div className="text-sm font-bold text-blue-600">{metrics?.roi != null ? `${metrics.roi}%` : "—"}</div>
           </div>
           <div className="text-center border-l border-slate-100">
             <div className="text-[10px] text-slate-400 uppercase font-semibold">Cap</div>
-            <div className="text-sm font-bold text-slate-700">6.5%</div>
+            <div className="text-sm font-bold text-slate-700">{metrics?.cap != null ? `${metrics.cap}%` : "—"}</div>
           </div>
           <div className="text-center border-l border-slate-100">
             <div className="text-[10px] text-slate-400 uppercase font-semibold">Abs.</div>
-            <div className="text-sm font-bold text-orange-500">2m</div>
+            <div className="text-sm font-bold text-orange-500">{metrics?.abs ?? "—"}</div>
           </div>
         </div>
       </div>
