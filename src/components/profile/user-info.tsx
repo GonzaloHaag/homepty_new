@@ -7,13 +7,12 @@ import {
   CheckCircle2Icon,
 } from "lucide-react";
 import { DialogEditUser } from "./dialog-edit-user";
-import { STATES_NAMES_BY_ID } from "@/utils/formatters";
-import { User } from "@/types";
+import { UserWithLocation } from "@/server/queries/user/get-user-info";
 import { Button } from "../ui/button";
 import Image from "next/image";
 
 interface Props {
-  user: User;
+  user: UserWithLocation;
 }
 
 // Componente síncrono — recibe user ya resuelto desde page.tsx
@@ -85,7 +84,9 @@ export function UserInfo({ user }: Props) {
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-3 text-[11px] text-gray-400">
               <span className="flex items-center gap-1.5 hover:text-primary cursor-pointer transition-colors">
                 <MapPinIcon size={13} className="text-gray-300" />
-                {user.id_estado ? STATES_NAMES_BY_ID[user.id_estado] : "Sin ubicación"}
+                {user.ciudades?.nombre_ciudad || user.estados?.nombre_estado
+                  ? `${user.ciudades?.nombre_ciudad ? `${user.ciudades.nombre_ciudad}, ` : ""}${user.estados?.nombre_estado ?? ""}`
+                  : "Sin ubicación"}
               </span>
               <span className="flex items-center gap-1.5 hover:text-primary cursor-pointer transition-colors">
                 <MailIcon size={13} className="text-gray-300" />
