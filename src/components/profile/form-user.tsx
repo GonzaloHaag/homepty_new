@@ -14,14 +14,14 @@ import { DialogFooter } from "../ui/dialog";
 import { DialogCloseButton } from "../shared";
 import { Button } from "../ui/button";
 import { useActionState, useEffect, useRef, useState } from "react";
-import { updateUserAction } from "@/server/actions";
-import { User } from "@/types";
+import { updateUserAction, fetchStatesAction, fetchCitiesAction } from "@/server/actions";
+import { UserWithLocation } from "@/server/queries/user/get-user-info";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { Camera, Loader2 } from "lucide-react";
 
 interface Props {
-  user: User;
+  user: UserWithLocation;
   closeDialog: () => void;
 }
 export function FormUser({ user, closeDialog }: Props) {
@@ -32,6 +32,56 @@ export function FormUser({ user, closeDialog }: Props) {
   const [photoUrl, setPhotoUrl] = useState<string>(user.imagen_perfil_usuario ?? "");
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // States for locations
+  const [statesList, setStatesList] = useState<{ id_estado: number, nombre_estado: string }[]>([]);
+  const [citiesList, setCitiesList] = useState<{ id_ciudad: number, nombre_ciudad: string }[]>([]);
+  const [selectedState, setSelectedState] = useState<number | "">(user.id_estado ?? "");
+  const [loadingLocations, setLoadingLocations] = useState(false);
+
+  // Load initial states
+  useEffect(() => {
+    async function loadInitialData() {
+      setLoadingLocations(true);
+      try {
+        const states = await fetchStatesAction();
+        setStatesList(states);
+
+        if (user.id_estado) {
+          const cities = await fetchCitiesAction(user.id_estado);
+          setCitiesList(cities);
+        }
+      } catch (error) {
+        console.error("Error loading initial locations:", error);
+      } finally {
+        setLoadingLocations(false);
+      }
+    }
+    loadInitialData();
+  }, [user.id_estado]);
+
+  // Handle state change
+  const onStateChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newStateId = e.target.value ? Number(e.target.value) : "";
+    setSelectedState(newStateId as number | "");
+
+    // Clear current cities and reset selector to maintain coherence
+    setCitiesList([]);
+    const citySelect = document.getElementById("id_ciudad") as HTMLSelectElement;
+    if (citySelect) citySelect.value = "";
+
+    if (newStateId) {
+      setLoadingLocations(true);
+      try {
+        const cities = await fetchCitiesAction(newStateId as number);
+        setCitiesList(cities);
+      } catch (error) {
+        console.error("Error fetching cities for state:", newStateId, error);
+      } finally {
+        setLoadingLocations(false);
+      }
+    }
+  };
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -206,12 +256,16 @@ export function FormUser({ user, closeDialog }: Props) {
             <NativeSelect
               id="id_estado"
               name="id_estado"
-              defaultValue={
-                state?.inputs?.id_estado.toString() ?? user.id_estado ?? ""
-              }
+              value={selectedState}
+              onChange={onStateChange}
               aria-invalid={!!state?.errors?.id_estado}
             >
-              <NativeSelectOption value={10}>Durango</NativeSelectOption>
+              <option value="">Selecciona un estado</option>
+              {statesList.map((st) => (
+                <NativeSelectOption key={st.id_estado} value={st.id_estado}>
+                  {st.nombre_estado}
+                </NativeSelectOption>
+              ))}
             </NativeSelect>
             {state?.errors?.id_estado && (
               <FieldError>{state.errors.id_estado}</FieldError>
@@ -219,7 +273,10 @@ export function FormUser({ user, closeDialog }: Props) {
           </Field>
         </div>
         <Field>
-          <FieldLabel htmlFor="id_ciudad">Ciudad</FieldLabel>
+          <div className="flex items-center justify-between">
+            <FieldLabel htmlFor="id_ciudad">Ciudad / Municipio</FieldLabel>
+            {loadingLocations && <Loader2 className="w-3 h-3 animate-spin text-primary" />}
+          </div>
           <NativeSelect
             id="id_ciudad"
             name="id_ciudad"
@@ -227,13 +284,27 @@ export function FormUser({ user, closeDialog }: Props) {
               state?.inputs?.id_ciudad.toString() ?? user.id_ciudad ?? ""
             }
             aria-invalid={!!state?.errors?.id_ciudad}
+            disabled={!selectedState || citiesList.length === 0 || loadingLocations}
           >
-            <NativeSelectOption value={27}>Gomez palacio</NativeSelectOption>
+            <option value="">
+              {!selectedState
+                ? "Selecciona un estado primero"
+                : loadingLocations
+                  ? "Cargando municipios..."
+                  : "Selecciona una ciudad"}
+            </option>
+            {citiesList.map((city) => (
+              <NativeSelectOption key={city.id_ciudad} value={city.id_ciudad}>
+                {city.nombre_ciudad}
+              </NativeSelectOption>
+            ))}
           </NativeSelect>
           {state?.errors?.id_ciudad && (
             <FieldError>{state.errors.id_ciudad}</FieldError>
           )}
         </Field>
+
+
         <Field>
           <FieldLabel htmlFor="descripcion_usuario">Descripción</FieldLabel>
           <Textarea
@@ -264,6 +335,6 @@ export function FormUser({ user, closeDialog }: Props) {
           Guardar
         </Button>
       </DialogFooter>
-    </form>
+    </form >
   );
 }
