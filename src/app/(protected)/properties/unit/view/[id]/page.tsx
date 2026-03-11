@@ -2,6 +2,8 @@ import { PropertyViewLayout } from "@/components/property/view/property-view-lay
 import { PropertyViewTracker } from "@/components/property/view/property-view-tracker";
 import { ErrorMessage } from "@/components/shared";
 import { getPropertyById } from "@/server/queries";
+import { getPropertyOwner, type PropertyOwner } from "@/components/property/view/property-owner-card";
+
 export default async function PropertiesUnitViewPage({
   params,
 }: {
@@ -15,6 +17,11 @@ export default async function PropertiesUnitViewPage({
   }
   const unit = response.data;
 
+  // Fetch property owner in parallel with rendering
+  const owner: PropertyOwner | null = unit.id_usuario
+    ? await getPropertyOwner(unit.id_usuario)
+    : null;
+
   return (
     <>
       <PropertyViewTracker
@@ -22,8 +29,7 @@ export default async function PropertiesUnitViewPage({
         propertyType="unit"
         propertyName={unit.nombre}
       />
-      <PropertyViewLayout property={unit} />
+      <PropertyViewLayout property={unit} owner={owner} />
     </>
   );
 }
-
