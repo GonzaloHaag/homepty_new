@@ -189,6 +189,53 @@ export function PropertyContent({ property, owner }: Props) {
                     </div>
                 </div>
 
+                {/* ── Specs — área + área construida ───────────────── */}
+                <div className="flex flex-wrap gap-6 py-6 border-y border-slate-100 mb-8">
+                    {property.habitaciones > 0 && (
+                        <div className="flex items-center gap-3">
+                            <BedIcon className="text-slate-400" size={22} />
+                            <div className="text-sm font-semibold text-slate-700">
+                                {property.habitaciones}{" "}
+                                <span className="text-slate-400 font-normal">Habitaciones</span>
+                            </div>
+                        </div>
+                    )}
+                    {property.banios > 0 && (
+                        <div className="flex items-center gap-3">
+                            <BathIcon className="text-slate-400" size={22} />
+                            <div className="text-sm font-semibold text-slate-700">
+                                {property.banios}{" "}
+                                <span className="text-slate-400 font-normal">Baños</span>
+                            </div>
+                        </div>
+                    )}
+                    {/* Área total (terreno) */}
+                    {property.area > 0 && (
+                        <div className="flex items-center gap-3">
+                            <SquareIcon className="text-slate-400" size={22} />
+                            <div className="text-sm font-semibold text-slate-700">
+                                {property.area} m²{" "}
+                                <span className="text-slate-400 font-normal">terreno</span>
+                            </div>
+                        </div>
+                    )}
+                    {/* Área construida */}
+                    {property.area_construida > 0 && (
+                        <div className="flex items-center gap-3">
+                            <HomeIcon className="text-slate-400" size={22} />
+                            <div className="text-sm font-semibold text-slate-700">
+                                {property.area_construida} m²{" "}
+                                <span className="text-slate-400 font-normal">construidos</span>
+                            </div>
+                        </div>
+                    )}
+                    {!!(property.area === 0 && (property.area_construida ?? 0) === 0) && (
+                        <div className="flex items-center gap-3">
+                            <ScalingIcon className="text-slate-400" size={22} />
+                            <div className="text-sm text-slate-400 font-normal">Superficie no especificada</div>
+                        </div>
+                    )}
+                </div>
 
 
 
