@@ -2,7 +2,6 @@
 import { verifySession } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { Database } from "@/types/database";
 
@@ -40,24 +39,18 @@ export type ActionResponse<T = void> =
     | { ok: false; message: string };
 
 // ──────────────────────────────────────────────
-// HELPER: Cliente con Service Role (solo para operaciones bulk de servidor)
-// Requiere SUPABASE_SERVICE_ROLE_KEY en el entorno.
+// HELPER: Cliente con Service Role (bulk writes, bypasa RLS)
+// Usa createServerClient SIN cookie handlers para que no inyecte
+// la sesión del usuario — así el service role key aplica limpiamente.
 // ──────────────────────────────────────────────
-async function createServiceClient() {
-    const cookieStore = await cookies();
+function createServiceClient() {
     return createServerClient<Database>(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.SUPABASE_SERVICE_ROLE_KEY!,
         {
             cookies: {
-                getAll: () => cookieStore.getAll(),
-                setAll: (cookiesToSet) => {
-                    try {
-                        cookiesToSet.forEach(({ name, value }) =>
-                            cookieStore.set(name, value)
-                        );
-                    } catch { }
-                },
+                getAll: () => [],
+                setAll: () => { },
             },
         }
     );
@@ -78,7 +71,14 @@ type EBPropertyDetail = {
     bathrooms: number | null;
     parking_spaces: number | null;
     operations?: Array<{ type: string; amount: number; currency: string }>;
-    location?: { city: string; state: string; street: string; postal_code: string };
+    location?: {
+        city: string;
+        state: string;
+        street: string;
+        postal_code: string;
+        lat: number | null;   // ✅ EasyBroker incluye coordenadas GPS
+        lng: number | null;
+    };
     property_images?: Array<{ url: string; title: string }>;
     features?: string[];
     updated_at: string;
@@ -120,21 +120,27 @@ function matchAmenidades(
         .map((a) => a.id_amenidad);
 }
 
-async function resolveLocation(
+// ──────────────────────────────────────────────────────────────
+// Paso 1: Buscar por nombre (ILIKE) en estados y ciudades
+// ──────────────────────────────────────────────────────────────
+async function resolveByName(
     supabase: Awaited<ReturnType<typeof createServiceClient>>,
     stateName: string,
     cityName: string
 ): Promise<{ id_estado: number; id_ciudad: number } | null> {
+    if (!stateName) return null;
+
     const { data: estado } = await supabase
         .from("estados")
-        .select("id_estado")
+        .select("id_estado, nombre_estado")
         .ilike("nombre_estado", `%${stateName}%`)
         .limit(1)
         .maybeSingle();
 
     if (!estado) return null;
 
-    const { data: ciudad } = await supabase
+    // Intentar ciudad exacta primero, luego relajado
+    const { data: ciudadExacta } = await supabase
         .from("ciudades")
         .select("id_ciudad")
         .eq("id_estado", estado.id_estado)
@@ -142,9 +148,77 @@ async function resolveLocation(
         .limit(1)
         .maybeSingle();
 
-    if (!ciudad) return null;
+    if (ciudadExacta) return { id_estado: estado.id_estado, id_ciudad: ciudadExacta.id_ciudad };
 
-    return { id_estado: estado.id_estado, id_ciudad: ciudad.id_ciudad };
+    // Si la ciudad no matchea, tomar la primera ciudad del estado
+    // (mejor que fallback global a (1,1))
+    const { data: primeraciudad } = await supabase
+        .from("ciudades")
+        .select("id_ciudad")
+        .eq("id_estado", estado.id_estado)
+        .limit(1)
+        .maybeSingle();
+
+    return primeraciudad ? { id_estado: estado.id_estado, id_ciudad: primeraciudad.id_ciudad } : null;
+}
+
+// ──────────────────────────────────────────────────────────────
+// Paso 2: Reverse geocoding via Mapbox (lat/lng → estado/ciudad)
+// ──────────────────────────────────────────────────────────────
+async function resolveByMapbox(
+    supabase: Awaited<ReturnType<typeof createServiceClient>>,
+    lat: number,
+    lng: number
+): Promise<{ id_estado: number; id_ciudad: number; stateName: string; cityName: string } | null> {
+    const token = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
+    if (!token) return null;
+
+    try {
+        const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?types=region,place&language=es&country=MX&access_token=${token}`;
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) return null;
+
+        const json = await res.json();
+        const features: Array<{ id: string; place_type: string[]; text: string }> = json.features ?? [];
+
+        const regionFeature = features.find(f => f.place_type.includes("region"));
+        const placeFeature = features.find(f => f.place_type.includes("place"));
+
+        const mapboxState = regionFeature?.text ?? "";
+        const mapboxCity = placeFeature?.text ?? "";
+
+        if (!mapboxState) return null;
+
+        const resolved = await resolveByName(supabase, mapboxState, mapboxCity);
+        if (!resolved) return null;
+
+        return { ...resolved, stateName: mapboxState, cityName: mapboxCity };
+    } catch {
+        return null;
+    }
+}
+
+// ──────────────────────────────────────────────────────────────
+// Orquestador: cadena ILIKE → Mapbox reverse → null
+// ──────────────────────────────────────────────────────────────
+async function resolveLocation(
+    supabase: Awaited<ReturnType<typeof createServiceClient>>,
+    stateName: string,
+    cityName: string,
+    lat?: number | null,
+    lng?: number | null
+): Promise<{ id_estado: number; id_ciudad: number; source: string } | null> {
+    // 1️⃣ Intento directo por nombre
+    const byName = await resolveByName(supabase, stateName, cityName);
+    if (byName) return { ...byName, source: "name" };
+
+    // 2️⃣ Reverse geocoding si hay coordenadas GPS
+    if (lat && lng) {
+        const byMapbox = await resolveByMapbox(supabase, lat, lng);
+        if (byMapbox) return { ...byMapbox, source: `mapbox(${byMapbox.stateName}/${byMapbox.cityName})` };
+    }
+
+    return null;
 }
 
 // ──────────────────────────────────────────────
@@ -275,7 +349,12 @@ export async function triggerSyncAction(): Promise<ActionResponse> {
 
     if (logError || !logEntry) {
         console.error("[EasyBroker] Error creando log:", logError);
-        return { ok: false, message: "Error al iniciar la sincronización." };
+        return {
+            ok: false,
+            message: logError
+                ? `Error al iniciar la sincronización: ${logError.message}`
+                : "Error al iniciar la sincronización (log entry vacío).",
+        };
     }
 
     const logId = logEntry.id;
@@ -322,7 +401,18 @@ export async function triggerSyncAction(): Promise<ActionResponse> {
         }
 
         // 5. Para cada propiedad, obtener detalle y sincronizar
-        for (const item of allProperties) {
+        const L = "[EasyBroker]";
+        const BAR = "━".repeat(60);
+        console.log(`\n${L} ${BAR}`);
+        console.log(`${L} 🔄 INICIO DE SINCRONIZACIÓN`);
+        console.log(`${L} 👤 Usuario: ${userId}`);
+        console.log(`${L} 📦 Total propiedades a procesar: ${allProperties.length}`);
+        console.log(`${L} ${BAR}`);
+        // L y BAR disponibles para todo el scope del try
+
+        for (let i = 0; i < allProperties.length; i++) {
+            const item = allProperties[i];
+            const idx = `[${i + 1}/${allProperties.length}]`;
             try {
                 const detailRes = await fetch(
                     `https://api.easybroker.com/v1/properties/${item.public_id}`,
@@ -334,34 +424,67 @@ export async function triggerSyncAction(): Promise<ActionResponse> {
 
                 if (!detailRes.ok) {
                     failed++;
-                    errorDetails[item.public_id] = `HTTP ${detailRes.status}`;
+                    const errMsg = `HTTP ${detailRes.status}`;
+                    errorDetails[item.public_id] = errMsg;
+                    console.log(`${L} ${idx} ❌ ${item.public_id} — Error detalle: ${errMsg}`);
                     continue;
                 }
 
                 const prop: EBPropertyDetail = await detailRes.json();
 
-                // Resolver ubicación
-                const location = await resolveLocation(
-                    serviceClient,
-                    prop.location?.state ?? "",
-                    prop.location?.city ?? ""
-                );
+                // ── Resolver ubicación ──────────────────────────
+                const ebState = prop.location?.state ?? "";
+                const ebCity = prop.location?.city ?? "";
+                const ebLat = prop.location?.lat;
+                const ebLng = prop.location?.lng;
+                const location = await resolveLocation(serviceClient, ebState, ebCity, ebLat, ebLng);
+                const locationStr = location
+                    ? `${ebState}, ${ebCity} → estado_id=${location.id_estado}, ciudad_id=${location.id_ciudad} [${location.source}] ✓`
+                    : `⚠️  "${ebState} / ${ebCity}" NO resuelto (sin lat/lng o sin match en BD) → usando fallback (1,1)`;
 
+                // ── Operación y precio ──────────────────────────
                 const operation = prop.operations?.[0];
                 const precio = operation?.amount ?? 0;
                 const tipoAccion = operation?.type === "sale" ? 1 : 2;
+                const tipoAccionStr = operation?.type === "sale" ? "Venta" : "Renta";
+
+                // ── Tipo de propiedad ───────────────────────────
                 const tipoProp = mapPropertyType(prop.property_type ?? "house");
+                const isLand = ["land", "lote", "terreno"].some(t =>
+                    (prop.property_type ?? "").toLowerCase().includes(t)
+                );
+
+                // ── Áreas — terrenos usan lot_size, no construction ──
+                const rawLot = prop.lot_size;
+                const rawConst = prop.construction_size;
+                const area = Math.round(rawLot ?? rawConst ?? 0);
+                const area_construida = Math.round(rawConst ?? 0);
+
+                // ── Imágenes y amenidades ───────────────────────
                 const imagesJson = prop.property_images?.map((img) => img.url) ?? [];
                 const featuresJson = prop.features ?? [];
                 const matchedAmenidades = matchAmenidades(featuresJson, amenidades ?? []);
+
+                // ── Log de propiedad ────────────────────────────
+                console.log(`${L} ${idx} 🏠 ${prop.public_id}`);
+                console.log(`${L}   ├─ Nombre:      ${prop.title ?? "(sin título)"}`);
+                console.log(`${L}   ├─ Tipo EB:     ${prop.property_type} → ${tipoProp}${isLand ? " (TERRENO)" : ""}`);
+                console.log(`${L}   ├─ Operación:   ${tipoAccionStr} | Precio: $${precio.toLocaleString("es-MX")}`);
+                console.log(`${L}   ├─ Área:        lot_size=${rawLot ?? "null"}, construction_size=${rawConst ?? "null"} → area=${area}m², area_construida=${area_construida}m²`);
+                if (!isLand) {
+                    console.log(`${L}   ├─ Recámaras:  ${prop.bedrooms ?? 0} | Baños: ${prop.bathrooms ?? 0} | Estac: ${prop.parking_spaces ?? 0}`);
+                }
+                console.log(`${L}   ├─ Ubicación:   ${locationStr}`);
+                console.log(`${L}   ├─ Dirección:   ${prop.location?.street ?? "(sin calle)"}, CP: ${prop.location?.postal_code ?? "?"}`);
+                console.log(`${L}   ├─ Imágenes:    ${imagesJson.length} | Features EB: ${featuresJson.length} | Amenidades match: ${matchedAmenidades.length}`);
 
                 const propiedadData = {
                     nombre: prop.title ?? `Propiedad ${prop.public_id}`,
                     descripcion: prop.description ?? "",
                     descripcion_estado: "",
                     precio,
-                    area: Math.round(prop.lot_size ?? prop.construction_size ?? 0),
-                    area_construida: Math.round(prop.construction_size ?? 0),
+                    area,
+                    area_construida,
                     habitaciones: prop.bedrooms ?? 0,
                     banios: prop.bathrooms ?? 0,
                     estacionamientos: prop.parking_spaces ?? 0,
@@ -370,7 +493,15 @@ export async function triggerSyncAction(): Promise<ActionResponse> {
                     id_tipo_uso: 1,
                     id_estado: location?.id_estado ?? 1,
                     id_ciudad: location?.id_ciudad ?? 1,
-                    direccion: prop.location?.street ?? "",
+                    // Nombres desnormalizados para evitar JOINs en reads (UI los usa directamente)
+                    estado_nombre: location?.source === "name"
+                        ? ebState
+                        : (location?.source?.match(/mapbox\((.+?)\//)?.[1] ?? ebState ?? null),
+                    ciudad_nombre: location?.source === "name"
+                        ? ebCity
+                        : (location?.source?.match(/\/(.+?)\)/)?.[1] ?? ebCity ?? null),
+                    // Dirección: EasyBroker manda la colonia en `street`, complementamos con city/state
+                    direccion: [prop.location?.street, ebCity].filter(Boolean).join(", "),
                     codigo_postal: prop.location?.postal_code ?? null,
                     id_usuario: userId,
                     is_unit: true,
@@ -397,10 +528,10 @@ export async function triggerSyncAction(): Promise<ActionResponse> {
                     if (updateErr) {
                         failed++;
                         errorDetails[prop.public_id] = updateErr.message;
+                        console.log(`${L}   └─ ❌ UPDATE ERROR: ${updateErr.message}`);
                         continue;
                     }
 
-                    // Reimportar imágenes
                     await serviceClient.from("imagenes_propiedades").delete().eq("id_propiedad", existing.id);
                     if (imagesJson.length > 0) {
                         await serviceClient.from("imagenes_propiedades").insert(
@@ -408,7 +539,6 @@ export async function triggerSyncAction(): Promise<ActionResponse> {
                         );
                     }
 
-                    // Reimportar amenidades
                     if (matchedAmenidades.length > 0) {
                         await serviceClient.from("amenidades_propiedades").delete().eq("id_propiedad", existing.id);
                         await serviceClient.from("amenidades_propiedades").insert(
@@ -417,6 +547,7 @@ export async function triggerSyncAction(): Promise<ActionResponse> {
                     }
 
                     updated++;
+                    console.log(`${L}   └─ 🔄 ACTUALIZADA (id: ${existing.id})`);
                 } else {
                     const { data: newProp, error: insertErr } = await serviceClient
                         .from("propiedades")
@@ -426,7 +557,9 @@ export async function triggerSyncAction(): Promise<ActionResponse> {
 
                     if (insertErr || !newProp) {
                         failed++;
-                        errorDetails[prop.public_id] = insertErr?.message ?? "Error desconocido";
+                        const errMsg = insertErr?.message ?? "Error desconocido";
+                        errorDetails[prop.public_id] = errMsg;
+                        console.log(`${L}   └─ ❌ INSERT ERROR: ${errMsg}`);
                         continue;
                     }
 
@@ -443,12 +576,27 @@ export async function triggerSyncAction(): Promise<ActionResponse> {
                     }
 
                     added++;
+                    console.log(`${L}   └─ ✅ NUEVA insertada (id: ${newProp.id})`);
                 }
             } catch (propErr) {
                 failed++;
                 errorDetails[item.public_id] = String(propErr);
+                console.log(`${L} ${idx} ❌ ${item.public_id} — EXCEPCIÓN: ${propErr}`);
             }
         }
+
+        // ── Resumen final ────────────────────────────────────────
+        console.log(`\n${L} ${BAR}`);
+        console.log(`${L} ✅ Nuevas:       ${added}`);
+        console.log(`${L} 🔄 Actualizadas: ${updated}`);
+        console.log(`${L} ❌ Fallidas:     ${failed}`);
+        if (Object.keys(errorDetails).length > 0) {
+            console.log(`${L} 📋 Errores por propiedad:`);
+            for (const [pid, err] of Object.entries(errorDetails)) {
+                console.log(`${L}    • ${pid}: ${err}`);
+            }
+        }
+        console.log(`${L} ${BAR}\n`);
 
         // 6. Actualizar log a success
         await serviceClient

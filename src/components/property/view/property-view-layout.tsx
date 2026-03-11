@@ -1,12 +1,12 @@
 "use client";
-import { PropertyWithImages } from "@/types";
+import { PropertyWithImagesAndAmenities } from "@/types";
 import { useEffect } from "react";
 import { PropertyContent } from "./property-content";
 import { PropertySidebar } from "./property-sidebar";
 import { useAppShell } from "@/hooks";
 
 interface Props {
-    property: PropertyWithImages;
+    property: PropertyWithImagesAndAmenities;
 }
 
 export function PropertyViewLayout({ property }: Props) {
