@@ -9,7 +9,7 @@ import {
     CalendarIcon,
     DockIcon,
     MapPinIcon,
-    PhoneIcon,
+    MailIcon,
     ScalingIcon,
     ChevronLeftIcon,
     ChevronRightIcon,
@@ -17,18 +17,21 @@ import {
     HomeIcon,
     ChevronDownIcon,
     ChevronUpIcon,
+    PhoneIcon,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useAppShell } from "@/hooks";
 import { MapLocation } from "../map-location";
 import { useState } from "react";
+import type { PropertyOwner } from "./property-owner-card";
 
 interface Props {
     property: PropertyWithImagesAndAmenities;
+    owner: PropertyOwner | null;
 }
 
-export function PropertyContent({ property }: Props) {
+export function PropertyContent({ property, owner }: Props) {
     const { isRightCollapsed, setIsRightCollapsed } = useAppShell();
     const [currentImageIdx, setCurrentImageIdx] = useState(0);
     const [showEBJson, setShowEBJson] = useState(false);
@@ -236,14 +239,36 @@ export function PropertyContent({ property }: Props) {
 
                 {/* Actions */}
                 <div className="flex gap-4 mb-10">
-                    <button className="flex-1 bg-primary text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-200">
+                    <button
+                        onClick={() => alert("Agendar visita — próximamente disponible")}
+                        className="flex-1 bg-slate-100 text-slate-500 font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 cursor-not-allowed"
+                        title="Próximamente"
+                    >
                         <CalendarIcon size={20} />
                         Agendar visita
                     </button>
-                    <button className="flex-1 bg-white border border-slate-200 text-slate-700 font-bold py-3.5 rounded-xl hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
-                        <PhoneIcon size={20} />
-                        Llamar ahora
-                    </button>
+                    {owner?.email_usuario ? (
+                        <a
+                            href={`mailto:${owner.email_usuario}?subject=Consulta: ${encodeURIComponent(property.nombre)}`}
+                            className="flex-1 bg-primary text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-200"
+                        >
+                            <MailIcon size={20} />
+                            Contactar
+                        </a>
+                    ) : owner?.telefono_usuario ? (
+                        <a
+                            href={`tel:${owner.telefono_usuario}`}
+                            className="flex-1 bg-primary text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-200"
+                        >
+                            <PhoneIcon size={20} />
+                            Contactar
+                        </a>
+                    ) : (
+                        <button className="flex-1 bg-slate-100 text-slate-400 font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 cursor-not-allowed">
+                            <MailIcon size={20} />
+                            Contactar
+                        </button>
+                    )}
                 </div>
 
                 {/* Description */}

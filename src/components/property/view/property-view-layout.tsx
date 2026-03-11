@@ -4,25 +4,25 @@ import { useEffect } from "react";
 import { PropertyContent } from "./property-content";
 import { PropertySidebar } from "./property-sidebar";
 import { useAppShell } from "@/hooks";
+import type { PropertyOwner } from "./property-owner-card";
 
 interface Props {
     property: PropertyWithImagesAndAmenities;
+    owner: PropertyOwner | null;
 }
 
-export function PropertyViewLayout({ property }: Props) {
+export function PropertyViewLayout({ property, owner }: Props) {
     const { setRightPanelContent, setIsRightCollapsed } = useAppShell();
 
     // Inject Sidebar content on mount
     useEffect(() => {
-        setRightPanelContent(<PropertySidebar property={property} />);
-        setIsRightCollapsed(false); // Ensure sidebar is open by default
+        setRightPanelContent(<PropertySidebar property={property} owner={owner} />);
+        setIsRightCollapsed(false);
 
-        // Cleanup: clear sidebar when unmounting (leaving the page)
-        // Optional: revert to default right panel if needed
         return () => {
             setRightPanelContent(null);
         };
-    }, [property, setRightPanelContent, setIsRightCollapsed]);
+    }, [property, owner, setRightPanelContent, setIsRightCollapsed]);
 
-    return <PropertyContent property={property} />;
+    return <PropertyContent property={property} owner={owner} />;
 }
