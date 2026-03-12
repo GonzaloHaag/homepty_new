@@ -6,6 +6,7 @@ import { PropertySchema } from "@/schemas";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { trackActivity } from "./activity-tracker";
 import z from "zod";
+import type { Database } from "@/types/database";
 
 export async function createUnitAction({
   unit,
@@ -148,10 +149,9 @@ export async function createDevelopmentAction({
   );
 
   // ── Paso 2: Insertar el desarrollo (sin área/precio/hab) ─────────────
+  // ── Paso 2: Insertar el desarrollo (sin área/precio/hab) ─────────────
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const devData = development as any;
-  // NOTE: Type cast needed until migration is applied and types are regenerated.
-  // After migration: area, precio, habitaciones become nullable in the DB.
   const { data: desarrolloData, error: errorDesarrollo } = await supabase
     .from("propiedades")
     .insert({
@@ -172,16 +172,16 @@ export async function createDevelopmentAction({
       longitud: devData.longitud || null,
       caracteristicas: devData.caracteristicas || null,
       // Development-specific: no area/precio/hab/baños/estacionamientos
-      area: 0,
-      area_construida: 0,
-      precio: 0,
-      habitaciones: 0,
+      area: null,
+      area_construida: null,
+      precio: null,
+      habitaciones: null,
       banios: 0,
       estacionamientos: 0,
       id_usuario: userId,
       is_unit: false,
       parent_id: null,
-    } as Parameters<typeof supabase.from<"propiedades">>[0] extends never ? never : any)
+    })
     .select()
     .single();
 
@@ -261,7 +261,7 @@ export async function createDevelopmentAction({
     const { data: unitData, error: errorUnit } = await supabase
       .from("propiedades")
       .insert({
-        tipo: unit.tipo as "Departamento" | "Local comercial" | "Oficina" | "Casa",
+        tipo: unit.tipo as Database["public"]["Enums"]["tipo_propiedad"],
         nombre: unit.nombre,
         descripcion: unit.descripcion || "",
         descripcion_estado: "",
