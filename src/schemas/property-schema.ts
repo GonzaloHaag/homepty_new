@@ -104,6 +104,25 @@ export const LocationCharacteristicsPropertySchema = z.object({
   codigo_postal: z.string().optional(),
   colonia: z.string().optional(),
   amenidades: z.array(z.number().int()).optional(),
+  latitud: z.number().optional().nullable(),
+  longitud: z.number().optional().nullable(),
+  floor_plan_url: z.string().optional().nullable(),
+});
+
+// ============================================================
+// SCHEMA DE UBICACIÓN — SOLO DESARROLLO (sin área/precio/hab/baños)
+// Un desarrollo NO tiene cuartos ni precio — solo sus UNIDADES.
+// ============================================================
+export const DevelopmentLocationSchema = z.object({
+  id_estado: z.number("Campo obligatorio").int(),
+  id_ciudad: z.number("Campo obligatorio").int(),
+  direccion: z.string("Campo obligatorio").min(5, "Mínimo 5 caracteres"),
+  codigo_postal: z.string().optional(),
+  colonia: z.string().optional(),
+  amenidades: z.array(z.number().int()).optional(),
+  latitud: z.number().optional().nullable(),
+  longitud: z.number().optional().nullable(),
+  caracteristicas: z.string().optional(),
 });
 
 // ============================================================
@@ -116,7 +135,7 @@ export const PropertySchema = z.object({
 
 export const DevelopmentSchema = z.object({
   ...BasicInfoDevelopmentSchema.shape,
-  ...LocationCharacteristicsPropertySchema.shape,
+  ...DevelopmentLocationSchema.shape,
 });
 
 // ============================================================
@@ -127,3 +146,4 @@ export type BasicInfoDevelopment = z.infer<typeof BasicInfoDevelopmentSchema>;
 export type LocationCharacteristicsProperty = z.infer<
   typeof LocationCharacteristicsPropertySchema
 >;
+export type DevelopmentLocation = z.infer<typeof DevelopmentLocationSchema>;

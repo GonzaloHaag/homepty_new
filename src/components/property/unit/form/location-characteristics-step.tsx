@@ -20,9 +20,17 @@ const AddressAutoComplete = dynamic(
 export function LocationCharacteristicsStep() {
   const {
     register,
+    watch,
     formState: { errors },
     control
   } = useFormContext<LocationCharacteristicsProperty>();
+
+  // City filtering by selected state
+  const selectedEstado = watch("id_estado");
+  const filteredCities = selectedEstado
+    ? CITIES.filter((c) => c.id_estado === Number(selectedEstado))
+    : [];
+
   return (
     <section className="grid grid-cols-2 items-start gap-6">
       <div className="w-full col-span-2 grid grid-cols-3 gap-6 items-start">
@@ -41,11 +49,16 @@ export function LocationCharacteristicsStep() {
         </div>
         <div className="flex flex-col gap-y-2">
           <Label htmlFor="id_ciudad">Ciudad *</Label>
-          <NativeSelect {...register("id_ciudad", { valueAsNumber: true })}>
+          <NativeSelect
+            {...register("id_ciudad", { valueAsNumber: true })}
+            disabled={!selectedEstado}
+          >
             <NativeSelectOption value={""}>
-              Seleccionar ciudad
+              {selectedEstado
+                ? "Seleccionar ciudad"
+                : "Primero selecciona un estado"}
             </NativeSelectOption>
-            {CITIES.map((city) => (
+            {filteredCities.map((city) => (
               <NativeSelectOption key={city.id} value={city.id}>
                 {city.label}
               </NativeSelectOption>

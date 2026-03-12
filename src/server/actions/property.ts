@@ -101,19 +101,39 @@ export async function createUnitAction({
   };
 }
 
+// ============================================================
+// Interface para unidades inline dentro de un desarrollo
+// ============================================================
+interface InlineUnitPayload {
+  unit: {
+    tipo: string;
+    nombre: string;
+    descripcion: string;
+    precio: number;
+    area: number;
+    habitaciones: number;
+    banios: number;
+    estacionamientos: number;
+    amenidades: number[];
+    caracteristicas: string;
+  };
+  unitFiles: File[];
+  floorPlanFile?: File;
+}
+
 export async function createDevelopmentAction({
   development,
   developmentFiles,
-  unitIds = [],
+  inlineUnits = [],
 }: {
   development: unknown;
   developmentFiles: File[];
-  unitIds?: number[];
+  inlineUnits?: InlineUnitPayload[];
 }) {
   const { userId } = await verifySession();
   const supabase = await createClient();
 
-  // Paso 1 -- Subir imagenes del desarrollo al storage
+  // ── Paso 1: Subir imágenes del desarrollo al storage ─────────────────
   const uploadDevelopmentImages = await Promise.all(
     developmentFiles.map(async (file) => {
       const { error, imageUrl } = await uploadImage({
@@ -127,43 +147,41 @@ export async function createDevelopmentAction({
     })
   );
 
-  // Paso 2 -- Subir desarrollo
-  const validatedFields = PropertySchema.safeParse(development);
-  if (!validatedFields.success) {
-    console.log("Error de validación:", validatedFields.error);
-    return {
-      ok: false,
-      message: "Error de validación. Por favor, revisa los campos.",
-      errors: z.flattenError(validatedFields.error).fieldErrors,
-    };
-  }
-
+  // ── Paso 2: Insertar el desarrollo (sin área/precio/hab) ─────────────
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const devData = development as any;
+  // NOTE: Type cast needed until migration is applied and types are regenerated.
+  // After migration: area, precio, habitaciones become nullable in the DB.
   const { data: desarrolloData, error: errorDesarrollo } = await supabase
     .from("propiedades")
     .insert({
-      tipo: validatedFields.data.tipo,
-      nombre: validatedFields.data.nombre,
-      id_tipo_accion: validatedFields.data.id_tipo_accion,
-      id_tipo_uso: validatedFields.data.id_tipo_uso,
-      descripcion: validatedFields.data.descripcion,
-      descripcion_estado: validatedFields.data.descripcion_estado,
-      descripcion_inversion: validatedFields.data.descripcion_inversion,
-      area: validatedFields.data.area,
-      area_construida: validatedFields.data.area_construida,
-      precio: validatedFields.data.precio,
-      habitaciones: validatedFields.data.habitaciones,
-      banios: validatedFields.data.banios,
-      estacionamientos: validatedFields.data.estacionamientos,
-      caracteristicas: validatedFields.data.caracteristicas,
-      id_estado: validatedFields.data.id_estado,
-      id_ciudad: validatedFields.data.id_ciudad,
-      codigo_postal: validatedFields.data.codigo_postal,
-      direccion: validatedFields.data.direccion,
-      colonia: validatedFields.data.colonia,
+      tipo: devData.tipo,
+      nombre: devData.nombre,
+      id_tipo_accion: devData.id_tipo_accion,
+      id_tipo_uso: devData.id_tipo_uso,
+      descripcion: devData.descripcion,
+      descripcion_estado: devData.descripcion_estado,
+      descripcion_inversion: devData.descripcion_inversion || null,
+      // Location
+      id_estado: devData.id_estado,
+      id_ciudad: devData.id_ciudad,
+      codigo_postal: devData.codigo_postal || null,
+      direccion: devData.direccion,
+      colonia: devData.colonia || null,
+      latitud: devData.latitud || null,
+      longitud: devData.longitud || null,
+      caracteristicas: devData.caracteristicas || null,
+      // Development-specific: no area/precio/hab/baños/estacionamientos
+      area: 0,
+      area_construida: 0,
+      precio: 0,
+      habitaciones: 0,
+      banios: 0,
+      estacionamientos: 0,
       id_usuario: userId,
       is_unit: false,
       parent_id: null,
-    })
+    } as Parameters<typeof supabase.from<"propiedades">>[0] extends never ? never : any)
     .select()
     .single();
 
@@ -174,42 +192,141 @@ export async function createDevelopmentAction({
     };
   }
 
-  // Paso 3 - Relacionar desarrollo e imagenes del mismo
-  const { error } = await supabase.from("imagenes_propiedades").insert(
-    uploadDevelopmentImages.map((uploadImage) => ({
-      id_propiedad: desarrolloData.id,
-      image_url: uploadImage,
-    }))
-  );
+  // ── Paso 3: Imágenes del desarrollo ──────────────────────────────────
+  if (uploadDevelopmentImages.length > 0) {
+    const { error } = await supabase.from("imagenes_propiedades").insert(
+      uploadDevelopmentImages.map((url) => ({
+        id_propiedad: desarrolloData.id,
+        image_url: url,
+      }))
+    );
 
-  if (error) {
-    return {
-      ok: false,
-      message: error.message,
-    };
-  }
-
-  // Paso 4 - Asignar unidades seleccionadas al desarrollo
-  if (unitIds.length > 0) {
-    const { error: unitsError } = await supabase
-      .from("propiedades")
-      .update({ parent_id: desarrolloData.id })
-      .in("id", unitIds);
-
-    if (unitsError) {
+    if (error) {
       return {
         ok: false,
-        message:
-          "Error al asignar las unidades al desarrollo: " + unitsError.message,
+        message: error.message,
       };
+    }
+  }
+
+  // ── Paso 4: Amenidades del desarrollo ────────────────────────────────
+  const devAmenidades = devData.amenidades as number[] | undefined;
+  if (devAmenidades && devAmenidades.length > 0) {
+    const { error: errorAmenidades } = await supabase
+      .from("amenidades_propiedades")
+      .insert(
+        devAmenidades.map((id_amenidad) => ({
+          id_propiedad: desarrolloData.id,
+          id_amenidad,
+        }))
+      );
+    if (errorAmenidades) {
+      console.log("Error al insertar amenidades del desarrollo:", errorAmenidades);
+    }
+  }
+
+  // ── Paso 5: Crear unidades inline ────────────────────────────────────
+  for (const inlineUnit of inlineUnits) {
+    const { unit, unitFiles, floorPlanFile } = inlineUnit;
+
+    // 5a. Subir imágenes de la unidad
+    const uploadedUnitImages = await Promise.all(
+      unitFiles.map(async (file) => {
+        const { error, imageUrl } = await uploadImage({
+          file,
+          bucket: "properties_images",
+        });
+        if (error) {
+          throw new Error("Error al subir imagen de unidad: " + error);
+        }
+        return imageUrl;
+      })
+    );
+
+    // 5b. Subir floor plan si existe
+    let floorPlanUrl: string | null = null;
+    if (floorPlanFile) {
+      const { error, imageUrl } = await uploadImage({
+        file: floorPlanFile,
+        bucket: "properties_images",
+      });
+      if (error) {
+        console.log("Error al subir plano:", error);
+      } else {
+        floorPlanUrl = imageUrl;
+      }
+    }
+
+    // 5c. Insertar la unidad con parent_id del desarrollo
+    const { data: unitData, error: errorUnit } = await supabase
+      .from("propiedades")
+      .insert({
+        tipo: unit.tipo as "Departamento" | "Local comercial" | "Oficina" | "Casa",
+        nombre: unit.nombre,
+        descripcion: unit.descripcion || "",
+        descripcion_estado: "",
+        precio: unit.precio,
+        area: unit.area,
+        habitaciones: unit.habitaciones,
+        banios: unit.banios,
+        estacionamientos: unit.estacionamientos,
+        caracteristicas: unit.caracteristicas || null,
+        floor_plan_url: floorPlanUrl,
+        // Inherit location from development
+        id_estado: devData.id_estado,
+        id_ciudad: devData.id_ciudad,
+        direccion: devData.direccion,
+        id_tipo_accion: devData.id_tipo_accion,
+        id_tipo_uso: devData.id_tipo_uso,
+        id_usuario: userId,
+        is_unit: true,
+        parent_id: desarrolloData.id,
+      })
+      .select()
+      .single();
+
+    if (errorUnit) {
+      console.log(`Error al crear unidad "${unit.nombre}":`, errorUnit);
+      continue; // continue with other units
+    }
+
+    // 5d. Imágenes de la unidad
+    if (uploadedUnitImages.length > 0) {
+      await supabase.from("imagenes_propiedades").insert(
+        uploadedUnitImages.map((url) => ({
+          id_propiedad: unitData.id,
+          image_url: url,
+        }))
+      );
+    }
+
+    // 5e. Amenidades de la unidad
+    if (unit.amenidades && unit.amenidades.length > 0) {
+      await supabase.from("amenidades_propiedades").insert(
+        unit.amenidades.map((id_amenidad) => ({
+          id_propiedad: unitData.id,
+          id_amenidad,
+        }))
+      );
     }
   }
 
   revalidatePath("/");
   revalidateTag("properties", "max");
-  trackActivity({ tipo_actividad: "propiedad_listada", modulo: "crm", entidad_id: String(desarrolloData.id), entidad_tipo: "propiedad", metadata: { tipo: validatedFields.data.tipo, is_unit: false, units_count: unitIds.length } }).catch(() => { });
+  trackActivity({
+    tipo_actividad: "propiedad_listada",
+    modulo: "crm",
+    entidad_id: String(desarrolloData.id),
+    entidad_tipo: "propiedad",
+    metadata: {
+      tipo: devData.tipo,
+      is_unit: false,
+      units_count: inlineUnits.length,
+    },
+  }).catch(() => { });
+
   return {
     ok: true,
-    message: "Desarrollo creado con éxito"
+    message: "Desarrollo creado con éxito",
   };
 }

@@ -103,42 +103,42 @@ export const USER_ACTIVITY = [
  */
 export const TYPES_OF_UNITS = [
   // --- Residencial ---
-  { id: 1,  label: "Casa sola",              value: "Casa sola",              grupo: "Residencial" },
-  { id: 2,  label: "Casa en condominio",      value: "Casa en condominio",      grupo: "Residencial" },
-  { id: 3,  label: "Villa / Residencia",      value: "Villa / Residencia",      grupo: "Residencial" },
-  { id: 4,  label: "Departamento",            value: "Departamento",            grupo: "Residencial" },
-  { id: 5,  label: "Loft",                    value: "Loft",                    grupo: "Residencial" },
-  { id: 6,  label: "Penthouse",               value: "Penthouse",               grupo: "Residencial" },
-  { id: 7,  label: "Studio",                  value: "Studio",                  grupo: "Residencial" },
-  { id: 8,  label: "Casa de playa",           value: "Casa de playa",           grupo: "Residencial" },
-  { id: 9,  label: "Cabaña / Glamping",       value: "Cabaña / Glamping",       grupo: "Residencial" },
+  { id: 1, label: "Casa sola", value: "Casa sola", grupo: "Residencial" },
+  { id: 2, label: "Casa en condominio", value: "Casa en condominio", grupo: "Residencial" },
+  { id: 3, label: "Villa / Residencia", value: "Villa / Residencia", grupo: "Residencial" },
+  { id: 4, label: "Departamento", value: "Departamento", grupo: "Residencial" },
+  { id: 5, label: "Loft", value: "Loft", grupo: "Residencial" },
+  { id: 6, label: "Penthouse", value: "Penthouse", grupo: "Residencial" },
+  { id: 7, label: "Studio", value: "Studio", grupo: "Residencial" },
+  { id: 8, label: "Casa de playa", value: "Casa de playa", grupo: "Residencial" },
+  { id: 9, label: "Cabaña / Glamping", value: "Cabaña / Glamping", grupo: "Residencial" },
   // --- Comercial ---
-  { id: 10, label: "Local comercial",         value: "Local comercial",         grupo: "Comercial" },
-  { id: 11, label: "Plaza comercial",         value: "Plaza comercial",         grupo: "Comercial" },
-  { id: 12, label: "Centro comercial",        value: "Centro comercial",        grupo: "Comercial" },
-  { id: 13, label: "Restaurante",             value: "Restaurante",             grupo: "Comercial" },
-  { id: 14, label: "Dark kitchen",            value: "Dark kitchen",            grupo: "Comercial" },
+  { id: 10, label: "Local comercial", value: "Local comercial", grupo: "Comercial" },
+  { id: 11, label: "Plaza comercial", value: "Plaza comercial", grupo: "Comercial" },
+  { id: 12, label: "Centro comercial", value: "Centro comercial", grupo: "Comercial" },
+  { id: 13, label: "Restaurante", value: "Restaurante", grupo: "Comercial" },
+  { id: 14, label: "Dark kitchen", value: "Dark kitchen", grupo: "Comercial" },
   // --- Oficinas ---
-  { id: 15, label: "Oficina corporativa",     value: "Oficina corporativa",     grupo: "Oficinas" },
-  { id: 16, label: "Coworking / Flex",        value: "Coworking / Flex",        grupo: "Oficinas" },
-  { id: 17, label: "Consultorio",             value: "Consultorio",             grupo: "Oficinas" },
+  { id: 15, label: "Oficina corporativa", value: "Oficina corporativa", grupo: "Oficinas" },
+  { id: 16, label: "Coworking / Flex", value: "Coworking / Flex", grupo: "Oficinas" },
+  { id: 17, label: "Consultorio", value: "Consultorio", grupo: "Oficinas" },
   // --- Industrial ---
-  { id: 18, label: "Bodega logística",        value: "Bodega logística",        grupo: "Industrial" },
-  { id: 19, label: "Centro de distribución", value: "Centro de distribución",  grupo: "Industrial" },
-  { id: 20, label: "Nave industrial",         value: "Nave industrial",         grupo: "Industrial" },
-  { id: 21, label: "Parque industrial",       value: "Parque industrial",       grupo: "Industrial" },
+  { id: 18, label: "Bodega logística", value: "Bodega logística", grupo: "Industrial" },
+  { id: 19, label: "Centro de distribución", value: "Centro de distribución", grupo: "Industrial" },
+  { id: 20, label: "Nave industrial", value: "Nave industrial", grupo: "Industrial" },
+  { id: 21, label: "Parque industrial", value: "Parque industrial", grupo: "Industrial" },
   // --- Hospitalidad ---
-  { id: 22, label: "Hotel",                   value: "Hotel",                   grupo: "Hospitalidad" },
-  { id: 23, label: "Boutique hotel",          value: "Boutique hotel",          grupo: "Hospitalidad" },
-  { id: 24, label: "Airbnb / Vacation rental",value: "Airbnb / Vacation rental",grupo: "Hospitalidad" },
+  { id: 22, label: "Hotel", value: "Hotel", grupo: "Hospitalidad" },
+  { id: 23, label: "Boutique hotel", value: "Boutique hotel", grupo: "Hospitalidad" },
+  { id: 24, label: "Airbnb / Vacation rental", value: "Airbnb / Vacation rental", grupo: "Hospitalidad" },
   // --- Salud ---
-  { id: 25, label: "Clínica / Consultorio",   value: "Clínica / Consultorio",   grupo: "Salud" },
-  { id: 26, label: "Hospital",                value: "Hospital",                grupo: "Salud" },
+  { id: 25, label: "Clínica / Consultorio", value: "Clínica / Consultorio", grupo: "Salud" },
+  { id: 26, label: "Hospital", value: "Hospital", grupo: "Salud" },
   // --- Terrenos ---
-  { id: 27, label: "Terreno urbano",          value: "Terreno urbano",          grupo: "Terrenos" },
-  { id: 28, label: "Lote residencial",        value: "Lote residencial",        grupo: "Terrenos" },
-  { id: 29, label: "Terreno industrial",      value: "Terreno industrial",      grupo: "Terrenos" },
-  { id: 30, label: "Terreno agropecuario",    value: "Terreno agropecuario",    grupo: "Terrenos" },
+  { id: 27, label: "Terreno urbano", value: "Terreno urbano", grupo: "Terrenos" },
+  { id: 28, label: "Lote residencial", value: "Lote residencial", grupo: "Terrenos" },
+  { id: 29, label: "Terreno industrial", value: "Terreno industrial", grupo: "Terrenos" },
+  { id: 30, label: "Terreno agropecuario", value: "Terreno agropecuario", grupo: "Terrenos" },
 ];
 
 /**
@@ -147,14 +147,14 @@ export const TYPES_OF_UNITS = [
  * El tipo de inmueble se determina en el paso de Taxonomía.
  */
 export const TYPES_OF_DEVELOPMENTS = [
-  { id: 1, label: "Vertical",             value: "Vertical",             descripcion: "Torres, edificios de departamentos, condominios en altura" },
-  { id: 2, label: "Horizontal",           value: "Horizontal",           descripcion: "Fraccionamientos, privadas, conjuntos de casas" },
-  { id: 3, label: "Uso Mixto",            value: "Uso Mixto",            descripcion: "Combina residencial, comercial y/u oficinas" },
-  { id: 4, label: "Parque Industrial",    value: "Parque Industrial",    descripcion: "Conjunto de naves, bodegas y áreas de manufactura" },
-  { id: 5, label: "Master Plan",          value: "Master Plan",          descripcion: "Desarrollo integral de gran escala con múltiples usos" },
-  { id: 6, label: "Comercial / Retail",   value: "Comercial / Retail",   descripcion: "Plazas, centros comerciales, strips de locales" },
+  { id: 1, label: "Vertical", value: "Vertical", descripcion: "Torres, edificios de departamentos, condominios en altura" },
+  { id: 2, label: "Horizontal", value: "Horizontal", descripcion: "Fraccionamientos, privadas, conjuntos de casas" },
+  { id: 3, label: "Uso Mixto", value: "Uso Mixto", descripcion: "Combina residencial, comercial y/u oficinas" },
+  { id: 4, label: "Parque Industrial", value: "Parque Industrial", descripcion: "Conjunto de naves, bodegas y áreas de manufactura" },
+  { id: 5, label: "Master Plan", value: "Master Plan", descripcion: "Desarrollo integral de gran escala con múltiples usos" },
+  { id: 6, label: "Comercial / Retail", value: "Comercial / Retail", descripcion: "Plazas, centros comerciales, strips de locales" },
   { id: 7, label: "Hotelero / Turístico", value: "Hotelero / Turístico", descripcion: "Hoteles, resorts, desarrollos vacacionales" },
-  { id: 8, label: "Oficinas Corporativas",value: "Oficinas Corporativas",descripcion: "Edificios de oficinas, campus corporativos" },
+  { id: 8, label: "Oficinas Corporativas", value: "Oficinas Corporativas", descripcion: "Edificios de oficinas, campus corporativos" },
   { id: 9, label: "Reconversión / Retrofit", value: "Reconversión / Retrofit", descripcion: "Rehabilitación de inmueble existente con nuevo uso" },
 ];
 
@@ -297,20 +297,59 @@ export const CITIES: { id: number; id_estado: number; label: string }[] = [
   { id: 94, id_estado: 32, label: "Guadalupe" },
 ];
 
+/**
+ * Amenidades de desarrollo inmobiliario — agrupadas por categoría.
+ * Cubren desarrollos Verticales, Horizontales, Comerciales, Industriales, etc.
+ * El campo `grupo` permite agrupar visualmente en la UI.
+ */
 export const AMENITIES = [
-  { id: 5, nombre: "Alberca" },
-  { id: 11, nombre: "Asador" },
-  { id: 4, nombre: "Asoleadero" },
-  { id: 2, nombre: "Business Center" },
-  { id: 6, nombre: "CoWorking" },
-  { id: 3, nombre: "Elevador" },
-  { id: 9, nombre: "Estacionamiento de Visitantes" },
-  { id: 1, nombre: "Gimnasio" },
-  { id: 8, nombre: "Salón de eventos" },
-  { id: 7, nombre: "Terraza" },
-  { id: 10, nombre: "Vigilancia 24 Hrs" },
-  { id: 12, nombre: "Zona de Mascotas" },
-  { id: 13, nombre: "Zonas Verdes" },
+  // ── Wellness ──────────────────────────────────────────────────────────────
+  { id: 1, nombre: "Gimnasio", grupo: "Wellness" },
+  { id: 2, nombre: "Alberca al aire libre", grupo: "Wellness" },
+  { id: 3, nombre: "Alberca techada", grupo: "Wellness" },
+  { id: 4, nombre: "Spa / Sauna / Vapor", grupo: "Wellness" },
+  { id: 5, nombre: "Jacuzzi", grupo: "Wellness" },
+  { id: 6, nombre: "Yoga room", grupo: "Wellness" },
+  // ── Social ────────────────────────────────────────────────────────────────
+  { id: 7, nombre: "Salón de eventos", grupo: "Social" },
+  { id: 8, nombre: "Rooftop / Terraza", grupo: "Social" },
+  { id: 9, nombre: "Sala de estar", grupo: "Social" },
+  { id: 10, nombre: "Área de asadores / BBQ", grupo: "Social" },
+  { id: 11, nombre: "Bar / Lounge", grupo: "Social" },
+  { id: 12, nombre: "Kids club", grupo: "Social" },
+  { id: 13, nombre: "Teens club", grupo: "Social" },
+  // ── Sports ────────────────────────────────────────────────────────────────
+  { id: 14, nombre: "Canchas de pádel", grupo: "Sports" },
+  { id: 15, nombre: "Cancha de tenis", grupo: "Sports" },
+  { id: 16, nombre: "Área deportiva", grupo: "Sports" },
+  { id: 17, nombre: "Pista de jogging", grupo: "Sports" },
+  // ── Work ──────────────────────────────────────────────────────────────────
+  { id: 18, nombre: "Coworking", grupo: "Work" },
+  { id: 19, nombre: "Business center", grupo: "Work" },
+  { id: 20, nombre: "Sala de juntas", grupo: "Work" },
+  // ── Services ──────────────────────────────────────────────────────────────
+  { id: 21, nombre: "Elevador", grupo: "Services" },
+  { id: 22, nombre: "Estacionamiento de visitantes", grupo: "Services" },
+  { id: 23, nombre: "Vigilancia 24 hrs", grupo: "Services" },
+  { id: 24, nombre: "Control de acceso", grupo: "Services" },
+  { id: 25, nombre: "Concierge", grupo: "Services" },
+  { id: 26, nombre: "Lavandería", grupo: "Services" },
+  { id: 27, nombre: "Bodega / Storage", grupo: "Services" },
+  // ── Green ─────────────────────────────────────────────────────────────────
+  { id: 28, nombre: "Áreas verdes / Jardines", grupo: "Green" },
+  { id: 29, nombre: "Roof garden", grupo: "Green" },
+  { id: 30, nombre: "Zona de mascotas (Pet-friendly)", grupo: "Green" },
+  { id: 31, nombre: "Huerto urbano", grupo: "Green" },
+  // ── Entertainment ─────────────────────────────────────────────────────────
+  { id: 32, nombre: "Cine / Sala multimedia", grupo: "Entertainment" },
+  { id: 33, nombre: "Salón de juegos", grupo: "Entertainment" },
+  { id: 34, nombre: "Biblioteca", grupo: "Entertainment" },
+  // ── Industrial ────────────────────────────────────────────────────────────
+  { id: 35, nombre: "Andenes de carga", grupo: "Industrial" },
+  { id: 36, nombre: "Patio de maniobras", grupo: "Industrial" },
+  { id: 37, nombre: "Planta de tratamiento", grupo: "Industrial" },
+  { id: 38, nombre: "Subestación eléctrica", grupo: "Industrial" },
+  { id: 39, nombre: "Báscula industrial", grupo: "Industrial" },
 ];
 
 export const TYPES_STATUS_REQUEST = [

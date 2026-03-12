@@ -8,7 +8,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import z from "zod";
 import {
   BasicInfoDevelopmentSchema,
-  LocationCharacteristicsPropertySchema,
+  DevelopmentLocationSchema,
 } from "@/schemas";
 import { BasicInformationStep } from "./basic-information-step";
 import { Confirm } from "./confirm";
@@ -19,7 +19,7 @@ import { TaxonomyStep } from "./taxonomy-step";
 import { ButtonBack } from "@/components/shared";
 import { Card } from "@/components/ui/card";
 import { createDevelopmentAction } from "@/server/actions";
-import { PropertyWithImages } from "@/types";
+import type { InlineUnitData } from "./unit-inline-form";
 
 // Schema para el paso de taxonomía (campos opcionales)
 const TaxonomyStepSchema = z.object({
@@ -42,8 +42,8 @@ const { useStepper, steps, utils } = defineStepper(
   },
   {
     id: "location-characteristics",
-    label: "Ubicación y características",
-    schema: LocationCharacteristicsPropertySchema,
+    label: "Ubicación y amenidades",
+    schema: DevelopmentLocationSchema,
   },
   {
     id: "units",
@@ -53,46 +53,47 @@ const { useStepper, steps, utils } = defineStepper(
   { id: "confirm", label: "Confirmar", schema: z.object({}) }
 );
 
-interface Props {
-  availableUnits: PropertyWithImages[];
-}
-
-export function FormPropertyDevelopment({ availableUnits }: Props) {
+export function FormPropertyDevelopment() {
+  // ── Development images ──────────────────────────────────────────────────
   const [developmentImageUrls, setDevelopmentImageUrls] = useState<string[]>([]);
   const [developmentFileUrls, setDevelopmentFileUrls] = useState<File[]>([]);
-  const [selectedUnits, setSelectedUnits] = useState<PropertyWithImages[]>([]);
-
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const handleClick = () => {
-    inputRef.current?.click();
-  };
-
+  const handleClick = () => inputRef.current?.click();
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const files = Array.from(event.target.files);
-      setDevelopmentFileUrls([...developmentFileUrls, ...files]);
+      setDevelopmentFileUrls((prev) => [...prev, ...files]);
       const newImagesUrls = files.map((file) => URL.createObjectURL(file));
-      setDevelopmentImageUrls([...developmentImageUrls, ...newImagesUrls]);
+      setDevelopmentImageUrls((prev) => [...prev, ...newImagesUrls]);
     }
   };
 
-  const handleSelectUnit = (unit: PropertyWithImages) => {
-    if (!selectedUnits.some((u) => u.id === unit.id)) {
-      setSelectedUnits([...selectedUnits, unit]);
-    }
+  // ── Inline units (CRUD) ─────────────────────────────────────────────────
+  const [inlineUnits, setInlineUnits] = useState<InlineUnitData[]>([]);
+
+  const handleAddUnit = (unit: InlineUnitData) => {
+    setInlineUnits((prev) => [...prev, unit]);
   };
 
-  const handleRemoveUnit = (unitId: number) => {
-    setSelectedUnits(selectedUnits.filter((u) => u.id !== unitId));
+  const handleUpdateUnit = (clientId: string, updated: InlineUnitData) => {
+    setInlineUnits((prev) =>
+      prev.map((u) => (u._clientId === clientId ? updated : u))
+    );
   };
 
+  const handleDeleteUnit = (clientId: string) => {
+    setInlineUnits((prev) => prev.filter((u) => u._clientId !== clientId));
+  };
+
+  // ── Form & stepper ─────────────────────────────────────────────────────
   const stepper = useStepper();
 
   const methods = useForm({
     mode: "onBlur",
     resolver: zodResolver(stepper.current.schema),
     defaultValues: {
+      // Basic info
       tipo: "Vertical" as const,
       nombre: "",
       id_tipo_accion: 1,
@@ -100,23 +101,21 @@ export function FormPropertyDevelopment({ availableUnits }: Props) {
       descripcion: "",
       descripcion_estado: "",
       descripcion_inversion: undefined,
+      // Taxonomy
+      taxonomy_vertical_id: null,
+      taxonomy_segment_id: null,
+      taxonomy_subsegment_id: null,
+      taxonomy_attributes: {},
+      // Location (dev-specific — no area/precio/hab/baños)
       id_estado: undefined,
       id_ciudad: undefined,
       codigo_postal: undefined,
       direccion: "",
       colonia: undefined,
-      area: undefined,
-      area_construida: undefined,
-      precio: undefined,
-      habitaciones: undefined,
-      banios: undefined,
-      estacionamientos: undefined,
+      amenidades: [] as number[],
+      latitud: undefined,
+      longitud: undefined,
       caracteristicas: undefined,
-      // Taxonomía Inmobiliaria
-      taxonomy_vertical_id: null,
-      taxonomy_segment_id: null,
-      taxonomy_subsegment_id: null,
-      taxonomy_attributes: {},
     },
   });
 
@@ -138,11 +137,27 @@ export function FormPropertyDevelopment({ availableUnits }: Props) {
       if (stepper.isLast) {
         const allFormValues = getValues();
         console.log("All form values:", allFormValues);
+        console.log("Inline units:", inlineUnits);
 
         const response = await createDevelopmentAction({
           development: allFormValues,
           developmentFiles: developmentFileUrls,
-          unitIds: selectedUnits.map((u) => u.id),
+          inlineUnits: inlineUnits.map((u) => ({
+            unit: {
+              tipo: u.tipo,
+              nombre: u.nombre,
+              descripcion: u.descripcion,
+              precio: u.precio,
+              area: u.area,
+              habitaciones: u.habitaciones,
+              banios: u.banios,
+              estacionamientos: u.estacionamientos,
+              amenidades: u.amenidades,
+              caracteristicas: u.caracteristicas,
+            },
+            unitFiles: u.imageFiles,
+            floorPlanFile: u.floorPlanFile ?? undefined,
+          })),
         });
 
         if (!response.ok) {
@@ -153,7 +168,7 @@ export function FormPropertyDevelopment({ availableUnits }: Props) {
         toast.success("Desarrollo creado con éxito!");
         setDevelopmentImageUrls([]);
         setDevelopmentFileUrls([]);
-        setSelectedUnits([]);
+        setInlineUnits([]);
         stepper.reset();
         reset();
       } else {
@@ -212,9 +227,8 @@ export function FormPropertyDevelopment({ availableUnits }: Props) {
                   </li>
                   {index < array.length - 1 && (
                     <Separator
-                      className={`flex-1 ${
-                        index < currentIndex ? "bg-primary" : "bg-muted"
-                      }`}
+                      className={`flex-1 ${index < currentIndex ? "bg-primary" : "bg-muted"
+                        }`}
                     />
                   )}
                 </Fragment>
@@ -235,10 +249,10 @@ export function FormPropertyDevelopment({ availableUnits }: Props) {
               "location-characteristics": () => <LocationCharacteristicsStep />,
               units: () => (
                 <UnitsStep
-                  availableUnits={availableUnits}
-                  selectedUnits={selectedUnits}
-                  onSelectUnit={handleSelectUnit}
-                  onRemoveUnit={handleRemoveUnit}
+                  units={inlineUnits}
+                  onAddUnit={handleAddUnit}
+                  onUpdateUnit={handleUpdateUnit}
+                  onDeleteUnit={handleDeleteUnit}
                 />
               ),
               confirm: () => <Confirm />,

@@ -4,6 +4,7 @@ export {
   BasicInfoPropertySchema,
   BasicInfoDevelopmentSchema,
   LocationCharacteristicsPropertySchema,
+  DevelopmentLocationSchema,
   PropertySchema,
   DevelopmentSchema,
   UNIT_TIPO_VALUES,
@@ -11,6 +12,7 @@ export {
   type BasicInfoProperty,
   type BasicInfoDevelopment,
   type LocationCharacteristicsProperty,
+  type DevelopmentLocation,
 } from "./property-schema";
 export { RequestSchema } from "./request-schema";
 export { OfferSchema } from "./offer-schema";
