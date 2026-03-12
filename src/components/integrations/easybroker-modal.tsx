@@ -50,20 +50,31 @@ export function EasyBrokerModal({ open, onOpenChange }: Props) {
     const [msg, setMsg] = useState<{ text: string; ok: boolean } | null>(null);
     const [isPending, startTransition] = useTransition();
 
-    // Cargar datos cuando abre el modal
+    // Cargar datos cada vez que abre el modal
     const handleOpen = useCallback(async (isOpen: boolean) => {
         onOpenChange(isOpen);
-        if (isOpen && !loaded) {
-            const [intRes, logRes] = await Promise.all([
-                getIntegrationStatusAction(),
-                getSyncHistoryAction(),
-            ]);
-            if (intRes.ok) setIntegration(intRes.data ?? null);
-            if (logRes.ok) setLogs(logRes.data ?? []);
-            if (intRes.ok && intRes.data) setApiKey("••••••••••••••••••••");
-            setLoaded(true);
+        if (!isOpen) {
+            // Reset state on close so next open always re-fetches
+            setLoaded(false);
+            setMsg(null);
+            return;
         }
-    }, [loaded, onOpenChange]);
+        // Always fetch fresh data on open
+        setLoaded(false);
+        const [intRes, logRes] = await Promise.all([
+            getIntegrationStatusAction(),
+            getSyncHistoryAction(),
+        ]);
+        if (intRes.ok) setIntegration(intRes.data ?? null);
+        if (logRes.ok) setLogs(logRes.data ?? []);
+        // Show masked key placeholder if token exists
+        if (intRes.ok && intRes.data?.api_key) {
+            setApiKey("••••••••••••••••••••");
+        } else {
+            setApiKey("");
+        }
+        setLoaded(true);
+    }, [onOpenChange]);
 
     const refresh = useCallback(async () => {
         const [intRes, logRes] = await Promise.all([
@@ -153,9 +164,9 @@ export function EasyBrokerModal({ open, onOpenChange }: Props) {
                             </div>
                             {/* Badge estado */}
                             <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full border ${isConnected && integration.is_active
-                                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                    : isConnected ? "bg-amber-50 text-amber-700 border-amber-200"
-                                        : "bg-gray-100 text-gray-500 border-gray-200"
+                                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                : isConnected ? "bg-amber-50 text-amber-700 border-amber-200"
+                                    : "bg-gray-100 text-gray-500 border-gray-200"
                                 }`}>
                                 <span className={`w-1.5 h-1.5 rounded-full ${isConnected && integration.is_active ? "bg-emerald-500" : isConnected ? "bg-amber-500" : "bg-gray-400"}`} />
                                 {isConnected && integration.is_active ? "Conectado" : isConnected ? "Pausado" : "Sin configurar"}
@@ -199,8 +210,8 @@ export function EasyBrokerModal({ open, onOpenChange }: Props) {
                                         onClick={handleToggle}
                                         disabled={isPending}
                                         className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg disabled:opacity-50 transition-colors border ${integration.is_active
-                                                ? "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"
-                                                : "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+                                            ? "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"
+                                            : "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
                                             }`}
                                     >
                                         {integration.is_active ? "Pausar" : "Activar"}
