@@ -12,6 +12,7 @@
 -- Developments do not have rooms, price, or area — only their UNITS do.
 ALTER TABLE propiedades ALTER COLUMN precio DROP NOT NULL;
 ALTER TABLE propiedades ALTER COLUMN area DROP NOT NULL;
+ALTER TABLE propiedades ALTER COLUMN area_construida DROP NOT NULL;
 ALTER TABLE propiedades ALTER COLUMN habitaciones DROP NOT NULL;
 
 -- ── 2 & 3. Add geolocation & floor plan columns ────────────────────────────
