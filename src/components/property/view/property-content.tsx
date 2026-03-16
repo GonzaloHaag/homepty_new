@@ -22,7 +22,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useAppShell } from "@/hooks";
-import { MapLocation } from "../map-location";
+import { EnvironmentMap } from "./environment-map";
 import { useState } from "react";
 import type { PropertyOwner } from "./property-owner-card";
 
@@ -274,14 +274,25 @@ export function PropertyContent({ property, owner }: Props) {
                     <div className="flex flex-col gap-1 mb-4">
                         <div className="flex items-center gap-2">
                             <MapPinIcon className="text-primary" size={20} />
-                            <h3 className="text-lg font-bold text-slate-900">Ubicación</h3>
+                            <h3 className="text-lg font-bold text-slate-900">Ubicación y Entorno</h3>
                         </div>
                         <p className="text-slate-500 text-sm ml-7">
                             {locationShort || property.direccion || "Ubicación no disponible"}
                         </p>
                     </div>
-                    <div className="rounded-2xl overflow-hidden border border-slate-200 h-[300px] relative bg-slate-100">
-                        <MapLocation />
+                    <div className="rounded-2xl overflow-hidden border-0 h-[800px] relative mb-4">
+                        {(property as Record<string, unknown>).latitud && (property as Record<string, unknown>).longitud ? (
+                            <EnvironmentMap 
+                                address={addressLine} 
+                                coordinates={[(property as Record<string, unknown>).longitud as number, (property as Record<string, unknown>).latitud as number]}
+                                propertyType={property.tipo}
+                            />
+                        ) : (
+                            <EnvironmentMap 
+                                address={addressLine}
+                                propertyType={property.tipo}
+                            />
+                        )}
                     </div>
                 </div>
 

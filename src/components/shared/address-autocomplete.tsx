@@ -8,11 +8,12 @@ const AddressAutofillClient = dynamic(
   () =>
     import("@mapbox/search-js-react").then((mod) => {
       const { AddressAutofill } = mod;
-      function Wrapper({ children }: { children: ReactNode }) {
+      function Wrapper({ children, onRetrieve }: { children: ReactNode; onRetrieve?: (res: any) => void }) {
         return (
           <AddressAutofill
             accessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!}
             options={{ language: "es", country: "MX" }}
+            onRetrieve={onRetrieve}
           >
             {children}
           </AddressAutofill>
@@ -25,8 +26,10 @@ const AddressAutofillClient = dynamic(
 
 export default function AddressAutoComplete({
   children,
+  onRetrieve,
 }: {
   children: ReactNode;
+  onRetrieve?: (res: any) => void;
 }) {
-  return <AddressAutofillClient>{children}</AddressAutofillClient>;
+  return <AddressAutofillClient onRetrieve={onRetrieve}>{children}</AddressAutofillClient>;
 }

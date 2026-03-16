@@ -22,7 +22,8 @@ export function LocationCharacteristicsStep() {
     register,
     watch,
     formState: { errors },
-    control
+    control,
+    setValue
   } = useFormContext<LocationCharacteristicsProperty>();
 
   // City filtering by selected state
@@ -74,7 +75,16 @@ export function LocationCharacteristicsStep() {
         />
       </div>
       <div className="w-full col-span-2 grid grid-cols-2 gap-6 items-start">
-        <AddressAutoComplete>
+        <AddressAutoComplete
+          onRetrieve={(res) => {
+            const feature = res.features[0];
+            if (feature?.geometry?.coordinates) {
+              const [lng, lat] = feature.geometry.coordinates;
+              setValue("longitud", lng);
+              setValue("latitud", lat);
+            }
+          }}
+        >
           <InputForm
             label="Dirección (calle y número) *"
             type="text"
