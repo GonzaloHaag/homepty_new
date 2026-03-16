@@ -1,8 +1,8 @@
-import { PropertyViewLayout } from "@/components/property/view/property-view-layout";
 import { PropertyViewTracker } from "@/components/property/view/property-view-tracker";
 import { ErrorMessage } from "@/components/shared";
-import { getPropertyById } from "@/server/queries";
+import { getPropertyById, getUnitsByDevelopmentId } from "@/server/queries";
 import { getPropertyOwner, type PropertyOwner } from "@/components/property/view/property-owner-card";
+import { DevelopmentViewLayout } from "@/components/property/development/view/development-view-layout";
 
 export default async function PropertiesDevelopmentViewPage({
   params,
@@ -17,10 +17,14 @@ export default async function PropertiesDevelopmentViewPage({
   }
   const development = response.data;
 
-  // Fetch property owner in parallel with rendering
-  const owner: PropertyOwner | null = development.id_usuario
-    ? await getPropertyOwner(development.id_usuario)
-    : null;
+  const ownerPromise = development.id_usuario
+    ? getPropertyOwner(development.id_usuario)
+    : Promise.resolve(null);
+    
+  const unitsPromise = getUnitsByDevelopmentId({ developmentId: Number(id) });
+
+  const [owner, unitsResponse] = await Promise.all([ownerPromise, unitsPromise]);
+  const units = unitsResponse.ok && unitsResponse.data ? unitsResponse.data : [];
 
   return (
     <>
@@ -29,7 +33,7 @@ export default async function PropertiesDevelopmentViewPage({
         propertyType="development"
         propertyName={development.nombre}
       />
-      <PropertyViewLayout property={development} owner={owner} />
+      <DevelopmentViewLayout property={development} owner={owner as PropertyOwner | null} units={units} />
     </>
   );
 }

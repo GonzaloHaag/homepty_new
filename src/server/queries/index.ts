@@ -7,6 +7,7 @@ export {
   getAllDevelopmentsByCurrentUser,
   getPropertyById,
   getAvailableUnitsForDevelopment,
+  getUnitsByDevelopmentId,
 } from "./properties";
 export { getOffersByCurrentUser } from "./offers";
 export { getClientsByCurrentUser } from "./clients";

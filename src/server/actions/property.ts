@@ -155,7 +155,7 @@ export async function createDevelopmentAction({
   const { data: desarrolloData, error: errorDesarrollo } = await supabase
     .from("propiedades")
     .insert({
-      tipo: devData.tipo,
+      tipo: devData.tipo as Database["public"]["Enums"]["tipo_propiedad"],
       nombre: devData.nombre,
       id_tipo_accion: devData.id_tipo_accion,
       id_tipo_uso: devData.id_tipo_uso,
@@ -172,10 +172,10 @@ export async function createDevelopmentAction({
       longitud: devData.longitud || null,
       caracteristicas: devData.caracteristicas || null,
       // Development-specific: no area/precio/hab/baños/estacionamientos
-      area: null,
-      area_construida: null,
-      precio: null,
-      habitaciones: null,
+      area: 0,
+      area_construida: 0,
+      precio: 0,
+      habitaciones: 0,
       banios: 0,
       estacionamientos: 0,
       id_usuario: userId,

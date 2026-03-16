@@ -229,3 +229,31 @@ export async function getAvailableUnitsForDevelopment(): Promise<
     data,
   };
 }
+
+export async function getUnitsByDevelopmentId({
+  developmentId,
+}: {
+  developmentId: number;
+}): Promise<QueryResponse<PropertyWithImages[]>> {
+  const supabase = await createClient();
+  const { error, data } = await supabase
+    .from("propiedades")
+    .select("*, imagenes_propiedades(*)")
+    .eq("parent_id", developmentId)
+    .eq("is_unit", true)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.log("Error al obtener las unidades del desarrollo:", error);
+    return {
+      ok: false,
+      message: "Error al obtener las unidades. Por favor, intenta de nuevo.",
+    };
+  }
+
+  return {
+    ok: true,
+    message: "Unidades del desarrollo obtenidas con éxito",
+    data,
+  };
+}
