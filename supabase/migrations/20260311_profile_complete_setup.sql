@@ -5,6 +5,8 @@ CREATE POLICY "Allow User Uploads" ON storage.objects FOR INSERT WITH CHECK (buc
 CREATE POLICY "Allow User Updates" ON storage.objects FOR UPDATE USING (bucket_id = 'profile-photos' AND (storage.foldername(name))[1] = auth.uid()::text) WITH CHECK (bucket_id = 'profile-photos' AND (storage.foldername(name))[1] = auth.uid()::text);
 
 -- 2. MEXICO LOCATIONS DATA
+CREATE UNIQUE INDEX IF NOT EXISTS idx_estados_nombre_estado_unique ON estados(nombre_estado);
+
 -- 1. Insert States (Alphabetical Order)
 INSERT INTO estados (nombre_estado, id_pais) VALUES ('Aguascalientes', 1) ON CONFLICT (nombre_estado) DO NOTHING;
 INSERT INTO estados (nombre_estado, id_pais) VALUES ('Baja California', 1) ON CONFLICT (nombre_estado) DO NOTHING;
