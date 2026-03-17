@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
+import { toast } from "sonner";
 import { getCopilotSessions, saveCopilotSession, deleteCopilotSession, updateCopilotSessionTitle } from "@/server/actions/copilot/history";
 import type { CopilotMessage, CopilotContext, CopilotSession } from "@/lib/brain-types";
 
@@ -132,7 +133,7 @@ export function useCopilotAI(context?: CopilotContext) {
         } finally {
             setIsLoading(false);
         }
-    }, [isLoading, fetchHistory, context]);
+    }, [isLoading, fetchHistory]);
 
     const clearMessages = useCallback(() => {
         setMessages([]);
@@ -149,9 +150,12 @@ export function useCopilotAI(context?: CopilotContext) {
     const removeHistoryItem = useCallback(async (id: string) => {
         const success = await deleteCopilotSession(id);
         if (success) {
+            toast.success("Conversación eliminada");
             await fetchHistory();
             setMessages([]);
             setCurrentSessionId(null);
+        } else {
+            toast.error("No se pudo eliminar la conversación");
         }
         return success;
     }, [fetchHistory]);
@@ -159,7 +163,10 @@ export function useCopilotAI(context?: CopilotContext) {
     const renameHistoryItem = useCallback(async (id: string, title: string) => {
         const success = await updateCopilotSessionTitle(id, title);
         if (success) {
+            toast.success("Conversación renombrada");
             await fetchHistory();
+        } else {
+            toast.error("No se pudo renombrar la conversación");
         }
         return success;
     }, [fetchHistory]);

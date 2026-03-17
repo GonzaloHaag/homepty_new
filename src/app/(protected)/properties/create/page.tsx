@@ -54,24 +54,6 @@ export default async function PropertiesCreatePage() {
                 </p>
               </div>
             </Link>
-            <Link
-              href="#"
-              className="flex flex-col gap-y-4 bg-card p-4 rounded border border-slate-100 hover:border-primary transition-colors duration-300"
-            >
-              <div className="flex items-center justify-center size-12 rounded bg-muted">
-                <HouseIcon size={24} className="text-muted-foreground" />
-              </div>
-              <div className="flex flex-col gap-y-2">
-                <h4 className="font-medium">Propiedad individual</h4>
-                <span className="text-gray-400">
-                  Casa, deparatamento, local, etc.
-                </span>
-                <p className="text-primary">
-                  Ideal para propiedades individuales como casas, departamentos,
-                  locales comerciales, terrenos, etc.
-                </p>
-              </div>
-            </Link>
           </section>
         </div>
       </div>
